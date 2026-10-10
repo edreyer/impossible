@@ -98,6 +98,10 @@ their domain names, policies, authorization decisions, and workflows.
   validity, and use `fromTrusted` only for literals and already validated data.
 - Do not model "past" or "future" as stored value types; check relationships to
   the current time through a `Clock` context parameter and store the plain value.
+- Sign refinements come in mirrored pairs: every `PositiveX` has a `NegativeX`
+  with negation between them. A `NonNegativeX` exists only where zero is a common
+  valid value (`Decimal`, `Money`); integers use `BoundedInt` instead. There are no
+  `NonPositive` types.
 - Keep operations invariant-preserving. If arithmetic is introduced, handle
   overflow and invalid results explicitly through precise typed failures.
 - Do not duplicate Arrow's result types or build a generic validation framework.

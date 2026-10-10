@@ -25,6 +25,9 @@ value class PositiveInt private constructor(val value: Int) : Comparable<Positiv
         return PositiveInt(sum)
     }
 
+    /** The negation of a positive integer always fits. */
+    operator fun unaryMinus(): NegativeInt = NegativeInt.fromTrustedInt(-value)
+
     fun toPositiveLong(): PositiveLong = PositiveLong.fromTrustedLong(value.toLong())
 
     fun toPositiveDecimal(): PositiveDecimal = PositiveDecimal.fromTrustedDecimal(Decimal.of(value.toLong()))
@@ -38,5 +41,7 @@ value class PositiveInt private constructor(val value: Int) : Comparable<Positiv
             raise.ensure(value > 0) { Error.NonPositive(value) }
             return PositiveInt(value)
         }
+
+        internal fun fromTrustedInt(value: Int): PositiveInt = PositiveInt(value)
     }
 }

@@ -17,8 +17,8 @@ package holds the construction contract shared by every type.
 | `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()` and `fromTrusted`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
 | `.text` | `NonBlankString`, `Slug` |
 | `.contact` | `Email`, `Phone` |
-| `.numeric` | `PositiveInt`, `PositiveLong`, `BoundedInt`, `PositiveDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
-| `.money` | `Currency`, `Money` |
+| `.numeric` | `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt`, `PositiveDecimal`, `NegativeDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
+| `.money` | `Currency`, `Money`, `PositiveMoney`, `NonNegativeMoney`, `NegativeMoney` |
 | `.time` | `DateChecks`, `DateRange`, `EffectivePeriod`, `TimeWindow`, `PositiveDuration` |
 | `.locale` | `CountryCode`, `LanguageTag` |
 | `.identity` | `TypedId` |
@@ -30,9 +30,12 @@ package holds the construction contract shared by every type.
 | `NonBlankString` | At least one character is not Kotlin whitespace; optional maximum length | `NonBlankString.Error` (`Blank`, `TooLong`) |
 | `Slug` | Lowercase ASCII letters and digits in hyphen-joined groups | `Slug.Error.InvalidFormat(value)` |
 | `PositiveInt` | `1..Int.MAX_VALUE` | `PositiveInt.Error.NonPositive(value)` |
+| `NegativeInt` | `Int.MIN_VALUE..-1` | `NegativeInt.Error.NonNegative(value)` |
 | `PositiveLong` | `1..Long.MAX_VALUE` | `PositiveLong.Error.NonPositive(value)` |
+| `NegativeLong` | `Long.MIN_VALUE..-1` | `NegativeLong.Error.NonNegative(value)` |
 | `BoundedInt` | `Int` within the factory's inclusive range | `BoundedInt.Error.OutOfRange(value, bounds)` |
 | `PositiveDecimal` | Exact decimal `> 0` | `PositiveDecimal.Error.NonPositive(value)` |
+| `NegativeDecimal` | Exact decimal `< 0` | `NegativeDecimal.Error.NonNegative(value)` |
 | `NonNegativeDecimal` | Exact decimal `>= 0` | `NonNegativeDecimal.Error.Negative(value)` |
 | `Percentage` | Exact whole percentage units in `0..100` | `Percentage.Error.OutOfRange(value)` |
 | `TypedId<Tag>` | UUID with a compile-time domain tag | `TypedId.Error.InvalidFormat(value)` |
@@ -44,6 +47,7 @@ package holds the construction contract shared by every type.
 | `PositiveDuration` | Finite `Duration` `> 0` | `PositiveDuration.Error` (`NonPositive`, `Infinite`) |
 | `Currency` | ISO 4217 code from the bundled code list | `Currency.Error.UnsupportedCode(value)` |
 | `Money` | Signed `Long` of a currency's minor units | `Money.Error` |
+| `PositiveMoney`, `NonNegativeMoney`, `NegativeMoney` | `Money` `> 0`, `>= 0`, `< 0` | `NonPositive`, `Negative`, `NonNegative` |
 | `CountryCode` | Assigned ISO 3166-1 alpha-2 code from the bundled list | `CountryCode.Error.UnsupportedCode(value)` |
 | `LanguageTag` | Canonical-case BCP 47 language, script, region and variants | `LanguageTag.Error.InvalidFormat(value)` |
 | `Email` | ASCII dot-atom mailbox and DNS-label domain | `Email.Error.InvalidFormat(value)` |
@@ -340,12 +344,17 @@ ordering are numeric within each type, so `1.0` equals `1.00`. Their constructor
 are private, and they expose no public copy operation that bypasses validation.
 They supply validated construction and ordering, plus the operations whose result
 always keeps the invariant: `PositiveDecimal + PositiveDecimal`,
-`NonNegativeDecimal + NonNegativeDecimal`, and `PositiveDecimal.toNonNegativeDecimal()`.
+`NonNegativeDecimal + NonNegativeDecimal`, `NegativeDecimal + NegativeDecimal`,
+`PositiveDecimal.toNonNegativeDecimal()`, and negation between `PositiveDecimal` and
+`NegativeDecimal`.
 `Percentage.ratio` is the exact ratio (12.5% is `0.125`), and `Money` accepts a
 `Percentage` directly. Other arithmetic on extracted values has ordinary `Decimal` behavior.
 
 `PositiveInt` and `PositiveLong` add with a typed `Overflow` failure, compare, and widen
-with `toPositiveLong()` and `toPositiveDecimal()`. There is deliberately no
+with `toPositiveLong()` and `toPositiveDecimal()`. `NegativeInt` and `NegativeLong`
+mirror them (`MINUS_ONE`, `plus`, `toNegativeLong()`, `toNegativeDecimal()`). Negating a
+positive integer is total; negating a negative one raises `Overflow` only for
+`MIN_VALUE`, which has no positive counterpart. There is deliberately no
 `NonNegativeInt`: use `PositiveInt` for counts that cannot be zero, and
 `BoundedInt.factory(0..n)` or a consuming-domain type where zero is valid.
 `BoundedInt.factory(1..5)` validates a range such as a rating; bounds are programmer
@@ -526,6 +535,23 @@ rate or an exchange rate, as `Decimal` (or `Percentage`) and round into `Money` 
 `allocate` gives each part its proportional share truncated toward zero, then hands
 the remaining minor units out one at a time to the first parts in order: USD `10.00`
 split three ways is `3.34, 3.33, 3.33`.
+
+### Signed money
+
+`Money` itself is signed, so balances and adjustments can go either way. When a field
+needs a sign guarantee, wrap it in a refinement and the composite never re-checks it:
+
+| Type | Use for | Operations that keep the sign |
+| --- | --- | --- |
+| `NonNegativeMoney` (`>= 0`) | Prices, fees, discounts, totals; zero is valid | `add`, `multiply(PositiveInt)`, `multiply(Percentage, mode)`, `allocate`, `split`, `NonNegativeMoney.zero(currency)` |
+| `PositiveMoney` (`> 0`) | Amounts that must be charged or paid | `add`, `multiply(PositiveInt)`, `negate()` to `NegativeMoney`, `toNonNegativeMoney()` |
+| `NegativeMoney` (`< 0`) | Refunds, credits | `add`, `multiply(PositiveInt)`, `negate()` to `PositiveMoney` |
+
+Each factory takes an already built `Money`, so compose them in a field:
+`field { PositiveMoney.from(Money.from(input, Error::InvalidAmount), Error::NotPositive) }`.
+Each wrapper exposes the underlying `money` for anything else. Arithmetic still raises
+`Money.ArithmeticError` for currency mismatch and overflow; `NegativeMoney.negate()`
+raises `Overflow` only for `Long.MIN_VALUE` minor units.
 
 ```kotlin
 import arrow.core.raise.Raise

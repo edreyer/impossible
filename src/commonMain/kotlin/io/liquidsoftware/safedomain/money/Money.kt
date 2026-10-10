@@ -81,6 +81,9 @@ class Money private constructor(val minor: Long, val currency: Currency, private
         return Money(-minor, currency, scale)
     }
 
+    /** [negate] for callers that know [minor] is not [Long.MIN_VALUE]. */
+    internal fun negateUnchecked(): Money = Money(-minor, currency, scale)
+
     /** Unit price times quantity, exactly. */
     context(raise: Raise<ArithmeticError>)
     fun multiply(quantity: PositiveInt): Money =

@@ -25,6 +25,8 @@ class PositiveDecimal private constructor(val value: Decimal) : Comparable<Posit
     /** The sum of two positive decimals is always positive. */
     operator fun plus(other: PositiveDecimal): PositiveDecimal = PositiveDecimal(value + other.value)
 
+    operator fun unaryMinus(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(-value)
+
     fun toNonNegativeDecimal(): NonNegativeDecimal = NonNegativeDecimal.fromTrustedDecimal(value)
 
     companion object : ValueFactory<Decimal, Error, PositiveDecimal> {
