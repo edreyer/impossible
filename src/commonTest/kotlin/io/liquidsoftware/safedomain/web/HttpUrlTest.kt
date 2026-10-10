@@ -14,7 +14,7 @@ class HttpUrlTest {
             "https://127.0.0.1:0/", "http://[::1]:65535/", "https://xn--bcher-kva.example/é",
             "https://user:pass@example.com/path", "https://example.com./")) {
             val url = assertIs<Either.Right<HttpUrl>>(either { HttpUrl.from(raw) }).value
-            assertEquals(raw, url.value.toString())
+            assertEquals(raw, url.value)
         }
     }
 

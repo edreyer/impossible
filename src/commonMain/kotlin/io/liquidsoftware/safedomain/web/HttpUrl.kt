@@ -113,7 +113,7 @@ class HttpUrl private constructor(
                 raise.ensure(portText.all { it in '0'..'9' }) { syntaxError }
                 raise.ensureNotNull(portText.toIntOrNull()) { syntaxError }
             }
-            raise.ensure(port == null || port in 0..65535) { Error.InvalidPort(port!!) }
+            raise.ensure(port == null || port in 0..65535) { Error.InvalidPort(port) }
 
             return HttpUrl(value, scheme, userInfo, host, port, path, query, fragment)
         }

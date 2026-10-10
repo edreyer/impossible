@@ -41,7 +41,7 @@ class DecimalAndIdentityCompositionTest {
         assertEquals(Decimal.parse("10.00"), offer.inventory.value)
         assertEquals(Decimal.parse("12.50"), offer.discount.value)
         assertEquals(rawId, offer.customer.value.toString())
-        assertEquals("HTTPS://Example.com/offers", offer.endpoint.value.toString())
+        assertEquals("HTTPS://Example.com/offers", offer.endpoint.value)
     }
 }
 
