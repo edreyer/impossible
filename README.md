@@ -37,7 +37,7 @@ package holds the construction contract shared by every type.
 | `FutureDate` | `LocalDate` strictly after an explicit `asOf` | `FutureDate.Error.NotFuture(value, asOf)` |
 | `PastDate` | `LocalDate` strictly before an explicit `asOf` | `PastDate.Error.NotPast(value, asOf)` |
 | `DateRange` | Inclusive endpoints with `start <= endInclusive` | `DateRange.Error.EndBeforeStart(...)` |
-| `Currency` | ISO 4217 code supported by the running JDK | `Currency.Error.UnsupportedCode(value)` |
+| `Currency` | ISO 4217 code from the bundled code list | `Currency.Error.UnsupportedCode(value)` |
 | `Money` | Exact signed decimal amount and validated currency | `NonEmptyList<Money.Error>` |
 | `Email` | ASCII dot-atom mailbox and DNS-label domain | `Email.Error.InvalidFormat(value)` |
 | `Phone` | International E.164-shaped text | `Phone.Error.InvalidFormat(value)` |
@@ -372,7 +372,8 @@ val endpoint = either { HttpUrl.from("https://example.com:8443/offers?active=tru
 
 ## Dates and ranges
 
-`FutureDate` and `PastDate` store a `LocalDate` and an explicit `asOf` date.
+`FutureDate` and `PastDate` store a `kotlinx.datetime.LocalDate` and an explicit
+`asOf` date.
 Today is excluded by both strict comparisons. They do not consult a clock or
 time zone. The comparison remains true against the stored reference; a
 `FutureDate` is not proof that a date remains in the future as time passes.
@@ -389,19 +390,22 @@ constructors and no public copy method that could bypass their invariants.
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.FutureDate
-import java.time.LocalDate
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
-val asOf = LocalDate.of(2026, 10, 5)
-val delivery = either { FutureDate.from(FutureDate.Input(asOf.plusDays(1), asOf)) }
-val period = either { DateRange.from(DateRange.Input(asOf, asOf.plusDays(7))) }
+val asOf = LocalDate(2026, 10, 5)
+val delivery = either { FutureDate.from(FutureDate.Input(asOf.plus(DatePeriod(days = 1)), asOf)) }
+val period = either { DateRange.from(DateRange.Input(asOf, asOf.plus(DatePeriod(days = 7)))) }
 ```
 
 ## Money and currencies
 
-`Currency.from("USD")` accepts codes supported by the running JDK's currency
-data, including historic and pseudo-currencies. Codes are case-sensitive and
-are never trimmed or repaired. This is not a guarantee of current legal tender.
-See the [JDK currency contract](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Currency.html).
+`Currency.from("USD")` accepts ISO 4217 alphabetic codes from the library's
+bundled list, including historic and fund codes such as `XDR`. The list is the
+same on every platform, so validation never depends on the runtime's currency
+data. Codes are case-sensitive and are never trimmed or repaired. This is not a
+guarantee of current legal tender.
 
 `Money.from(Money.Input(amount = "12.3400", currency = "EUR"))` validates decimal
 text and currency independently using `validate`. Its mapped factory can

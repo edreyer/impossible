@@ -7,7 +7,7 @@ import arrow.core.raise.either
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.assertFails
 import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 
@@ -55,7 +55,7 @@ class UniqueListTest {
         val reversed = assertIs<Either.Right<UniqueList<String>>>(either { UniqueList.factory<String>().from(source.reversed()) }).value
         source.clear()
         assertEquals(listOf("a", "b"), list.value)
-        assertFailsWith<UnsupportedOperationException> { (list.value as MutableList<String>).clear() }
+        assertFails { (list.value as MutableList<String>).clear() }
         assertEquals(list, equal)
         assertEquals(list.hashCode(), equal.hashCode())
         assertNotEquals(list, reversed)
@@ -70,7 +70,7 @@ class UniqueListTest {
         assertEquals(listOf(97, 98), mapped.value)
         assertEquals(emptyList(), source.filter { false }.value)
         assertEquals(listOf("a", "b"), source.value)
-        assertFailsWith<UnsupportedOperationException> { (mapped.value as MutableList<Int>).clear() }
+        assertFails { (mapped.value as MutableList<Int>).clear() }
     }
 
     @Test

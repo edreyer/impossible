@@ -1,13 +1,15 @@
 package io.liquidsoftware.safedomain.money
 
 import arrow.core.raise.Raise
+import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
-import java.util.Currency as JdkCurrency
+import kotlin.jvm.JvmInline
 
 /**
- * An ISO 4217 code supported by the running JDK's currency data, including historic
- * and pseudo-currencies. Input is preserved: lowercase codes and whitespace are
- * rejected. This does not establish that a currency is currently legal tender.
+ * An ISO 4217 alphabetic code from the library's bundled code list, including historic
+ * and fund codes. Input is preserved: lowercase codes and whitespace are rejected.
+ * Validation is identical on every platform. This does not establish that a currency
+ * is currently legal tender.
  */
 @JvmInline
 value class Currency private constructor(val code: String) {
@@ -18,11 +20,7 @@ value class Currency private constructor(val code: String) {
     companion object : ValueFactory<String, Error, Currency> {
         context(raise: Raise<Error>)
         override fun from(value: String): Currency {
-            try {
-                JdkCurrency.getInstance(value)
-            } catch (_: IllegalArgumentException) {
-                raise.raise(Error.UnsupportedCode(value))
-            }
+            raise.ensure(value in isoCurrencyCodes) { Error.UnsupportedCode(value) }
             return Currency(value)
         }
     }

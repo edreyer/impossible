@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.assertFails
 import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 
@@ -61,7 +61,7 @@ class BoundedListTest {
         }).value
         source.clear()
         assertEquals(listOf("b", null, "b"), value.value)
-        assertFailsWith<UnsupportedOperationException> { (value.value as MutableList<String?>).clear() }
+        assertFails { (value.value as MutableList<String?>).clear() }
     }
 
     @Test
@@ -81,7 +81,7 @@ class BoundedListTest {
         val mapped = source.map { it.length }
         assertEquals(listOf(1, 1), mapped.value)
         assertEquals(source.bounds, mapped.bounds)
-        assertFailsWith<UnsupportedOperationException> { (mapped.value as MutableList<Int>).clear() }
+        assertFails { (mapped.value as MutableList<Int>).clear() }
     }
 
     @Test

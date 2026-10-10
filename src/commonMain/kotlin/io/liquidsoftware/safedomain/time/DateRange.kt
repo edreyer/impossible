@@ -3,7 +3,7 @@ package io.liquidsoftware.safedomain.time
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 /** A closed range with [start] <= [endInclusive]. Both endpoints are included. */
 class DateRange private constructor(val start: LocalDate, val endInclusive: LocalDate) {

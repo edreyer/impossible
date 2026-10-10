@@ -14,17 +14,20 @@ import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.FutureDate
 import io.liquidsoftware.safedomain.time.PastDate
 import java.math.BigDecimal
-import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 
 class BusinessValueCompositionTest {
-    private val today = LocalDate.of(2026, 10, 5)
+    private val today = LocalDate(2026, 10, 5)
     private val valid = BookingInput(
-        FutureDate.Input(today.plusDays(1), today),
-        PastDate.Input(today.minusDays(1), today),
-        DateRange.Input(today, today.plusDays(2)),
+        FutureDate.Input(today.plus(DatePeriod(days = 1)), today),
+        PastDate.Input(today.minus(DatePeriod(days = 1)), today),
+        DateRange.Input(today, today.plus(DatePeriod(days = 2))),
         Money.Input("12.3400", "EUR"),
         "Alice@example.com",
         "+34612345678",
@@ -36,7 +39,7 @@ class BusinessValueCompositionTest {
             Booking.from(valid.copy(
                 arrival = FutureDate.Input(today, today),
                 ordered = PastDate.Input(today, today),
-                period = DateRange.Input(today, today.minusDays(1)),
+                period = DateRange.Input(today, today.minus(DatePeriod(days = 1))),
                 price = Money.Input("oops", "ZZZ"),
                 email = "invalid",
                 phone = "123",
@@ -45,7 +48,7 @@ class BusinessValueCompositionTest {
         assertEquals(Either.Left(nonEmptyListOf(
             Booking.Error.InvalidArrival(FutureDate.Error.NotFuture(today, today)),
             Booking.Error.InvalidOrderDate(PastDate.Error.NotPast(today, today)),
-            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minusDays(1))),
+            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
             Booking.Error.InvalidPrice(nonEmptyListOf(
                 Money.Error.InvalidAmount("oops"),
                 Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
@@ -58,10 +61,10 @@ class BusinessValueCompositionTest {
     @Test
     fun `cross field range failure accumulates alongside an unrelated contact failure`() {
         val result: Either<NonEmptyList<Booking.Error>, Booking> = either {
-            Booking.from(valid.copy(period = DateRange.Input(today, today.minusDays(1)), email = "invalid"))
+            Booking.from(valid.copy(period = DateRange.Input(today, today.minus(DatePeriod(days = 1))), email = "invalid"))
         }
         assertEquals(Either.Left(nonEmptyListOf(
-            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minusDays(1))),
+            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
             Booking.Error.InvalidEmail(Email.Error.InvalidFormat("invalid")),
         )), result)
     }
@@ -69,8 +72,8 @@ class BusinessValueCompositionTest {
     @Test
     fun `valid composite stores the typed values without losing precision or spelling`() {
         val booking = assertIs<Either.Right<Booking>>(either { Booking.from(valid) }).value
-        assertEquals(today.plusDays(1), booking.arrival.value)
-        assertEquals(today.minusDays(1), booking.ordered.value)
+        assertEquals(today.plus(DatePeriod(days = 1)), booking.arrival.value)
+        assertEquals(today.minus(DatePeriod(days = 1)), booking.ordered.value)
         assertEquals(today, booking.period.start)
         assertEquals(BigDecimal("12.3400"), booking.price.amount)
         assertEquals("EUR", booking.price.currency.code)

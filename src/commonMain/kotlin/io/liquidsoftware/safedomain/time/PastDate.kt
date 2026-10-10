@@ -3,7 +3,7 @@ package io.liquidsoftware.safedomain.time
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 /**
  * A date strictly before [asOf]. Equality includes the value and its explicit

@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.assertFails
 import kotlin.test.assertIs
 
 class NonEmptyFactoriesTest {
@@ -40,8 +40,8 @@ class NonEmptyFactoriesTest {
         val list = assertIs<Either.Right<arrow.core.NonEmptyList<String>>>(result).value
         source.clear()
         assertEquals(listOf("a", "b"), list.all)
-        assertFailsWith<UnsupportedOperationException> { (list.all as MutableList<String>).clear() }
-        assertFailsWith<UnsupportedOperationException> { (list.tail as MutableList<String>).clear() }
+        assertFails { (list.all as MutableList<String>).clear() }
+        assertFails { (list.tail as MutableList<String>).clear() }
         assertEquals("a", list.head)
     }
 
@@ -52,7 +52,7 @@ class NonEmptyFactoriesTest {
         val set = assertIs<Either.Right<arrow.core.NonEmptySet<String>>>(result).value
         source.clear()
         assertEquals(setOf("a", "b"), set.toSet())
-        assertFailsWith<UnsupportedOperationException> { (set.toSet() as MutableSet<String>).clear() }
+        assertFails { (set.toSet() as MutableSet<String>).clear() }
         assertEquals("a", set.head)
     }
 
