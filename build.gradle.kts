@@ -20,7 +20,10 @@ kotlin {
   js {
     // Browser tests would need Karma and a local browser; Node runs the same tests.
     browser { testTask { enabled = false } }
-    nodejs()
+    nodejs {
+      // The first time zone lookup loads the whole js-joda database, which can exceed Mocha's 2s default.
+      testTask { useMocha { timeout = "10s" } }
+    }
   }
   linuxX64()
   macosArm64()
@@ -32,6 +35,11 @@ kotlin {
       api("io.arrow-kt:arrow-core:2.2.3")
       api("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
       implementation("com.ionspin.kotlin:bignum:0.3.10")
+    }
+    jsMain.dependencies {
+      // Time zone data for TimeZoneId; 2.23.0 is the newest release compatible with
+      // the @js-joda/core version kotlinx-datetime ships.
+      implementation(npm("@js-joda/timezone", "2.23.0"))
     }
     commonTest.dependencies {
       implementation(kotlin("test"))

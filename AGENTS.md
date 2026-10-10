@@ -75,8 +75,8 @@ their domain names, policies, authorization decisions, and workflows.
 - Shared construction contracts (`ValueFactory`, the `validate` DSL) live in
   the root package `io.liquidsoftware.safedomain`.
 - Each value type lives in the domain subpackage it belongs to: `text`,
-  `contact`, `numeric`, `money`, `time`, `locale`, `identity`, `web`, or
-  `collections`.
+  `contact`, `numeric`, `money`, `time`, `locale`, `identity`, `web`, `geo`,
+  or `collections`.
   Add a new subpackage only when a type fits none of them.
 - Keep `internal` helpers in the package of the types that use them.
 - Mirror the main package in tests. Cross-cutting composition and factory tests

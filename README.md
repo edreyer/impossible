@@ -15,20 +15,22 @@ package holds the construction contract shared by every type.
 | Package | Contents |
 | --- | --- |
 | `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()` and `fromTrusted`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
-| `.text` | `NonBlankString`, `Slug` |
+| `.text` | `NonBlankString`, `Slug`, `Secret` |
 | `.contact` | `Email`, `Phone` |
 | `.numeric` | `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt`, `PositiveDecimal`, `NegativeDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
 | `.money` | `Currency`, `Money`, `PositiveMoney`, `NonNegativeMoney`, `NegativeMoney` |
-| `.time` | `DateChecks`, `DateRange`, `EffectivePeriod`, `TimeWindow`, `PositiveDuration` |
+| `.time` | `DateChecks`, `DateRange`, `EffectivePeriod`, `TimeWindow`, `PositiveDuration`, `TimeZoneId` |
 | `.locale` | `CountryCode`, `LanguageTag` |
 | `.identity` | `TypedId` |
-| `.web` | `HttpUrl` |
+| `.web` | `HttpUrl`, `DomainName`, `IpAddress` |
+| `.geo` | `GeoPoint` |
 | `.collections` | `NonEmptyList.factory()`, `NonEmptySet.factory()`, `NonEmptySet.distinctFactory()`, `UniqueList`, `BoundedList` |
 
 | Type | Invariant | Validation error |
 | --- | --- | --- |
 | `NonBlankString` | At least one character is not Kotlin whitespace; optional maximum length | `NonBlankString.Error` (`Blank`, `TooLong`) |
 | `Slug` | Lowercase ASCII letters and digits in hyphen-joined groups | `Slug.Error.InvalidFormat(value)` |
+| `Secret` | Non-blank text that `toString` never shows | `Secret.Error.Blank` |
 | `PositiveInt` | `1..Int.MAX_VALUE` | `PositiveInt.Error.NonPositive(value)` |
 | `NegativeInt` | `Int.MIN_VALUE..-1` | `NegativeInt.Error.NonNegative(value)` |
 | `PositiveLong` | `1..Long.MAX_VALUE` | `PositiveLong.Error.NonPositive(value)` |
@@ -40,11 +42,15 @@ package holds the construction contract shared by every type.
 | `Percentage` | Exact whole percentage units in `0..100` | `Percentage.Error.OutOfRange(value)` |
 | `TypedId<Tag>` | UUID with a compile-time domain tag | `TypedId.Error.InvalidFormat(value)` |
 | `HttpUrl` | Absolute HTTP/HTTPS URI with a server host and a port in `1..65535` | `HttpUrl.Error` |
+| `DomainName` | RFC 1123 host name, at most 253 characters, not all-numeric at the end | `DomainName.Error.InvalidFormat(value)` |
+| `IpAddress` (`V4`, `V6`) | Strict dotted-decimal IPv4 or RFC 4291 IPv6 text | `IpAddress.Error.InvalidFormat` (redacted) |
+| `GeoPoint` | Latitude in `-90..90`, longitude in `-180..180`, finite | `GeoPoint.Error` (`LatitudeOutOfRange`, `LongitudeOutOfRange`), accumulated |
 | `DateChecks.past()`, `future()` | `LocalDate` strictly before or after today from a context `Clock` | `DateChecks.Error` (`NotPast`, `NotFuture`) |
 | `DateRange` | Inclusive endpoints with `start <= endInclusive` | `DateRange.Error.EndBeforeStart(...)` |
 | `EffectivePeriod` | Open-ended from a date, or a bounded `DateRange` | none: built from valid parts |
 | `TimeWindow` | Half-open instants with `start < endExclusive` | `TimeWindow.Error.NotAfterStart(...)` |
 | `PositiveDuration` | Finite `Duration` `> 0` | `PositiveDuration.Error` (`NonPositive`, `Infinite`) |
+| `TimeZoneId` | IANA region id or `UTC`, resolved by the platform's time zone database | `TimeZoneId.Error.UnknownZone(value)` |
 | `Currency` | ISO 4217 code from the bundled code list | `Currency.Error.UnsupportedCode(value)` |
 | `Money` | Signed `Long` of a currency's minor units | `Money.Error` |
 | `PositiveMoney`, `NonNegativeMoney`, `NegativeMoney` | `Money` `> 0`, `>= 0`, `< 0` | `NonPositive`, `Negative`, `NonNegative` |
@@ -446,6 +452,32 @@ import io.liquidsoftware.safedomain.web.HttpUrl
 val endpoint = either { HttpUrl.from("https://example.com:8443/offers?active=true") }
 ```
 
+## Network names and addresses
+
+`DomainName` is a DNS host name as RFC 1123 defines it: ASCII letters, digits, and
+inner hyphens in labels of at most 63 characters, 253 in total. Single labels such as
+`localhost` are accepted; a final all-numeric label is not, so `1.2.3.4` is never a
+domain name. A trailing root dot, empty labels, and Unicode are rejected (encode IDNs
+to `xn--` first). `value` keeps the spelling; equality ignores ASCII case.
+
+`IpAddress.from(raw)` parses either family, and `IpAddress.V4.from` or
+`IpAddress.V6.from` accept only one. IPv4 parts may not have leading zeros, since
+`010` means 8 to some parsers and 10 to others. IPv6 accepts `::` and a trailing
+dotted IPv4 part, but no zone id or brackets. Equality uses the address bytes, so
+`::1` equals `0:0:0:0:0:0:0:1`, and `toString()` is the canonical RFC 5952 text. An
+address can identify a person, so `InvalidFormat` redacts its input in `toString`.
+
+## Secrets and coordinates
+
+`Secret` holds a password, API key, or token. Its `toString` is always
+`Secret(<redacted>)`, so it can sit in a data class that gets logged; `reveal()` reads
+the content at the point of use. Equality takes time independent of where two secrets
+first differ, and the hash code uses only the length.
+
+`GeoPoint` is a WGS 84 latitude and longitude in decimal degrees. Both are checked and
+reported together, and nothing is wrapped or clamped: `181.0` fails rather than becoming
+`-179.0`. Distance and bearing belong to the consuming domain.
+
 ## Dates and ranges
 
 "In the past" and "in the future" are relationships to a moment, not properties of
@@ -491,6 +523,13 @@ import kotlinx.datetime.plus
 val start = LocalDate(2026, 10, 5)
 val period = either { DateRange.from(DateRange.Input(start, start.plus(DatePeriod(days = 7)))) }
 ```
+
+`TimeZoneId` is an IANA region id such as `Europe/Berlin`, or `UTC`, spelled exactly as
+the time zone database does (`europe/berlin` fails). It exposes the resolved
+kotlinx-datetime `timeZone`. Fixed offsets such as `+02:00` are rejected; store a
+`UtcOffset` for those. Each platform resolves ids with its own database: the JDK's on
+the JVM, the operating system's on native targets, and the bundled
+`@js-joda/timezone` data on JS.
 
 ## Money and currencies
 
@@ -726,9 +765,9 @@ date range operations, collection invariants, and minor-unit money arithmetic on
 Kotlin Multiplatform target listed under [Build](#build), plus a few JVM
 conversions. It does not yet include serialization adapters. Arithmetic on an extracted
 `Int` has ordinary Kotlin semantics; the wrappers' own operations preserve their
-invariants and report overflow explicitly. There is no time zone id type yet:
-kotlinx-datetime resolves region ids on JavaScript only with an extra time zone
-database, so validation would differ by platform.
+invariants and report overflow explicitly. `TimeZoneId` is the one type whose
+validation depends on platform data: each target resolves ids with its own time zone
+database, so a zone added recently may be known on one platform and not another.
 
 External data, including model-produced structured output, should pass through
 the factories. Future serialization adapters must enforce the same validation.
@@ -757,6 +796,9 @@ so validation behaves the same on every platform. Dependencies:
   standard library's `kotlin.time`.
 - [bignum 0.3.10](https://github.com/ionspin/kotlin-multiplatform-bignum), an
   implementation dependency behind `Decimal`.
+- [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), a JS-only
+  npm dependency that gives `TimeZoneId` the IANA database there. It is the newest
+  release compatible with the `@js-joda/core` version kotlinx-datetime uses.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
 `Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,
