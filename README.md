@@ -263,10 +263,10 @@ their first failure. `validate` has no field-count limit.
 
 `validate` wraps Arrow's `accumulate` API, which Arrow 2.2.3 marks
 `@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
-[Validation.kt](src/main/kotlin/io/liquidsoftware/safedomain/Validation.kt);
+[Validation.kt](src/commonMain/kotlin/io/liquidsoftware/safedomain/Validation.kt);
 callers need none. `Validated<A>` is an alias for Arrow's
 `RaiseAccumulate.Value<A>`.
-[ValidationTest](src/test/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
+[ValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
 covers ordering, flattening, indexing, dependent blocks, and early reads.
 
 ## Decimals and percentages
@@ -576,7 +576,7 @@ val names by field {
 
 Independent collection fields are declared alongside it; parent errors can wrap
 an entire `UniqueList` duplicate batch without matching each branch.
-[CollectionCompositionTest](src/test/kotlin/io/liquidsoftware/safedomain/CollectionCompositionTest.kt)
+[CollectionCompositionTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/CollectionCompositionTest.kt)
 demonstrates indexed element validation, nonempty lists and sets, uniqueness,
 size bounds, and accumulation across all four fields. Relationships that depend
 on valid elements run after their prerequisites succeed.

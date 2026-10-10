@@ -1,6 +1,5 @@
 plugins {
-  `java-library`
-  kotlin("jvm") version "2.4.20"
+  kotlin("multiplatform") version "2.4.20"
 }
 
 group = "io.liquidsoftware"
@@ -10,15 +9,21 @@ repositories {
   mavenCentral()
 }
 
-dependencies {
-  api("io.arrow-kt:arrow-core:2.2.3")
-  testImplementation(kotlin("test"))
-}
-
 kotlin {
   jvmToolchain(26)
-}
 
-tasks.test {
-  useJUnitPlatform()
+  jvm {
+    testRuns.named("test") {
+      executionTask.configure { useJUnitPlatform() }
+    }
+  }
+
+  sourceSets {
+    commonMain.dependencies {
+      api("io.arrow-kt:arrow-core:2.2.3")
+    }
+    commonTest.dependencies {
+      implementation(kotlin("test"))
+    }
+  }
 }
