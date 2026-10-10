@@ -26,7 +26,7 @@ class TimeZoneIdTest {
     }
 
     @Test
-    fun `unknown ids, wrong case, and fixed offsets are rejected`() {
+    fun `unknown ids wrong case and fixed offsets are rejected`() {
         for (value in listOf("", "Europe/Atlantis", "europe/berlin", "Berlin", "+02:00", "UTC+2", "Z", "GMT", " UTC")) {
             assertEquals(Either.Left(TimeZoneId.Error.UnknownZone(value)), zone(value), value)
         }

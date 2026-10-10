@@ -59,7 +59,7 @@ class SignedMoneyTest {
     }
 
     @Test
-    fun `non-negative amounts start at zero, take shares, and allocate`() {
+    fun `non-negative amounts start at zero take shares and allocate`() {
         val zero = either<Money.Error, NonNegativeMoney> { NonNegativeMoney.zero(usd) }.getOrNull()!!
         val total = calc { zero.add(NonNegativeMoney.fromTrusted(minor(1000))) }.getOrNull()!!
         assertEquals(NonNegativeMoney.fromTrusted(minor(1000)), total)

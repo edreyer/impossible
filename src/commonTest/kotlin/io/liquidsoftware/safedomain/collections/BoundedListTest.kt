@@ -11,7 +11,7 @@ import kotlin.test.assertNotEquals
 
 class BoundedListTest {
     @Test
-    fun `bounds are programmer configuration, so invalid ranges throw`() {
+    fun `bounds are programmer configuration so invalid ranges throw`() {
         for (bounds in listOf(-1..3, 2..1, 0..-1)) {
             assertFailsWith<IllegalArgumentException> { BoundedList.factory<Int>(bounds) }
         }

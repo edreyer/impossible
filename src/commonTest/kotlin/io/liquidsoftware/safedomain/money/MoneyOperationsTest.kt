@@ -42,7 +42,7 @@ class MoneyOperationsTest {
     }
 
     @Test
-    fun `arithmetic overflow is a typed failure, not a wraparound`() {
+    fun `arithmetic overflow is a typed failure not a wraparound`() {
         val max = usdMinor(Long.MAX_VALUE)
         val min = usdMinor(Long.MIN_VALUE)
         assertEquals(Either.Left(Money.ArithmeticError.Overflow), calc { max.add(usdMinor(1)) })

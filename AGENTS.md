@@ -126,6 +126,8 @@ their domain names, policies, authorization decisions, and workflows.
   declared, pinned dependencies for a build or test does not need confirmation.
 - Test actual contracts: invalid inputs, valid boundaries, exact preservation,
   value semantics, and typed failure composition. Keep tests deterministic.
+- Backticked test names must compile on Kotlin/Native: no `,` `.` `;` `:` `/`
+  `<` `>` `[` `]` or `\`. JVM and JS accept them, so only native builds catch it.
 - Use `./gradlew allTests` for tests (or `jvmTest` and `jsNodeTest` for a fast
   check) and `./gradlew build` for the complete build. Apple targets need macOS.
   Report failures and checks that could not run; do not claim unverified success.

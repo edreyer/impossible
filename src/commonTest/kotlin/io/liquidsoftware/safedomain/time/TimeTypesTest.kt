@@ -45,7 +45,7 @@ class TimeTypesTest {
     }
 
     @Test
-    fun `positive durations reject zero, negative and infinite durations`() {
+    fun `positive durations reject zero negative and infinite durations`() {
         for (value in listOf(Duration.ZERO, (-1).nanoseconds, -Duration.INFINITE)) {
             assertEquals(Either.Left(PositiveDuration.Error.NonPositive(value)),
                 either<PositiveDuration.Error, PositiveDuration> { PositiveDuration.from(value) })

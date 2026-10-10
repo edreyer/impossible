@@ -33,7 +33,7 @@ class MoneyTest {
     }
 
     @Test
-    fun `amounts finer than the minor unit are rejected, never rounded`() {
+    fun `amounts finer than the minor unit are rejected never rounded`() {
         assertEquals(Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("1.005"), 2)),
             either<Money.Error, Money> { Money.of(Decimal.parse("1.005"), usd) })
         assertEquals(Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("0.5"), 0)),
@@ -62,7 +62,7 @@ class MoneyTest {
     }
 
     @Test
-    fun `parser accumulates amount and currency failures, then checks minor units`() {
+    fun `parser accumulates amount and currency failures then checks minor units`() {
         val result: Either<NonEmptyList<Money.Error>, Money> = either { Money.parser.from(Money.Text("oops", "ZZZ")) }
         assertEquals(Either.Left(nonEmptyListOf(
             Money.Error.InvalidAmount("oops"),

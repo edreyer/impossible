@@ -48,7 +48,7 @@ class TypedIdTest {
     }
 
     @Test
-    fun `tags are compile-time only, so the same UUID under different tags is equal at runtime`() {
+    fun `tags are compile-time only so the same UUID under different tags is equal at runtime`() {
         val result = either {
             val customer = customers.from(raw)
             val order = orders.from(raw)
