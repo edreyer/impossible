@@ -9,7 +9,20 @@ its own meaning and policies.
 
 ## Types
 
-All types live in `io.liquidsoftware.safedomain`.
+Types are grouped by domain under `io.liquidsoftware.safedomain`. The root
+package holds the construction contract shared by every type.
+
+| Package | Contents |
+| --- | --- |
+| `io.liquidsoftware.safedomain` | `ValueFactory`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
+| `.text` | `NonBlankString` |
+| `.contact` | `Email`, `Phone` |
+| `.numeric` | `PositiveInt`, `NonNegativeInt`, `PositiveDecimal`, `NonNegativeDecimal`, `Percentage` |
+| `.money` | `Currency`, `Money` |
+| `.time` | `FutureDate`, `PastDate`, `DateRange` |
+| `.identity` | `TypedId` |
+| `.web` | `HttpUrl` |
+| `.collections` | `NonEmptyLists`, `NonEmptySets`, `UniqueList`, `BoundedList` |
 
 | Type | Invariant | Validation error |
 | --- | --- | --- |
@@ -51,9 +64,9 @@ Use `either` when a result needs to exist as a value:
 ```kotlin
 import arrow.core.Either
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.NonBlankString
-import io.liquidsoftware.safedomain.NonNegativeInt
-import io.liquidsoftware.safedomain.PositiveInt
+import io.liquidsoftware.safedomain.numeric.NonNegativeInt
+import io.liquidsoftware.safedomain.numeric.PositiveInt
+import io.liquidsoftware.safedomain.text.NonBlankString
 
 val name: Either<NonBlankString.Error, NonBlankString> =
     either { NonBlankString.from("  Alice  ") } // Preserves surrounding spaces.
@@ -76,7 +89,7 @@ application's own outcomes:
 import arrow.core.getOrElse
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.PositiveInt
+import io.liquidsoftware.safedomain.numeric.PositiveInt
 
 context(raise: Raise<PositiveInt.Error>)
 fun quantity(raw: Int): PositiveInt = PositiveInt.from(raw)
@@ -109,7 +122,7 @@ The mapped
 
 ```kotlin
 import arrow.core.raise.Raise
-import io.liquidsoftware.safedomain.PositiveInt
+import io.liquidsoftware.safedomain.numeric.PositiveInt
 
 sealed interface OrderError {
     data class InvalidQuantity(val cause: PositiveInt.Error) : OrderError
@@ -127,9 +140,9 @@ and inherit the mapped overload. Each layer owns its error model:
 import arrow.core.Either
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.NonBlankString
-import io.liquidsoftware.safedomain.PositiveInt
 import io.liquidsoftware.safedomain.ValueFactory
+import io.liquidsoftware.safedomain.numeric.PositiveInt
+import io.liquidsoftware.safedomain.text.NonBlankString
 
 data class OrderInput(val customer: String, val quantity: Int)
 
@@ -190,11 +203,11 @@ and their failures are raised together in declaration order:
 ```kotlin
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
-import io.liquidsoftware.safedomain.Email
-import io.liquidsoftware.safedomain.Money
-import io.liquidsoftware.safedomain.NonBlankString
 import io.liquidsoftware.safedomain.ValueFactory
+import io.liquidsoftware.safedomain.contact.Email
 import io.liquidsoftware.safedomain.field
+import io.liquidsoftware.safedomain.money.Money
+import io.liquidsoftware.safedomain.text.NonBlankString
 import io.liquidsoftware.safedomain.validate
 
 data class CustomerInput(val name: String, val email: String, val credit: Money.Input)
@@ -273,9 +286,9 @@ values has ordinary `BigDecimal` behavior. Money supplies separate typed arithme
 
 ```kotlin
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.NonNegativeDecimal
-import io.liquidsoftware.safedomain.Percentage
-import io.liquidsoftware.safedomain.PositiveDecimal
+import io.liquidsoftware.safedomain.numeric.NonNegativeDecimal
+import io.liquidsoftware.safedomain.numeric.Percentage
+import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import java.math.BigDecimal
 
 val quantity = either { PositiveDecimal.from(BigDecimal("2.500")) }
@@ -303,7 +316,7 @@ policies belong to the consuming domain.
 import arrow.core.Either
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.TypedId
+import io.liquidsoftware.safedomain.identity.TypedId
 
 interface CustomerTag
 interface OrderTag
@@ -350,7 +363,7 @@ the consuming domain.
 
 ```kotlin
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.HttpUrl
+import io.liquidsoftware.safedomain.web.HttpUrl
 
 val endpoint = either { HttpUrl.from("https://example.com:8443/offers?active=true") }
 ```
@@ -372,8 +385,8 @@ constructors and no public copy method that could bypass their invariants.
 
 ```kotlin
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.DateRange
-import io.liquidsoftware.safedomain.FutureDate
+import io.liquidsoftware.safedomain.time.DateRange
+import io.liquidsoftware.safedomain.time.FutureDate
 import java.time.LocalDate
 
 val asOf = LocalDate.of(2026, 10, 5)
@@ -413,9 +426,9 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.Money
-import io.liquidsoftware.safedomain.NonNegativeInt
-import io.liquidsoftware.safedomain.PositiveInt
+import io.liquidsoftware.safedomain.money.Money
+import io.liquidsoftware.safedomain.numeric.NonNegativeInt
+import io.liquidsoftware.safedomain.numeric.PositiveInt
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -474,8 +487,8 @@ explicit consuming-domain policy in this first pass.
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.NonEmptyLists
-import io.liquidsoftware.safedomain.UniqueList
+import io.liquidsoftware.safedomain.collections.NonEmptyLists
+import io.liquidsoftware.safedomain.collections.UniqueList
 
 val channels: Either<NonEmptyLists.Error, NonEmptyList<String>> = either {
     NonEmptyLists.factory<String>().from(listOf("email", "sms"))
@@ -498,8 +511,8 @@ These factories inherit the same mapped `from` overload as individual values:
 
 ```kotlin
 import arrow.core.raise.Raise
-import io.liquidsoftware.safedomain.BoundedList
-import io.liquidsoftware.safedomain.Email
+import io.liquidsoftware.safedomain.collections.BoundedList
+import io.liquidsoftware.safedomain.contact.Email
 
 sealed interface InvitationError {
     data class InvalidBounds(val cause: BoundedList.Bounds.Error) : InvitationError

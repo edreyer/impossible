@@ -5,6 +5,9 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.numeric.NonNegativeInt
+import io.liquidsoftware.safedomain.numeric.PositiveInt
+import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

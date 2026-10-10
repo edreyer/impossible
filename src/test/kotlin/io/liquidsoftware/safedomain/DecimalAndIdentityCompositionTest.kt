@@ -5,6 +5,11 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.identity.TypedId
+import io.liquidsoftware.safedomain.numeric.NonNegativeDecimal
+import io.liquidsoftware.safedomain.numeric.Percentage
+import io.liquidsoftware.safedomain.numeric.PositiveDecimal
+import io.liquidsoftware.safedomain.web.HttpUrl
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals

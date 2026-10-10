@@ -7,6 +7,11 @@ import arrow.core.getOrElse
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.collections.BoundedList
+import io.liquidsoftware.safedomain.collections.NonEmptyLists
+import io.liquidsoftware.safedomain.collections.NonEmptySets
+import io.liquidsoftware.safedomain.collections.UniqueList
+import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

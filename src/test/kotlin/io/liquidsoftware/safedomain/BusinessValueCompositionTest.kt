@@ -6,6 +6,13 @@ import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
 import arrow.core.raise.withError
+import io.liquidsoftware.safedomain.contact.Email
+import io.liquidsoftware.safedomain.contact.Phone
+import io.liquidsoftware.safedomain.money.Currency
+import io.liquidsoftware.safedomain.money.Money
+import io.liquidsoftware.safedomain.time.DateRange
+import io.liquidsoftware.safedomain.time.FutureDate
+import io.liquidsoftware.safedomain.time.PastDate
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.test.Test
