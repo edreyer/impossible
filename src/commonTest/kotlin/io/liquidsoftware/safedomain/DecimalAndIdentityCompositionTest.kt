@@ -6,11 +6,11 @@ import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.identity.TypedId
+import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.numeric.NonNegativeDecimal
 import io.liquidsoftware.safedomain.numeric.Percentage
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import io.liquidsoftware.safedomain.web.HttpUrl
-import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -19,12 +19,12 @@ class DecimalAndIdentityCompositionTest {
     @Test
     fun `parent accumulates precise failures from decimals percentages identifiers and URLs`() {
         val result: Either<NonEmptyList<Offer.Error>, Offer> = either {
-            Offer.from(OfferInput(BigDecimal.ZERO, BigDecimal("-1"), BigDecimal("101"), "invalid", "relative"))
+            Offer.from(OfferInput(Decimal.ZERO, Decimal.parse("-1"), Decimal.parse("101"), "invalid", "relative"))
         }
         assertEquals(Either.Left(nonEmptyListOf(
-            Offer.Error.InvalidQuantity(PositiveDecimal.Error.NonPositive(BigDecimal.ZERO)),
-            Offer.Error.InvalidInventory(NonNegativeDecimal.Error.Negative(BigDecimal("-1"))),
-            Offer.Error.InvalidDiscount(Percentage.Error.OutOfRange(BigDecimal("101"))),
+            Offer.Error.InvalidQuantity(PositiveDecimal.Error.NonPositive(Decimal.ZERO)),
+            Offer.Error.InvalidInventory(NonNegativeDecimal.Error.Negative(Decimal.parse("-1"))),
+            Offer.Error.InvalidDiscount(Percentage.Error.OutOfRange(Decimal.parse("101"))),
             Offer.Error.InvalidCustomer(TypedId.Error.InvalidFormat("invalid")),
             Offer.Error.InvalidEndpoint(HttpUrl.Error.NotAbsolute),
         )), result)
@@ -34,12 +34,12 @@ class DecimalAndIdentityCompositionTest {
     fun `parent constructs all typed fields without dropping decimal precision or endpoint spelling`() {
         val rawId = "550e8400-e29b-41d4-a716-446655440000"
         val result = either {
-            Offer.from(OfferInput(BigDecimal("2.500"), BigDecimal("10.00"), BigDecimal("12.50"), rawId, "HTTPS://Example.com/offers"))
+            Offer.from(OfferInput(Decimal.parse("2.500"), Decimal.parse("10.00"), Decimal.parse("12.50"), rawId, "HTTPS://Example.com/offers"))
         }
         val offer = assertIs<Either.Right<Offer>>(result).value
-        assertEquals(BigDecimal("2.500"), offer.quantity.value)
-        assertEquals(BigDecimal("10.00"), offer.inventory.value)
-        assertEquals(BigDecimal("12.50"), offer.discount.value)
+        assertEquals(Decimal.parse("2.500"), offer.quantity.value)
+        assertEquals(Decimal.parse("10.00"), offer.inventory.value)
+        assertEquals(Decimal.parse("12.50"), offer.discount.value)
         assertEquals(rawId, offer.customer.value.toString())
         assertEquals("HTTPS://Example.com/offers", offer.endpoint.value.toString())
     }
@@ -48,9 +48,9 @@ class DecimalAndIdentityCompositionTest {
 private interface CustomerTag
 
 private data class OfferInput(
-    val quantity: BigDecimal,
-    val inventory: BigDecimal,
-    val discount: BigDecimal,
+    val quantity: Decimal,
+    val inventory: Decimal,
+    val discount: Decimal,
     val customer: String,
     val endpoint: String,
 )

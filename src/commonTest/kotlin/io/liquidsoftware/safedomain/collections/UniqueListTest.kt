@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,10 +38,10 @@ class UniqueListTest {
         val result = either { UniqueList.factory<String?>().from(listOf(null, "a", null)) }
         assertEquals(Either.Left(nonEmptyListOf(UniqueList.Error.Duplicate(0, 2))), result)
         val first = assertIs<Either.Right<PositiveDecimal>>(either {
-            PositiveDecimal.from(java.math.BigDecimal("1.0"))
+            PositiveDecimal.from(Decimal.parse("1.0"))
         }).value
         val second = assertIs<Either.Right<PositiveDecimal>>(either {
-            PositiveDecimal.from(java.math.BigDecimal("1.00"))
+            PositiveDecimal.from(Decimal.parse("1.00"))
         }).value
         assertEquals(Either.Left(nonEmptyListOf(UniqueList.Error.Duplicate(0, 1))), either<NonEmptyList<UniqueList.Error>, UniqueList<PositiveDecimal>> {
             UniqueList.factory<PositiveDecimal>().from(listOf(first, second))

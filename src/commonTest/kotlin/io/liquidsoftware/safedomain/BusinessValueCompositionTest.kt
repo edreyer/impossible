@@ -10,10 +10,10 @@ import io.liquidsoftware.safedomain.contact.Email
 import io.liquidsoftware.safedomain.contact.Phone
 import io.liquidsoftware.safedomain.money.Currency
 import io.liquidsoftware.safedomain.money.Money
+import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.FutureDate
 import io.liquidsoftware.safedomain.time.PastDate
-import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -75,7 +75,7 @@ class BusinessValueCompositionTest {
         assertEquals(today.plus(DatePeriod(days = 1)), booking.arrival.value)
         assertEquals(today.minus(DatePeriod(days = 1)), booking.ordered.value)
         assertEquals(today, booking.period.start)
-        assertEquals(BigDecimal("12.3400"), booking.price.amount)
+        assertEquals(Decimal.parse("12.3400"), booking.price.amount)
         assertEquals("EUR", booking.price.currency.code)
         assertEquals("Alice@example.com", booking.email.value)
         assertEquals("+34612345678", booking.phone.value)

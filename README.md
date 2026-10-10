@@ -271,29 +271,42 @@ covers ordering, flattening, indexing, dependent blocks, and early reads.
 
 ## Decimals and percentages
 
-`PositiveDecimal.from(BigDecimal(...))` and `NonNegativeDecimal.from(BigDecimal(...))`
-enforce their sign invariants. `Percentage.from(BigDecimal("12.5"))` means **12.5%**
+Exact decimals use the library's own `Decimal`, which works the same on every
+platform. It stores an arbitrary-precision unscaled integer and an `Int` scale,
+and mirrors `java.math.BigDecimal`: `Decimal.parse("12.30")` keeps scale 2,
+`equals` includes scale while `compareTo` is numeric, and `toString` matches
+`BigDecimal.toString()`. `+`, `-`, `*` and unary minus are exact; `divide` and
+`setScale` take an explicit `RoundingMode` with the JDK's eight modes. Operations
+throw `ArithmeticException` when the scale leaves the `Int` range, when
+`UNNECESSARY` would have to round, or when aligning scales would add more than
+`Decimal.MAX_EXPANSION_DIGITS` (10,000) digits. A JVM test checks it against
+`BigDecimal`. The arbitrary-precision integer comes from
+[bignum](https://github.com/ionspin/kotlin-multiplatform-bignum), an internal
+dependency that is not part of the public API.
+
+`PositiveDecimal.from(Decimal.parse(...))` and `NonNegativeDecimal.from(Decimal.parse(...))`
+enforce their sign invariants. `Percentage.from(Decimal.parse("12.5"))` means **12.5%**
 and accepts the inclusive range `0..100`. It is suitable for bounded proportions,
 discounts, and progress; growth rates above 100% require a different domain type.
-These factories accept already parsed `BigDecimal` values, like the integer
+These factories accept already parsed `Decimal` values, like the integer
 factories accept already parsed `Int` values.
 
 All three types preserve decimal scale without rounding. Equality, hashing, and
 ordering are numeric within each type, so `1.0` equals `1.00`. Their constructors
 are private, and they expose no public copy operation that bypasses validation.
 They supply validated construction and ordering; arithmetic on their extracted
-values has ordinary `BigDecimal` behavior. Money supplies separate typed arithmetic.
+values has ordinary `Decimal` behavior. Money supplies separate typed arithmetic.
 
 ```kotlin
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.numeric.NonNegativeDecimal
 import io.liquidsoftware.safedomain.numeric.Percentage
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
-import java.math.BigDecimal
 
-val quantity = either { PositiveDecimal.from(BigDecimal("2.500")) }
-val balance = either { NonNegativeDecimal.from(BigDecimal("0.00")) }
-val discount = either { Percentage.from(BigDecimal("12.50")) }
+val quantity = either { PositiveDecimal.from(Decimal.parse("2.500")) }
+val balance = either { NonNegativeDecimal.from(Decimal.parse("0.00")) }
+val discount = either { Percentage.from(Decimal.parse("12.50")) }
 ```
 
 ## Typed identifiers
@@ -413,17 +426,17 @@ guarantee of current legal tender.
 `Money.from(Money.Input(amount = "12.3400", currency = "EUR"))` validates decimal
 text and currency independently using `validate`. Its mapped factory can
 wrap the complete `NonEmptyList<Money.Error>` into a parent domain's error.
-Decimal text follows the JDK's `BigDecimal` syntax, including scientific notation;
-whitespace, grouping separators, NaN, and infinity are rejected. Already typed
-components use `Money.create(amount: BigDecimal, currency: Currency)` without
+Decimal text follows `Decimal.parse`, which is the JDK's `BigDecimal` syntax
+with ASCII digits, including scientific notation; whitespace, grouping separators,
+NaN, and infinity are rejected. Already typed
+components use `Money.create(amount: Decimal, currency: Currency)` without
 parsing or redundant validation.
 
 Amounts can be positive, zero, or negative and can retain sub-minor-unit precision
 for intermediate calculations. Input scale is preserved, while equality and
 hashing use numeric amount and currency: USD `1.0` equals USD `1.00`, but EUR
 `1.00` is different. No floating-point conversion or implicit rounding occurs.
-This deliberately differs from scale-sensitive
-[`BigDecimal.equals`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/math/BigDecimal.html#equals(java.lang.Object)).
+This deliberately differs from scale-sensitive `Decimal.equals`.
 
 `add`, `subtract`, and `compare` require the same currency. `multiply` accepts
 an exact decimal scalar. `divide` and `round` require a `NonNegativeInt` scale
@@ -436,10 +449,10 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.money.Money
+import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.numeric.NonNegativeInt
 import io.liquidsoftware.safedomain.numeric.PositiveInt
-import java.math.BigDecimal
-import java.math.RoundingMode
+import io.liquidsoftware.safedomain.numeric.RoundingMode
 
 val parsed: Either<NonEmptyList<Money.Error>, Money> = either {
     Money.from(Money.Input("1.005", "USD"))
@@ -447,12 +460,12 @@ val parsed: Either<NonEmptyList<Money.Error>, Money> = either {
 
 context(raise: Raise<Money.ArithmeticError>)
 fun total(price: Money, quantity: PositiveInt, scale: NonNegativeInt): Money =
-    price.multiply(BigDecimal(quantity.value)).round(scale, RoundingMode.HALF_EVEN)
+    price.multiply(Decimal.of(quantity.value.toLong())).round(scale, RoundingMode.HALF_EVEN)
 ```
 
 Arithmetic raises `Money.ArithmeticError.CurrencyMismatch`, `DivisionByZero`, or
-`UnrepresentableResult` (decimal scale overflow or rounding needed when
-`UNNECESSARY` was requested). A consuming application can map these with
+`UnrepresentableResult` (decimal scale overflow, rounding needed when
+`UNNECESSARY` was requested, or a result beyond `Decimal`'s expansion limit). A consuming application can map these with
 `withError`, separately from input failures. Currency conversion, cash rounding,
 allocation, formatting, and nonnegative-balance policies belong to future
 explicit APIs or the consuming domain.

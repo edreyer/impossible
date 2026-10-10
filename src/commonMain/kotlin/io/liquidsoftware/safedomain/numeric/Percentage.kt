@@ -3,7 +3,6 @@ package io.liquidsoftware.safedomain.numeric
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
-import java.math.BigDecimal
 
 /**
  * An exact percentage in the inclusive range 0..100, in whole percentage units:
@@ -11,9 +10,9 @@ import java.math.BigDecimal
  * equality, hashing, and ordering use numeric value. Growth rates outside this
  * range require a different consuming-domain type.
  */
-class Percentage private constructor(val value: BigDecimal) : Comparable<Percentage> {
+class Percentage private constructor(val value: Decimal) : Comparable<Percentage> {
     sealed interface Error {
-        data class OutOfRange(val value: BigDecimal) : Error
+        data class OutOfRange(val value: Decimal) : Error
     }
 
     override fun compareTo(other: Percentage): Int = value.compareTo(other.value)
@@ -25,12 +24,12 @@ class Percentage private constructor(val value: BigDecimal) : Comparable<Percent
 
     override fun toString(): String = "Percentage(value=$value)"
 
-    companion object : ValueFactory<BigDecimal, Error, Percentage> {
-        private val maximum = BigDecimal("100")
+    companion object : ValueFactory<Decimal, Error, Percentage> {
+        private val maximum = Decimal.of(100)
 
         context(raise: Raise<Error>)
-        override fun from(value: BigDecimal): Percentage {
-            raise.ensure(value.signum() >= 0 && value <= maximum) { Error.OutOfRange(value) }
+        override fun from(value: Decimal): Percentage {
+            raise.ensure(value.sign >= 0 && value <= maximum) { Error.OutOfRange(value) }
             return Percentage(value)
         }
     }

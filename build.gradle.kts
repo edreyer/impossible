@@ -22,6 +22,7 @@ kotlin {
     commonMain.dependencies {
       api("io.arrow-kt:arrow-core:2.2.3")
       api("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
+      implementation("com.ionspin.kotlin:bignum:0.3.10")
     }
     commonTest.dependencies {
       implementation(kotlin("test"))
