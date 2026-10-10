@@ -604,9 +604,9 @@ on valid elements run after their prerequisites succeed.
 ## Current scope
 
 This library supplies validated construction, mapped factories, value semantics,
-date range operations, collection invariants, and decimal money arithmetic. It does not yet include
-serialization adapters, Java-facing convenience APIs, or Kotlin Multiplatform
-targets. Arithmetic on an extracted
+date range operations, collection invariants, and decimal money arithmetic on every
+Kotlin Multiplatform target listed under [Build](#build), plus a few JVM
+conversions. It does not yet include serialization adapters. Arithmetic on an extracted
 `Int` has ordinary Kotlin semantics; these wrappers do not make that arithmetic
 overflow-safe. Any future arithmetic API must preserve invariants and report
 overflow explicitly.
@@ -616,11 +616,35 @@ the factories. Future serialization adapters must enforce the same validation.
 
 ## Build
 
-The current scaffold uses Kotlin/JVM **2.4.20**, a **Java 26** toolchain, and the
-**Gradle 9.6.0** wrapper. It pins
-[Arrow Core 2.2.3](https://github.com/arrow-kt/arrow/releases/tag/2.2.3), the latest
-stable release verified when this first pass was implemented. Arrow Core is an
-API dependency because `Raise` appears in the public signatures.
+The library is Kotlin Multiplatform, built with Kotlin **2.4.20**, a **Java 26**
+toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. Targets:
+
+| Target | Tests |
+| --- | --- |
+| `jvm` | `./gradlew jvmTest` |
+| `js` (browser and Node.js) | `./gradlew jsNodeTest`; browser tests are disabled because they would need a local browser |
+| `linuxX64` | `./gradlew linuxX64Test` |
+| `macosArm64`, `iosArm64`, `iosSimulatorArm64` | `./gradlew macosArm64Test iosSimulatorArm64Test`; Apple targets build only on macOS |
+
+There is no Wasm target, because bignum does not publish one.
+
+Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types,
+so validation behaves the same on every platform. Dependencies:
+
+- [Arrow Core 2.2.3](https://github.com/arrow-kt/arrow/releases/tag/2.2.3), an API
+  dependency because `Raise` appears in the public signatures.
+- [kotlinx-datetime 0.8.0](https://github.com/Kotlin/kotlinx-datetime), an API
+  dependency for `LocalDate`.
+- [bignum 0.3.10](https://github.com/ionspin/kotlin-multiplatform-bignum), an
+  implementation dependency behind `Decimal`.
+
+JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
+`Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,
+`RoundingMode.toJavaRoundingMode()`, `HttpUrl.toJavaUri()`, and
+`Currency.toJavaCurrencyOrNull()` (null when the running JDK lacks a bundled
+code). kotlinx-datetime supplies `LocalDate.toJavaLocalDate()` and the standard
+library supplies `Uuid.toJavaUuid()`. JVM-only tests check `Decimal` against
+`java.math.BigDecimal` and `HttpUrl` against `java.net.URI`.
 
 Named context parameters are stable in Kotlin 2.4; no experimental context
 compiler flag is needed. See the
@@ -628,7 +652,7 @@ compiler flag is needed. See the
 and [Arrow's typed-error guide](https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/).
 
 ```sh
-./gradlew test
+./gradlew allTests   # every target this machine can run
 ./gradlew build
 ```
 

@@ -49,8 +49,8 @@ class UniqueList<A> private constructor(val value: List<A>) : Iterable<A> {
                     val snapshot = value.immutableListSnapshot()
                     val firstIndices = HashMap<A, Int>()
                     raise.mapOrAccumulate(snapshot.withIndex()) { (index, element) ->
-                        val firstIndex = firstIndices.putIfAbsent(element, index)
-                        if (firstIndex != null) this.raise(Error.Duplicate(firstIndex, index))
+                        val firstIndex = firstIndices.getOrPut(element) { index }
+                        if (firstIndex != index) this.raise(Error.Duplicate(firstIndex, index))
                     }
                     return UniqueList(snapshot)
                 }

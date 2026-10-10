@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.text
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
+import kotlin.jvm.JvmInline
 
 /**
  * A string containing at least one character that Kotlin does not classify as whitespace.

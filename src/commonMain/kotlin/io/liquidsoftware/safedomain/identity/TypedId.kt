@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.identity
 import arrow.core.raise.Raise
 import arrow.core.raise.ensureNotNull
 import io.liquidsoftware.safedomain.ValueFactory
+import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 import kotlin.uuid.Uuid

@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.contact
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
+import kotlin.jvm.JvmInline
 
 /**
  * International E.164-shaped text: '+' followed by 1..15 ASCII digits, the first

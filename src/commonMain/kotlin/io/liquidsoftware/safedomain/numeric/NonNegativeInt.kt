@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.numeric
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
+import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range 0..[Int.MAX_VALUE]. */
 @JvmInline

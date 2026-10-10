@@ -17,6 +17,15 @@ kotlin {
       executionTask.configure { useJUnitPlatform() }
     }
   }
+  js {
+    // Browser tests would need Karma and a local browser; Node runs the same tests.
+    browser { testTask { enabled = false } }
+    nodejs()
+  }
+  linuxX64()
+  macosArm64()
+  iosArm64()
+  iosSimulatorArm64()
 
   sourceSets {
     commonMain.dependencies {

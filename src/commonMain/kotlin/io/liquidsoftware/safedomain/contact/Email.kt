@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.contact
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
+import kotlin.jvm.JvmInline
 
 /**
  * An ASCII dot-atom mailbox with a DNS-label domain (including single-label domains).

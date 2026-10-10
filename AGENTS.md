@@ -88,11 +88,12 @@ their domain names, policies, authorization decisions, and workflows.
 - Keep operations invariant-preserving. If arithmetic is introduced, handle
   overflow and invalid results explicitly through precise typed failures.
 - Do not duplicate Arrow's result types or build a generic validation framework.
-- Prefer Kotlin standard library types over Java equivalents where Kotlin has
-  one (for example `kotlin.uuid.Uuid` instead of `java.util.UUID`). Keep JDK
-  types where the standard library has no equivalent (`BigDecimal`,
-  `java.time`, `URI`, `java.util.Currency`), and do not add a dependency just
-  to replace one without confirmation.
+- The library is Kotlin Multiplatform. Common code (`src/commonMain`) must not
+  use JDK types: use the Kotlin standard library (for example `kotlin.uuid.Uuid`),
+  kotlinx-datetime, or the library's own types (`Decimal`, `RoundingMode`).
+  Validation must behave identically on every target. JVM-only conversions to
+  JDK types belong in `src/jvmMain`. Do not add a dependency without
+  confirmation.
 - Do not add serialization, framework integrations, arithmetic APIs, or new
   types speculatively.
 
@@ -108,7 +109,8 @@ their domain names, policies, authorization decisions, and workflows.
   declared, pinned dependencies for a build or test does not need confirmation.
 - Test actual contracts: invalid inputs, valid boundaries, exact preservation,
   value semantics, and typed failure composition. Keep tests deterministic.
-- Use `./gradlew test` for tests and `./gradlew build` for the complete build.
+- Use `./gradlew allTests` for tests (or `jvmTest` and `jsNodeTest` for a fast
+  check) and `./gradlew build` for the complete build. Apple targets need macOS.
   Report failures and checks that could not run; do not claim unverified success.
 - Keep the README and API documentation aligned with the implementation.
 - Use Context7 for external API behavior or version-specific guidance. Resolve
