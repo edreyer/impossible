@@ -129,6 +129,9 @@ class Decimal private constructor(
     }
 
     /** A scale-independent hash matching numeric comparison, including extreme scales. */
+    /** The unscaled value as a [Long], or null when it does not fit. */
+    internal fun unscaledLongOrNull(): Long? = unscaled.toString().toLongOrNull()
+
     internal fun numericHashCode(): Int {
         if (sign == 0) return 0
         val digits = unscaled.toString()

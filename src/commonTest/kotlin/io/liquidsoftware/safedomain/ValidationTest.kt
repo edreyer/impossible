@@ -90,7 +90,7 @@ class ValidationTest {
             Order.from(OrderInput(" Alice ", Money.Text("9.990", "USD"), listOf(LineInput("A", 2), LineInput("B", 1)), 1, 3))
         }).value
         assertEquals(" Alice ", order.customer.value)
-        assertEquals("9.990", order.price.amount.toPlainString())
+        assertEquals(999L, order.price.minor)
         assertEquals(listOf("A", "B"), order.lines.map { it.sku.value })
         assertEquals(1 to 3, order.minimum.value to order.maximum.value)
     }

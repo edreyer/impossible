@@ -43,7 +43,7 @@ package holds the construction contract shared by every type.
 | `TimeWindow` | Half-open instants with `start < endExclusive` | `TimeWindow.Error.NotAfterStart(...)` |
 | `PositiveDuration` | Finite `Duration` `> 0` | `PositiveDuration.Error` (`NonPositive`, `Infinite`) |
 | `Currency` | ISO 4217 code from the bundled code list | `Currency.Error.UnsupportedCode(value)` |
-| `Money` | Exact signed decimal amount and validated currency | `Money.Error` |
+| `Money` | Signed `Long` of a currency's minor units | `Money.Error` |
 | `CountryCode` | Assigned ISO 3166-1 alpha-2 code from the bundled list | `CountryCode.Error.UnsupportedCode(value)` |
 | `LanguageTag` | Canonical-case BCP 47 language, script, region and variants | `LanguageTag.Error.InvalidFormat(value)` |
 | `Email` | ASCII dot-atom mailbox and DNS-label domain | `Email.Error.InvalidFormat(value)` |
@@ -493,33 +493,39 @@ guarantee of current legal tender. `Currency.minorUnits` gives the decimal place
 the minor unit (2 for USD, 0 for JPY, 3 for KWD) and is null for codes without one,
 such as `XAU` and `XXX`.
 
-`Money.from(Money.Input(amount, currency = "EUR"))` takes an already parsed
-`Decimal` and validates only the currency code, raising `Money.Error.InvalidCurrency`.
-`Money.parser.from(Money.Text(amount = "12.3400", currency = "EUR"))` parses decimal
-text and validates the currency independently using `validate`, raising a
-`NonEmptyList<Money.Error>`. Decimal text follows `Decimal.parse`, which is the JDK's
-`BigDecimal` syntax with ASCII digits, including scientific notation; whitespace,
-grouping separators, NaN, and infinity are rejected. Already typed components use
-`Money.create(amount: Decimal, currency: Currency)` without redundant validation.
+`Money` stores a signed `Long` count of the currency's minor units (`minor`) plus the
+`Currency`: USD 12.34 is 1234 cents, JPY 1234 is 1234 yen. An amount finer than the
+minor unit cannot exist, and currencies without a minor unit (`XAU`, `XXX`) cannot be
+money. `amount` gives the value in major units as a `Decimal` at the currency's
+scale, for display and interop. Equality and hashing use `minor` and `currency`.
 
-Amounts can be positive, zero, or negative and can retain sub-minor-unit precision
-for intermediate calculations. Input scale is preserved, while equality and
-hashing use numeric amount and currency: USD `1.0` equals USD `1.00`, but EUR
-`1.00` is different. No floating-point conversion or implicit rounding occurs.
-This deliberately differs from scale-sensitive `Decimal.equals`.
+| Construction | Behavior |
+| --- | --- |
+| `Money.of(amount: Decimal, currency)` | Requires the amount to be exact in minor units: `12.345` USD raises `NotInMinorUnits`, never rounds |
+| `Money.ofMinor(minor: Long, currency)`, `Money.zero(currency)` | From minor units directly |
+| `Money.from(Money.Input(amount, currency = "EUR"))` | Validates the currency code, then as `of` |
+| `Money.parser.from(Money.Text("12.34", "EUR"))` | Parses text and validates the currency independently, accumulating both, then checks minor units |
+
+Construction raises `Money.Error`: `InvalidAmount`, `InvalidCurrency`, `NoMinorUnits`,
+`NotInMinorUnits`, or `OutOfRange` (beyond a `Long` of minor units, about 92
+quadrillion USD). Decimal text follows `Decimal.parse`, which is the JDK's
+`BigDecimal` syntax with ASCII digits, including scientific notation; whitespace,
+grouping separators, NaN, and infinity are rejected.
+
+Keep values finer than a minor unit, such as a per-unit price of USD 0.0035, a tax
+rate or an exchange rate, as `Decimal` (or `Percentage`) and round into `Money` once.
 
 | Operation | Behavior |
 | --- | --- |
-| `add`, `subtract`, `compare`, `Money.sum(values)` | Require one currency |
-| `multiply(Decimal)`, `multiply(PositiveInt)`, `multiply(Percentage)` | Exact: unit price times quantity, or a percentage share |
-| `divide(divisor, scale, mode)`, `round(scale, mode)` | Explicit scale and `RoundingMode` |
-| `roundToMinorUnits(mode)` | Rounds to the currency's minor units |
-| `allocate(ratios)`, `split(parts)` | Splits into parts that always sum exactly to the original, in minor units |
-| unary minus | Exact |
+| `add`, `subtract`, `negate`, `Money.sum(values)` | Exact; require one currency; raise `Overflow` instead of wrapping |
+| `multiply(PositiveInt)` | Exact unit price times quantity |
+| `multiply(Decimal, mode)`, `multiply(Percentage, mode)`, `divide(Decimal, mode)` | Round to minor units with an explicit `RoundingMode` |
+| `allocate(ratios)`, `split(parts)` | Total; parts always sum exactly to the original |
+| `compare(other)` | Requires one currency; there is no ordering across currencies |
 
-`allocate` gives each part its proportional share truncated to minor units, then
-hands the remaining units out one at a time to the first parts in order: USD `10.00`
-split three ways is `3.34, 3.33, 3.33`. The amount must already be in minor units.
+`allocate` gives each part its proportional share truncated toward zero, then hands
+the remaining minor units out one at a time to the first parts in order: USD `10.00`
+split three ways is `3.34, 3.33, 3.33`.
 
 ```kotlin
 import arrow.core.raise.Raise
@@ -531,16 +537,15 @@ import io.liquidsoftware.safedomain.numeric.RoundingMode
 context(raise: Raise<Money.ArithmeticError>)
 fun lineTotal(price: Money, quantity: PositiveInt, discount: Percentage): Money {
     val gross = price.multiply(quantity)
-    return gross.subtract(gross.multiply(discount)).roundToMinorUnits(RoundingMode.HALF_EVEN)
+    return gross.subtract(gross.multiply(discount, RoundingMode.HALF_EVEN))
 }
 ```
 
 Arithmetic raises `Money.ArithmeticError.CurrencyMismatch`, `DivisionByZero`,
-`NoMinorUnits`, `NotInMinorUnits`, or `UnrepresentableResult` (decimal scale
-overflow, rounding needed when `UNNECESSARY` was requested, or a result beyond
-`Decimal`'s expansion limit). A consuming application can map these with
-`withError`, separately from input failures. Currency conversion, cash rounding,
-and formatting belong to the consuming domain.
+`Overflow`, or `RoundingRequired` (when `UNNECESSARY` was requested and the result
+needed rounding). A consuming application can map these with `withError`,
+separately from input failures. Currency conversion, cash rounding, and formatting
+belong to the consuming domain.
 
 ## Email and phone syntax
 
@@ -691,7 +696,7 @@ on valid elements run after their prerequisites succeed.
 ## Current scope
 
 This library supplies validated construction, mapped factories, value semantics,
-date range operations, collection invariants, and decimal money arithmetic on every
+date range operations, collection invariants, and minor-unit money arithmetic on every
 Kotlin Multiplatform target listed under [Build](#build), plus a few JVM
 conversions. It does not yet include serialization adapters. Arithmetic on an extracted
 `Int` has ordinary Kotlin semantics; the wrappers' own operations preserve their
@@ -755,8 +760,8 @@ and early reads. `OptionalityTest` covers `optional()`, `required()` and
 clock-checked dates, a range relationship failure alongside contact failures, and a
 nested money error batch. `DecimalAndIdentityCompositionTest` demonstrates
 accumulating construction with decimals, percentages, tagged IDs, and HTTP URLs.
-Money tests cover exact arithmetic, minor units, allocation, rounding decisions,
-immutability, and typed failures. Collection tests cover empty inputs, duplicate positions,
+Money tests cover minor-unit construction, exact and rounded arithmetic, overflow,
+allocation, and typed failures. Collection tests cover empty inputs, duplicate positions,
 inclusive size bounds, snapshot immutability, invariant-preserving operations,
 and accumulating composition. The library is not yet
 configured for publication.

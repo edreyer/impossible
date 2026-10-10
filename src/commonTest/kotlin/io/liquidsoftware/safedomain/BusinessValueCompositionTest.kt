@@ -10,7 +10,6 @@ import io.liquidsoftware.safedomain.contact.Email
 import io.liquidsoftware.safedomain.contact.Phone
 import io.liquidsoftware.safedomain.money.Currency
 import io.liquidsoftware.safedomain.money.Money
-import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.DateChecks
 import kotlin.test.Test
@@ -71,12 +70,12 @@ class BusinessValueCompositionTest {
     }
 
     @Test
-    fun `valid composite stores the typed values without losing precision or spelling`() {
+    fun `valid composite stores the typed values in minor units and preserves contact spelling`() {
         val booking = assertIs<Either.Right<Booking>>(book(valid)).value
         assertEquals(today.plus(DatePeriod(days = 1)), booking.arrival)
         assertEquals(today.minus(DatePeriod(days = 1)), booking.ordered)
         assertEquals(today, booking.period.start)
-        assertEquals(Decimal.parse("12.3400"), booking.price.amount)
+        assertEquals(1234L, booking.price.minor)
         assertEquals("EUR", booking.price.currency.code)
         assertEquals("Alice@example.com", booking.email.value)
         assertEquals("+34612345678", booking.phone.value)
