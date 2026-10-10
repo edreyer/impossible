@@ -3,7 +3,6 @@ package io.liquidsoftware.safedomain
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
-import arrow.core.raise.zipOrAccumulate
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -89,10 +88,11 @@ class Money private constructor(val amount: BigDecimal, val currency: Currency) 
     companion object : ValueFactory<Input, NonEmptyList<Error>, Money> {
         /** Parses BigDecimal text and validates currency independently, accumulating both failures. */
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: Input): Money = raise.zipOrAccumulate(
-            { parseAmount(value.amount) },
-            { Currency.from(value.currency, onError = Error::InvalidCurrency) },
-        ) { amount, currency -> create(amount, currency) }
+        override fun from(value: Input): Money = validate {
+            val amount by field { parseAmount(value.amount) }
+            val currency by Currency.field(value.currency, Error::InvalidCurrency)
+            create(amount, currency)
+        }
 
         /** All signed BigDecimal amounts are valid with an already validated currency. */
         fun create(amount: BigDecimal, currency: Currency): Money = Money(amount, currency)

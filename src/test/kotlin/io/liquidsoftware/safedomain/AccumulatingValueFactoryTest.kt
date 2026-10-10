@@ -5,7 +5,6 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import arrow.core.raise.zipOrAccumulate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -130,11 +129,12 @@ private class DemoOrder private constructor(
 
     companion object : ValueFactory<DemoOrderInput, NonEmptyList<Error>, DemoOrder> {
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: DemoOrderInput): DemoOrder = raise.zipOrAccumulate(
-            { NonBlankString.from(value.reference, onError = Error::InvalidReference) },
-            { PositiveInt.from(value.quantity, onError = Error::InvalidQuantity) },
-            { NonNegativeInt.from(value.revision, onError = Error::InvalidRevision) },
-        ) { reference, quantity, revision -> DemoOrder(reference, quantity, revision) }
+        override fun from(value: DemoOrderInput): DemoOrder = validate {
+            val reference by NonBlankString.field(value.reference, Error::InvalidReference)
+            val quantity by PositiveInt.field(value.quantity, Error::InvalidQuantity)
+            val revision by NonNegativeInt.field(value.revision, Error::InvalidRevision)
+            DemoOrder(reference, quantity, revision)
+        }
     }
 }
 
@@ -149,9 +149,10 @@ private class DemoCheckout private constructor(val order: DemoOrder, val custome
 
     companion object : ValueFactory<DemoCheckoutInput, NonEmptyList<Error>, DemoCheckout> {
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: DemoCheckoutInput): DemoCheckout = raise.zipOrAccumulate(
-            { DemoOrder.from(value.order, onError = Error::InvalidOrder) },
-            { NonBlankString.from(value.customer, onError = Error::InvalidCustomer) },
-        ) { order, customer -> DemoCheckout(order, customer) }
+        override fun from(value: DemoCheckoutInput): DemoCheckout = validate {
+            val order by DemoOrder.field(value.order, Error::InvalidOrder)
+            val customer by NonBlankString.field(value.customer, Error::InvalidCustomer)
+            DemoCheckout(order, customer)
+        }
     }
 }

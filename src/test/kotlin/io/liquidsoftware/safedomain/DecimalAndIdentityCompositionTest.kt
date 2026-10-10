@@ -5,7 +5,6 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import arrow.core.raise.zipOrAccumulate
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -70,12 +69,13 @@ private class Offer private constructor(
         private val customerIds = TypedId.factory<CustomerTag>()
 
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: OfferInput): Offer = raise.zipOrAccumulate(
-            { PositiveDecimal.from(value.quantity, onError = Error::InvalidQuantity) },
-            { NonNegativeDecimal.from(value.inventory, onError = Error::InvalidInventory) },
-            { Percentage.from(value.discount, onError = Error::InvalidDiscount) },
-            { customerIds.from(value.customer, onError = Error::InvalidCustomer) },
-            { HttpUrl.from(value.endpoint, onError = Error::InvalidEndpoint) },
-        ) { quantity, inventory, discount, customer, endpoint -> Offer(quantity, inventory, discount, customer, endpoint) }
+        override fun from(value: OfferInput): Offer = validate {
+            val quantity by PositiveDecimal.field(value.quantity, Error::InvalidQuantity)
+            val inventory by NonNegativeDecimal.field(value.inventory, Error::InvalidInventory)
+            val discount by Percentage.field(value.discount, Error::InvalidDiscount)
+            val customer by customerIds.field(value.customer, Error::InvalidCustomer)
+            val endpoint by HttpUrl.field(value.endpoint, Error::InvalidEndpoint)
+            Offer(quantity, inventory, discount, customer, endpoint)
+        }
     }
 }

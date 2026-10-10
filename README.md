@@ -169,15 +169,92 @@ The mapped overload delegates to Arrow's
 [`withError`](https://apidocs.arrow-kt.io/arrow-core/arrow.core.raise/with-error.html).
 It preserves the factory's validation strategy and invokes `onError` only for a
 logical failure. The `Order` example stops at its first failure; `Money.from`
-uses `zipOrAccumulate` and maps its complete nonempty error batch in one call.
-Unexpected exceptions from a factory or mapper propagate unchanged. Use Arrow's
-accumulation tools for independent validations that should all run.
+accumulates its failures with `validate`, and the mapped overload wraps its
+complete nonempty error batch in one call. Unexpected exceptions from a factory
+or mapper propagate unchanged. Use `validate` (below) for independent
+validations that should all run.
 Exception-based integrations can explicitly map a materialized result using
 `getOrElse { error -> throw ... }` at the framework boundary.
 
 `ValueFactory` is optional for consuming domain types; ordinary named `Raise`
 functions and `withError` remain available. No experimental callable-reference
 features or additional dependencies are required.
+
+## Accumulating composites with `validate`
+
+When every field of a composite should be checked and all failures reported
+together, use `validate { }`. Each field is declared by name with `by`; the
+constructor call at the end reads the validated values. All declared fields run,
+and their failures are raised together in declaration order:
+
+```kotlin
+import arrow.core.NonEmptyList
+import arrow.core.raise.Raise
+import io.liquidsoftware.safedomain.Email
+import io.liquidsoftware.safedomain.Money
+import io.liquidsoftware.safedomain.NonBlankString
+import io.liquidsoftware.safedomain.ValueFactory
+import io.liquidsoftware.safedomain.field
+import io.liquidsoftware.safedomain.validate
+
+data class CustomerInput(val name: String, val email: String, val credit: Money.Input)
+
+class Customer private constructor(val name: NonBlankString, val email: Email, val credit: Money) {
+    sealed interface Error {
+        data class InvalidName(val cause: NonBlankString.Error) : Error
+        data class InvalidEmail(val cause: Email.Error) : Error
+        data class InvalidCredit(val causes: NonEmptyList<Money.Error>) : Error
+    }
+
+    companion object : ValueFactory<CustomerInput, NonEmptyList<Error>, Customer> {
+        context(raise: Raise<NonEmptyList<Error>>)
+        override fun from(value: CustomerInput): Customer = validate {
+            val name by NonBlankString.field(value.name, Error::InvalidName)
+            val email by Email.field(value.email, Error::InvalidEmail)
+            val credit by Money.field(value.credit, Error::InvalidCredit)
+            Customer(name, email, credit)
+        }
+    }
+}
+```
+
+| Declaration | Result |
+| --- | --- |
+| `Factory.field(raw, Error::X)` | One field. A failure, including a nested factory's whole error batch, is mapped once with `onError`. |
+| `Factory.flatField(raw, Error::X)` | One field from an accumulating factory such as `Money`. Each nested error is mapped and added to the parent list individually. |
+| `Factory.eachField(raws) { index, error -> ... }` | Every element of an iterable. Each failure is reported with its zero-based index. |
+| `field { ... }` | A field computed by a block, for steps that depend on other fields or checks across fields. A failure stops only this block. |
+
+Choose `field` or `flatField` per nested factory: `field` keeps a nested batch
+together as one parent error, while `flatField` merges it into the parent's list.
+
+Reading a field's value is only safe once its validation has succeeded. Reading
+a failed field raises every error collected so far and ends the block, so read
+fields in the final constructor call, or inside a `field { }` block that depends
+on them. Inside such a block, ordinary `ensure` expresses a relationship between
+fields; it runs only when its inputs are valid:
+
+```kotlin
+val window by field {
+    val start by PastDate.field(value.start, Error::InvalidStart)
+    val end by PastDate.field(value.end, Error::InvalidEnd)
+    ensure(start.value <= end.value) { Error.EndBeforeStart }
+    start to end
+}
+```
+
+`validate` requires `Raise<NonEmptyList<Error>>`, so composites built with it
+expose a `NonEmptyList<Error>` factory, as `Money` does. Use the mapped
+`from(raw, onError = ...)` overload directly for composites that should stop at
+their first failure. `validate` has no field-count limit.
+
+`validate` wraps Arrow's `accumulate` API, which Arrow 2.2.3 marks
+`@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
+[Validation.kt](src/main/kotlin/io/liquidsoftware/safedomain/Validation.kt);
+callers need none. `Validated<A>` is an alias for Arrow's
+`RaiseAccumulate.Value<A>`.
+[ValidationTest](src/test/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
+covers ordering, flattening, indexing, dependent blocks, and early reads.
 
 ## Decimals and percentages
 
@@ -312,7 +389,7 @@ are never trimmed or repaired. This is not a guarantee of current legal tender.
 See the [JDK currency contract](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Currency.html).
 
 `Money.from(Money.Input(amount = "12.3400", currency = "EUR"))` validates decimal
-text and currency independently using `zipOrAccumulate`. Its mapped factory can
+text and currency independently using `validate`. Its mapped factory can
 wrap the complete `NonEmptyList<Money.Error>` into a parent domain's error.
 Decimal text follows the JDK's `BigDecimal` syntax, including scientific notation;
 whitespace, grouping separators, NaN, and infinity are rejected. Already typed
@@ -470,11 +547,20 @@ require stable equality and hashing. The Arrow adapters protect the storage of
 their initial result; subsequent Arrow transformations follow
 [Arrow's collection contracts](https://arrow-kt.io/learn/collections-functions/non-empty/).
 
-For raw elements, use `mapOrAccumulate` with `withIndex()` to retain error
-positions, then construct the collection once its elements are valid. An empty
-input can pass element validation and still fail nonempty collection validation.
-Independent fields can be combined with `zipOrAccumulate`; parent errors can
-wrap an entire `UniqueList` duplicate batch without matching each branch.
+For raw elements, use `eachField` inside `validate` to retain error positions,
+then construct the collection in a `field { }` block once its elements are valid.
+An empty input can pass element validation and still fail nonempty collection
+validation:
+
+```kotlin
+val names by field {
+    val elements by NonBlankString.eachField(value.recipients, Error::InvalidRecipient)
+    NonEmptyLists.factory<NonBlankString>().from(elements, onError = Error::InvalidRecipients)
+}
+```
+
+Independent collection fields are declared alongside it; parent errors can wrap
+an entire `UniqueList` duplicate batch without matching each branch.
 [CollectionCompositionTest](src/test/kotlin/io/liquidsoftware/safedomain/CollectionCompositionTest.kt)
 demonstrates indexed element validation, nonempty lists and sets, uniqueness,
 size bounds, and accumulation across all four fields. Relationships that depend
@@ -514,7 +600,9 @@ and [Arrow's typed-error guide](https://arrow-kt.io/learn/typed-errors/working-w
 The tests cover invalid values, boundaries, preservation, equality and hashing,
 and composition through named `Raise` contexts. Factory tests cover mapping
 through multiple domain layers, accumulation, short-circuiting, and exception
-propagation. `BusinessValueCompositionTest` demonstrates a composite of all six
+propagation. `ValidationTest` covers the `validate` DSL: declaration order,
+flattened and indexed nested errors, dependent field blocks, cross-field checks,
+and early reads. `BusinessValueCompositionTest` demonstrates a composite of all six
 new business types, including a range relationship failure alongside contact
 failures and a nested money error batch. `DecimalAndIdentityCompositionTest`
 demonstrates accumulating construction with decimals, percentages, tagged IDs,

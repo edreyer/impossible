@@ -51,6 +51,12 @@ their domain names, policies, authorization decisions, and workflows.
 - Compose validated types through `ValueFactory<Input, Error, Value>` when the
   factory contract fits. Use `from(value, onError = ...)` to map failures into
   the constructing type's own precise error model.
+- Build accumulating composites with `validate { }` and named `by` fields
+  (`field`, `flatField`, `eachField`, and `field { }` for dependent steps)
+  rather than `zipOrAccumulate` or direct use of Arrow's `accumulate`. Read
+  field values only in the final construction or inside a dependent
+  `field { }` block. Keep Arrow's experimental accumulate opt-in confined to
+  `Validation.kt`.
 - Translate failures at meaningful domain boundaries. Higher layers should
   handle their own closed outcomes and retain lower-level failures as details,
   rather than enumerate a growing library-wide error hierarchy. Reuse an error

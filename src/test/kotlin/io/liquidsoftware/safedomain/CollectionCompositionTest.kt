@@ -7,8 +7,6 @@ import arrow.core.getOrElse
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import arrow.core.raise.mapOrAccumulate
-import arrow.core.raise.zipOrAccumulate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -94,18 +92,15 @@ private class DispatchPlan private constructor(
         )
 
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: DispatchInput): DispatchPlan = raise.zipOrAccumulate(
-            {
-                val names = withNel {
-                    mapOrAccumulate(value.recipients.withIndex()) { (index, raw) ->
-                        NonBlankString.from(raw, onError = { Error.InvalidRecipient(index, it) })
-                    }
-                }
-                recipients.from(names, onError = Error::InvalidRecipients)
-            },
-            { labels.from(value.labels, onError = Error::InvalidLabels) },
-            { attachments.from(value.attachments, onError = Error::InvalidAttachments) },
-            { channels.from(value.channels, onError = Error::InvalidChannels) },
-        ) { names, tags, files, modes -> DispatchPlan(names, tags, files, modes) }
+        override fun from(value: DispatchInput): DispatchPlan = validate {
+            val names by field {
+                val elements by NonBlankString.eachField(value.recipients, Error::InvalidRecipient)
+                recipients.from(elements, onError = Error::InvalidRecipients)
+            }
+            val tags by labels.field(value.labels, Error::InvalidLabels)
+            val files by attachments.field(value.attachments, Error::InvalidAttachments)
+            val modes by channels.field(value.channels, Error::InvalidChannels)
+            DispatchPlan(names, tags, files, modes)
+        }
     }
 }

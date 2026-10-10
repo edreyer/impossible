@@ -6,7 +6,6 @@ import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
 import arrow.core.raise.withError
-import arrow.core.raise.zipOrAccumulate
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.test.Test
@@ -123,13 +122,14 @@ private class Booking private constructor(
 
     companion object : ValueFactory<BookingInput, NonEmptyList<Error>, Booking> {
         context(raise: Raise<NonEmptyList<Error>>)
-        override fun from(value: BookingInput): Booking = raise.zipOrAccumulate(
-            { FutureDate.from(value.arrival, onError = Error::InvalidArrival) },
-            { PastDate.from(value.ordered, onError = Error::InvalidOrderDate) },
-            { DateRange.from(value.period, onError = Error::InvalidPeriod) },
-            { Money.from(value.price, onError = Error::InvalidPrice) },
-            { Email.from(value.email, onError = Error::InvalidEmail) },
-            { Phone.from(value.phone, onError = Error::InvalidPhone) },
-        ) { arrival, ordered, period, price, email, phone -> Booking(arrival, ordered, period, price, email, phone) }
+        override fun from(value: BookingInput): Booking = validate {
+            val arrival by FutureDate.field(value.arrival, Error::InvalidArrival)
+            val ordered by PastDate.field(value.ordered, Error::InvalidOrderDate)
+            val period by DateRange.field(value.period, Error::InvalidPeriod)
+            val price by Money.field(value.price, Error::InvalidPrice)
+            val email by Email.field(value.email, Error::InvalidEmail)
+            val phone by Phone.field(value.phone, Error::InvalidPhone)
+            Booking(arrival, ordered, period, price, email, phone)
+        }
     }
 }
