@@ -79,4 +79,35 @@ class HttpUrlTest {
         }
         assertEquals(Either.Left(InvalidEndpoint(HttpUrl.Error.NotAbsolute)), result)
     }
+
+    @Test
+    fun `exposes parsed components without changing their spelling`() {
+        val url = assertIs<Either.Right<HttpUrl>>(either {
+            HttpUrl.from("HTTPS://user:p%41ss@Example.com:8443/a/B?q=[1]&r#Frag")
+        }).value
+        assertEquals("HTTPS", url.scheme)
+        assertEquals("user:p%41ss", url.userInfo)
+        assertEquals("Example.com", url.host)
+        assertEquals(8443, url.port)
+        assertEquals("/a/B", url.path)
+        assertEquals("q=[1]&r", url.query)
+        assertEquals("Frag", url.fragment)
+    }
+
+    @Test
+    fun `an empty port is absent and IPv6 forms follow RFC 4291`() {
+        val result = either {
+            assertEquals(null, HttpUrl.from("http://example.com:/").port)
+            assertEquals(null, HttpUrl.from("http://example.com").port)
+            for (host in listOf("[2001:db8::1]", "[::]", "[::ffff:192.0.2.1]", "[1:2:3:4:5:6:7:8]")) {
+                assertEquals(host, HttpUrl.from("http://$host/").host)
+            }
+        }
+        assertEquals(Either.Right(Unit), result)
+        for (raw in listOf("http://[1::2::3]/", "http://[1:2:3:4:5:6:7:8:9]/", "http://[12345::]/", "http://[::1]x/",
+            "https://a.example/b[1]", "https://example.com/#a#b", "https://:80/", "https://example.com:99999999999/")) {
+            val failed: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
+            assertEquals(Either.Left(HttpUrl.Error.InvalidSyntax(raw)), failed, raw)
+        }
+    }
 }

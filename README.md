@@ -343,21 +343,24 @@ required. See [Kotlin typeOf](https://kotlinlang.org/api/core/kotlin-stdlib/kotl
 
 ## HTTP URLs
 
-`HttpUrl.from(raw)` accepts absolute HTTP/HTTPS addresses with a server authority
-recognized by the JDK's `URI.parseServerAuthority`. Hosts may be ASCII DNS names
-(including single-label and encoded IDN names), IPv4 addresses, or bracketed IPv6
-addresses. Ports are optional; supplied numeric ports must be in `0..65535`.
-User information, queries, fragments, and legal Unicode path characters are
-accepted. Unicode host names must be encoded before construction.
+`HttpUrl.from(raw)` accepts absolute HTTP/HTTPS addresses with a server authority.
+The parser is written in common Kotlin and follows RFC 3986 with the rules of
+the JDK's `java.net.URI`, so the same input is accepted or rejected identically
+on every platform; a JVM test checks it against `java.net.URI` on a corpus of
+valid and invalid addresses. Hosts may be ASCII DNS names (including single-label
+and encoded IDN names), IPv4 addresses, or bracketed IPv6 addresses. Ports are
+optional; supplied numeric ports must be in `0..65535`. User information,
+queries, fragments, and legal Unicode path characters are accepted. Unicode host
+names must be encoded before construction.
 
-Input spelling is preserved without trimming, escaping, or path normalization.
-The read-only `value` is an immutable `URI`. Equality and hashing follow the
-[JDK URI contract](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/net/URI.html):
-scheme/host and percent-escape hex case are ignored, path case is significant,
-and omitted default ports and redundant path segments are not normalized.
-No DNS lookup or network request occurs. A valid value establishes address syntax;
-reachability, trusted hosts, credentials policy, and outbound request authorization
-remain application concerns.
+Input spelling is preserved without trimming, escaping, or path normalization:
+`value` is the original text, and `scheme`, `userInfo`, `host`, `port`, `path`,
+`query`, and `fragment` expose the parsed components as written. Equality and
+hashing follow `java.net.URI`: scheme/host and percent-escape hex case are
+ignored, path case is significant, and omitted default ports and redundant path
+segments are not normalized. No DNS lookup or network request occurs. A valid
+value establishes address syntax; reachability, trusted hosts, credentials
+policy, and outbound request authorization remain application concerns.
 
 Failures distinguish `InvalidSyntax`, `NotAbsolute`, `UnsupportedScheme`,
 `MissingHost`, and `InvalidPort`; the mapped factory adapts this closed model to
