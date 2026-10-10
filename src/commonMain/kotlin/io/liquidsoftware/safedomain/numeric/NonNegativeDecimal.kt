@@ -22,11 +22,18 @@ class NonNegativeDecimal private constructor(val value: Decimal) : Comparable<No
 
     override fun toString(): String = "NonNegativeDecimal(value=$value)"
 
+    /** The sum of two non-negative decimals is always non-negative. */
+    operator fun plus(other: NonNegativeDecimal): NonNegativeDecimal = NonNegativeDecimal(value + other.value)
+
     companion object : ValueFactory<Decimal, Error, NonNegativeDecimal> {
+        val ZERO: NonNegativeDecimal = NonNegativeDecimal(Decimal.ZERO)
+
         context(raise: Raise<Error>)
         override fun from(value: Decimal): NonNegativeDecimal {
             raise.ensure(value.sign >= 0) { Error.Negative(value) }
             return NonNegativeDecimal(value)
         }
+
+        internal fun fromTrustedDecimal(value: Decimal): NonNegativeDecimal = NonNegativeDecimal(value)
     }
 }

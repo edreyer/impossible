@@ -17,10 +17,16 @@ value class Currency private constructor(val code: String) {
         data class UnsupportedCode(val value: String) : Error
     }
 
+    /**
+     * Decimal places of the currency's minor unit, such as 2 for USD, 0 for JPY and
+     * 3 for KWD; null for codes without one, such as XAU (gold) and XXX (no currency).
+     */
+    val minorUnits: Int? get() = isoCurrencyMinorUnits.getValue(code)
+
     companion object : ValueFactory<String, Error, Currency> {
         context(raise: Raise<Error>)
         override fun from(value: String): Currency {
-            raise.ensure(value in isoCurrencyCodes) { Error.UnsupportedCode(value) }
+            raise.ensure(value in isoCurrencyMinorUnits) { Error.UnsupportedCode(value) }
             return Currency(value)
         }
     }

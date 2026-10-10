@@ -22,11 +22,18 @@ class PositiveDecimal private constructor(val value: Decimal) : Comparable<Posit
 
     override fun toString(): String = "PositiveDecimal(value=$value)"
 
+    /** The sum of two positive decimals is always positive. */
+    operator fun plus(other: PositiveDecimal): PositiveDecimal = PositiveDecimal(value + other.value)
+
+    fun toNonNegativeDecimal(): NonNegativeDecimal = NonNegativeDecimal.fromTrustedDecimal(value)
+
     companion object : ValueFactory<Decimal, Error, PositiveDecimal> {
         context(raise: Raise<Error>)
         override fun from(value: Decimal): PositiveDecimal {
             raise.ensure(value.sign > 0) { Error.NonPositive(value) }
             return PositiveDecimal(value)
         }
+
+        internal fun fromTrustedDecimal(value: Decimal): PositiveDecimal = PositiveDecimal(value)
     }
 }

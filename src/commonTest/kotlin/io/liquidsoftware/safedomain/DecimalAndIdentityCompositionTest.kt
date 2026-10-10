@@ -26,7 +26,7 @@ class DecimalAndIdentityCompositionTest {
             Offer.Error.InvalidInventory(NonNegativeDecimal.Error.Negative(Decimal.parse("-1"))),
             Offer.Error.InvalidDiscount(Percentage.Error.OutOfRange(Decimal.parse("101"))),
             Offer.Error.InvalidCustomer(TypedId.Error.InvalidFormat("invalid")),
-            Offer.Error.InvalidEndpoint(HttpUrl.Error.NotAbsolute),
+            Offer.Error.InvalidEndpoint(HttpUrl.Error.NotAbsolute("relative")),
         )), result)
     }
 

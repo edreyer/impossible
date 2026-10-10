@@ -8,7 +8,6 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.money.Currency
 import io.liquidsoftware.safedomain.money.Money
-import io.liquidsoftware.safedomain.numeric.NonNegativeInt
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
@@ -19,7 +18,7 @@ class ValidationTest {
     @Test
     fun `reports every field failure in declaration order`() {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
-            Order.from(OrderInput("", Money.Input("1", "USD"), listOf(LineInput("A", 1)), 0, 1))
+            Order.from(OrderInput("", Money.Text("1", "USD"), listOf(LineInput("A", 1)), 1, 1))
         }
         assertEquals(Either.Left(nonEmptyListOf(Order.Error.InvalidCustomer(NonBlankString.Error.Blank))), result)
     }
@@ -27,7 +26,7 @@ class ValidationTest {
     @Test
     fun `flatField maps each nested error into the parent list`() {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
-            Order.from(OrderInput("Alice", Money.Input("x", "ZZZ"), listOf(LineInput("A", 1)), 0, 1))
+            Order.from(OrderInput("Alice", Money.Text("x", "ZZZ"), listOf(LineInput("A", 1)), 1, 1))
         }
         assertEquals(Either.Left(nonEmptyListOf(
             Order.Error.InvalidPrice(Money.Error.InvalidAmount("x")),
@@ -38,7 +37,7 @@ class ValidationTest {
     @Test
     fun `eachField reports every invalid element with its index`() {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
-            Order.from(OrderInput("Alice", Money.Input("1", "USD"), listOf(LineInput("", 0), LineInput("B", 1), LineInput("C", -1)), 0, 1))
+            Order.from(OrderInput("Alice", Money.Text("1", "USD"), listOf(LineInput("", 0), LineInput("B", 1), LineInput("C", -1)), 1, 1))
         }
         assertEquals(Either.Left(nonEmptyListOf(
             Order.Error.InvalidLine(0, nonEmptyListOf(
@@ -52,7 +51,7 @@ class ValidationTest {
     @Test
     fun `a dependent field block stops on its own failure while later fields still run`() {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
-            Order.from(OrderInput("", Money.Input("1", "USD"), listOf(LineInput("A", 1)), 5, -1))
+            Order.from(OrderInput("", Money.Text("1", "USD"), listOf(LineInput("A", 1)), 5, -1))
         }
         assertEquals(Either.Left(nonEmptyListOf(
             Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
@@ -63,7 +62,7 @@ class ValidationTest {
     @Test
     fun `a cross field check runs once its inputs are valid`() {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
-            Order.from(OrderInput("", Money.Input("1", "USD"), listOf(LineInput("A", 1)), 5, 2))
+            Order.from(OrderInput("", Money.Text("1", "USD"), listOf(LineInput("A", 1)), 5, 2))
         }
         assertEquals(Either.Left(nonEmptyListOf(
             Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
@@ -88,7 +87,7 @@ class ValidationTest {
     @Test
     fun `builds the composite when every field is valid`() {
         val order = assertIs<Either.Right<Order>>(either {
-            Order.from(OrderInput(" Alice ", Money.Input("9.990", "USD"), listOf(LineInput("A", 2), LineInput("B", 1)), 1, 3))
+            Order.from(OrderInput(" Alice ", Money.Text("9.990", "USD"), listOf(LineInput("A", 2), LineInput("B", 1)), 1, 3))
         }).value
         assertEquals(" Alice ", order.customer.value)
         assertEquals("9.990", order.price.amount.toPlainString())
@@ -129,7 +128,7 @@ private class Line private constructor(val sku: NonBlankString, val quantity: Po
 
 private data class OrderInput(
     val customer: String,
-    val price: Money.Input,
+    val price: Money.Text,
     val lines: List<LineInput>,
     val minimum: Int,
     val maximum: Int,
@@ -139,14 +138,14 @@ private class Order private constructor(
     val customer: NonBlankString,
     val price: Money,
     val lines: List<Line>,
-    val minimum: NonNegativeInt,
+    val minimum: PositiveInt,
     val maximum: PositiveInt,
 ) {
     sealed interface Error {
         data class InvalidCustomer(val cause: NonBlankString.Error) : Error
         data class InvalidPrice(val cause: Money.Error) : Error
         data class InvalidLine(val index: Int, val causes: NonEmptyList<Line.Error>) : Error
-        data class InvalidMinimum(val cause: NonNegativeInt.Error) : Error
+        data class InvalidMinimum(val cause: PositiveInt.Error) : Error
         data class InvalidMaximum(val cause: PositiveInt.Error) : Error
         data class MaximumBelowMinimum(val minimum: Int, val maximum: Int) : Error
     }
@@ -155,10 +154,10 @@ private class Order private constructor(
         context(raise: Raise<NonEmptyList<Error>>)
         override fun from(value: OrderInput): Order = validate {
             val customer by NonBlankString.field(value.customer, Error::InvalidCustomer)
-            val price by Money.flatField(value.price, Error::InvalidPrice)
+            val price by Money.parser.flatField(value.price, Error::InvalidPrice)
             val lines by Line.eachField(value.lines, Error::InvalidLine)
             val limits by field {
-                val minimum by NonNegativeInt.field(value.minimum, Error::InvalidMinimum)
+                val minimum by PositiveInt.field(value.minimum, Error::InvalidMinimum)
                 val maximum by PositiveInt.field(value.maximum, Error::InvalidMaximum)
                 ensure(maximum.value >= minimum.value) {
                     Error.MaximumBelowMinimum(minimum.value, maximum.value)

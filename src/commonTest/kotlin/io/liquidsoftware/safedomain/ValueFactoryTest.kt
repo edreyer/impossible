@@ -3,8 +3,8 @@ package io.liquidsoftware.safedomain
 import arrow.core.Either
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.numeric.NonNegativeInt
 import io.liquidsoftware.safedomain.numeric.PositiveInt
+import io.liquidsoftware.safedomain.numeric.PositiveLong
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,13 +21,13 @@ class ValueFactoryTest {
         val quantity: Either<Order.Error, PositiveInt> = either {
             PositiveInt.from(0, onError = Order.Error::InvalidQuantity)
         }
-        val count: Either<CountError, NonNegativeInt> = either {
-            NonNegativeInt.from(-1, onError = ::CountError)
+        val count: Either<CountError, PositiveLong> = either {
+            PositiveLong.from(-1, onError = ::CountError)
         }
 
         assertEquals(Either.Left(Order.Error.InvalidCustomer(NonBlankString.Error.Blank)), name)
         assertEquals(Either.Left(Order.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0))), quantity)
-        assertEquals(Either.Left(CountError(NonNegativeInt.Error.Negative(-1))), count)
+        assertEquals(Either.Left(CountError(PositiveLong.Error.NonPositive(-1))), count)
     }
 
     @Test
@@ -35,11 +35,11 @@ class ValueFactoryTest {
         val result: Either<Order.Error, Order> = either {
             val customer = NonBlankString.from(" Alice ") { error("Mapper called on success") }
             val quantity = PositiveInt.from(2) { error("Mapper called on success") }
-            val count = NonNegativeInt.from(0) { error("Mapper called on success") }
+            val count = PositiveLong.from(1) { error("Mapper called on success") }
 
             assertEquals(" Alice ", customer.value)
             assertEquals(2, quantity.value)
-            assertEquals(0, count.value)
+            assertEquals(1L, count.value)
             Order.from(OrderInput(customer.value, quantity.value))
         }
 
@@ -100,7 +100,7 @@ class ValueFactoryTest {
         assertSame(failure, caught)
     }
 
-    private data class CountError(val cause: NonNegativeInt.Error)
+    private data class CountError(val cause: PositiveLong.Error)
 
     private sealed interface CheckoutError {
         data class InvalidOrder(val cause: Order.Error) : CheckoutError

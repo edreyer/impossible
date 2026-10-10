@@ -5,7 +5,6 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.numeric.Decimal
-import io.liquidsoftware.safedomain.numeric.NonNegativeInt
 import io.liquidsoftware.safedomain.numeric.RoundingMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,12 +14,12 @@ import kotlin.test.assertNotEquals
 class MoneyTest {
     private val usd = assertIs<Either.Right<Currency>>(either { Currency.from("USD") }).value
     private val eur = assertIs<Either.Right<Currency>>(either { Currency.from("EUR") }).value
-    private val cents = assertIs<Either.Right<NonNegativeInt>>(either { NonNegativeInt.from(2) }).value
+    private val cents = 2
 
     @Test
     fun `money accepts signed exact decimals and preserves input precision`() {
         for (raw in listOf("0", "-12.30", "0.001", "1E+4")) {
-            val money = assertIs<Either.Right<Money>>(either { Money.from(Money.Input(raw, "USD")) }).value
+            val money = assertIs<Either.Right<Money>>(either { Money.parser.from(Money.Text(raw, "USD")) }).value
             assertEquals(Decimal.parse(raw), money.amount)
             assertEquals(usd, money.currency)
         }
@@ -28,15 +27,24 @@ class MoneyTest {
 
     @Test
     fun `money accumulates amount and currency failures independently`() {
-        val result: Either<NonEmptyList<Money.Error>, Money> = either { Money.from(Money.Input("oops", "ZZZ")) }
+        val result: Either<NonEmptyList<Money.Error>, Money> = either { Money.parser.from(Money.Text("oops", "ZZZ")) }
         assertEquals(Either.Left(nonEmptyListOf(
             Money.Error.InvalidAmount("oops"),
             Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
         )), result)
         for (raw in listOf("", "NaN", "Infinity", " 1.00", "1.00 ", "1,00", "1e2147483649")) {
-            val invalid: Either<NonEmptyList<Money.Error>, Money> = either { Money.from(Money.Input(raw, "USD")) }
+            val invalid: Either<NonEmptyList<Money.Error>, Money> = either { Money.parser.from(Money.Text(raw, "USD")) }
             assertEquals(Either.Left(nonEmptyListOf(Money.Error.InvalidAmount(raw))), invalid)
         }
+    }
+
+    @Test
+    fun `typed input validates only the currency and keeps the amount exactly`() {
+        val money = assertIs<Either.Right<Money>>(either { Money.from(Money.Input(Decimal.parse("-1.50"), "USD")) }).value
+        assertEquals(Decimal.parse("-1.50"), money.amount)
+        assertEquals(usd, money.currency)
+        val invalid: Either<Money.Error, Money> = either { Money.from(Money.Input(Decimal.ONE, "usd")) }
+        assertEquals(Either.Left(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("usd"))), invalid)
     }
 
     @Test

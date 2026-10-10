@@ -39,12 +39,23 @@ class EmailTest {
     }
 
     @Test
-    fun `email equality uses the exact preserved text`() {
+    fun `email equality ignores domain case and keeps the local part case-sensitive`() {
         val result = either {
-            val email = Email.from("User@example.com")
+            val email = Email.from("User@Example.com")
+            assertEquals(email, Email.from("User@example.COM"))
+            assertEquals(email.hashCode(), Email.from("User@example.COM").hashCode())
             assertEquals(2, setOf(email, Email.from("User@example.com"), Email.from("user@example.com")).size)
-            assertEquals("contact", mapOf(email to "contact")[Email.from("User@example.com")])
+            assertEquals("User@Example.com", email.value)
+            assertEquals("User", email.localPart)
+            assertEquals("Example.com", email.domain)
         }
         assertEquals(Either.Right(Unit), result)
+    }
+
+    @Test
+    fun `rejected input is kept for callers but redacted from error text`() {
+        val error = Email.Error.InvalidFormat("secret@")
+        assertEquals("secret@", error.value)
+        assertEquals("InvalidFormat(value=<redacted>)", error.toString())
     }
 }

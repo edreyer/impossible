@@ -41,6 +41,10 @@ class Decimal private constructor(
 
     operator fun unaryMinus(): Decimal = Decimal(unscaled.negate(), scale)
 
+    /** This value divided by 10^[places], exactly; only the scale changes. */
+    fun movePointLeft(places: Int): Decimal =
+        Decimal(unscaled, checkScale(scale.toLong() + places, isZero = sign == 0))
+
     fun abs(): Decimal = if (sign < 0) -this else this
 
     /** Divides and rounds the quotient to [scale] digits after the point. */

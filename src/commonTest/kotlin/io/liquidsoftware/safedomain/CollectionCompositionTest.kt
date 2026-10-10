@@ -3,14 +3,14 @@ package io.liquidsoftware.safedomain
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.NonEmptySet
-import arrow.core.getOrElse
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.collections.BoundedList
-import io.liquidsoftware.safedomain.collections.NonEmptyLists
-import io.liquidsoftware.safedomain.collections.NonEmptySets
+import io.liquidsoftware.safedomain.collections.NonEmptyError
+
 import io.liquidsoftware.safedomain.collections.UniqueList
+import io.liquidsoftware.safedomain.collections.factory
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,7 +34,7 @@ class CollectionCompositionTest {
                 UniqueList.Error.Duplicate(0, 1), UniqueList.Error.Duplicate(0, 2),
             )),
             DispatchPlan.Error.InvalidAttachments(BoundedList.Error.TooSmall(1, 0)),
-            DispatchPlan.Error.InvalidChannels(NonEmptySets.Error.Empty),
+            DispatchPlan.Error.InvalidChannels(NonEmptyError.Empty),
         )), result)
     }
 
@@ -44,7 +44,7 @@ class CollectionCompositionTest {
             DispatchPlan.from(DispatchInput(emptyList(), emptyList(), listOf("a.pdf"), listOf("email")))
         }
         assertEquals(Either.Left(nonEmptyListOf(
-            DispatchPlan.Error.InvalidRecipients(NonEmptyLists.Error.Empty),
+            DispatchPlan.Error.InvalidRecipients(NonEmptyError.Empty),
         )), result)
     }
 
@@ -81,20 +81,17 @@ private class DispatchPlan private constructor(
 ) {
     sealed interface Error {
         data class InvalidRecipient(val index: Int, val cause: NonBlankString.Error) : Error
-        data class InvalidRecipients(val cause: NonEmptyLists.Error) : Error
+        data class InvalidRecipients(val cause: NonEmptyError) : Error
         data class InvalidLabels(val causes: NonEmptyList<UniqueList.Error>) : Error
         data class InvalidAttachments(val cause: BoundedList.Error) : Error
-        data class InvalidChannels(val cause: NonEmptySets.Error) : Error
+        data class InvalidChannels(val cause: NonEmptyError) : Error
     }
 
     companion object : ValueFactory<DispatchInput, NonEmptyList<Error>, DispatchPlan> {
-        private val recipients = NonEmptyLists.factory<NonBlankString>()
+        private val recipients = NonEmptyList.factory<NonBlankString>()
         private val labels = UniqueList.factory<String>()
-        private val channels = NonEmptySets.factory<String>()
-        private val attachments = BoundedList.factory<String>(
-            either { BoundedList.Bounds.from(BoundedList.Bounds.Input(1, 2)) }
-                .getOrElse { error("Invalid developer-supplied attachment bounds: $it") },
-        )
+        private val channels = NonEmptySet.factory<String>()
+        private val attachments = BoundedList.factory<String>(1..2)
 
         context(raise: Raise<NonEmptyList<Error>>)
         override fun from(value: DispatchInput): DispatchPlan = validate {

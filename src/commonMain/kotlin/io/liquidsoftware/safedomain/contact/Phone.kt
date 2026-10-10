@@ -14,7 +14,10 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class Phone private constructor(val value: String) {
     sealed interface Error {
-        data class InvalidFormat(val value: String) : Error
+        /** [toString] redacts [value], so a rejected number does not reach logs. */
+        data class InvalidFormat(val value: String) : Error {
+            override fun toString(): String = "InvalidFormat(value=<redacted>)"
+        }
     }
 
     companion object : ValueFactory<String, Error, Phone> {

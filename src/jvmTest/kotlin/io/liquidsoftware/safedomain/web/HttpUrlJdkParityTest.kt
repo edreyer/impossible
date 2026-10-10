@@ -15,7 +15,7 @@ class HttpUrlJdkParityTest {
         if (!uri.scheme.equals("http", true) && !uri.scheme.equals("https", true)) return "UnsupportedScheme(${uri.scheme})"
         val server = try { uri.parseServerAuthority() } catch (_: URISyntaxException) { return "InvalidSyntax" }
         if (server.isOpaque || server.host == null) return "MissingHost"
-        if (server.port != -1 && server.port !in 0..65535) return "InvalidPort(${server.port})"
+        if (server.port != -1 && server.port !in 1..65535) return "InvalidPort(${server.port})"
         return "Ok(${server.host},${server.port.takeIf { it != -1 }},${server.rawPath},${server.rawQuery},${server.rawFragment},${server.rawUserInfo})"
     }
 
@@ -23,9 +23,9 @@ class HttpUrlJdkParityTest {
         is Either.Right -> with(result.value) { "Ok($host,$port,$path,$query,$fragment,$userInfo)" }
         is Either.Left -> when (val error = result.value) {
             is HttpUrl.Error.InvalidSyntax -> "InvalidSyntax"
-            HttpUrl.Error.NotAbsolute -> "NotAbsolute"
+            is HttpUrl.Error.NotAbsolute -> "NotAbsolute"
             is HttpUrl.Error.UnsupportedScheme -> "UnsupportedScheme(${error.scheme})"
-            HttpUrl.Error.MissingHost -> "MissingHost"
+            is HttpUrl.Error.MissingHost -> "MissingHost"
             is HttpUrl.Error.InvalidPort -> "InvalidPort(${error.port})"
         }
     }

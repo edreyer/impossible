@@ -33,6 +33,23 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field(
     onError: (Error) -> Mapped,
 ): Validated<Value> = scope.accumulating { from(value, onError) }
 
+/**
+ * Validates one [required] field, mapping absence with [onMissing] and an invalid
+ * value with [onError].
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<Mapped>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.field(
+    value: Input,
+    onMissing: () -> Mapped,
+    onError: (Error) -> Mapped,
+): Validated<Value> = field(value) { failure ->
+    when (failure) {
+        RequiredError.Missing -> onMissing()
+        is RequiredError.Invalid -> onError(failure.cause)
+    }
+}
+
 /** Validates one field from an accumulating factory, mapping each nested error into the parent list. */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Mapped>)

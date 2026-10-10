@@ -15,6 +15,12 @@ their domain names, policies, authorization decisions, and workflows.
   details where no meaningful state distinction is lost.
 - Treat nullable types as a last resort in state-machine plumbing. Do not use
   `null` to encode control flow when explicit states express the meaning.
+- Opt into optionality explicitly with `Factory.optional()` (null stays null,
+  everything else is fully validated, blank is never treated as absent). Turn
+  nullable boundary input into required domain values with `Factory.required()`
+  and a typed missing error, never `!!` or a silent default. When absence has
+  meaning, or at least one of several values must be present, use a sealed type
+  or Arrow's `Ior` instead of nullable fields.
 - Make illegal states unrepresentable where practical. Validate untrusted
   input at boundaries, then construct types that enforce their invariants.
 - Use typed results for expected validation, authorization, capability, and
@@ -69,7 +75,8 @@ their domain names, policies, authorization decisions, and workflows.
 - Shared construction contracts (`ValueFactory`, the `validate` DSL) live in
   the root package `io.liquidsoftware.safedomain`.
 - Each value type lives in the domain subpackage it belongs to: `text`,
-  `contact`, `numeric`, `money`, `time`, `identity`, `web`, or `collections`.
+  `contact`, `numeric`, `money`, `time`, `locale`, `identity`, `web`, or
+  `collections`.
   Add a new subpackage only when a type fits none of them.
 - Keep `internal` helpers in the package of the types that use them.
 - Mirror the main package in tests. Cross-cutting composition and factory tests
@@ -84,7 +91,13 @@ their domain names, policies, authorization decisions, and workflows.
 - Document the exact invariant, accepted boundaries, normalization, and equality
   semantics. Do not silently trim, normalize, clamp, or repair input.
 - Keep errors specific to each type. Add distinctions only when they carry
-  meaning for callers.
+  meaning for callers. Redact raw personal data (such as email addresses and
+  phone numbers) from error `toString` output.
+- Treat programmer configuration (bounds, ranges, literals) differently from
+  untrusted input: take plain Kotlin values such as `IntRange` and `require`
+  validity, and use `fromTrusted` only for literals and already validated data.
+- Do not model "past" or "future" as stored value types; check relationships to
+  the current time through a `Clock` context parameter and store the plain value.
 - Keep operations invariant-preserving. If arithmetic is introduced, handle
   overflow and invalid results explicitly through precise typed failures.
 - Do not duplicate Arrow's result types or build a generic validation framework.

@@ -15,6 +15,9 @@ class Percentage private constructor(val value: Decimal) : Comparable<Percentage
         data class OutOfRange(val value: Decimal) : Error
     }
 
+    /** The same value as a ratio, exactly: 12.5% is 0.125. */
+    val ratio: Decimal get() = value.movePointLeft(2)
+
     override fun compareTo(other: Percentage): Int = value.compareTo(other.value)
 
     override fun equals(other: Any?): Boolean =

@@ -5,7 +5,6 @@ import arrow.core.NonEmptyList
 import arrow.core.nonEmptyListOf
 import arrow.core.raise.Raise
 import arrow.core.raise.either
-import io.liquidsoftware.safedomain.numeric.NonNegativeInt
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
@@ -23,7 +22,7 @@ class AccumulatingValueFactoryTest {
             Either.Left(nonEmptyListOf(
                 DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
                 DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                DemoOrder.Error.InvalidRevision(NonNegativeInt.Error.Negative(-1)),
+                DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
             )),
             result,
         )
@@ -32,9 +31,9 @@ class AccumulatingValueFactoryTest {
     @Test
     fun `reports only the invalid field when the other fields are valid`() {
         val cases = listOf(
-            DemoOrderInput("", 1, 0) to DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
-            DemoOrderInput("ORD-1", 0, 0) to DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-            DemoOrderInput("ORD-1", 1, -1) to DemoOrder.Error.InvalidRevision(NonNegativeInt.Error.Negative(-1)),
+            DemoOrderInput("", 1, 1) to DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
+            DemoOrderInput("ORD-1", 0, 1) to DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
+            DemoOrderInput("ORD-1", 1, -1) to DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
         )
 
         for ((input, expectedError) in cases) {
@@ -49,13 +48,13 @@ class AccumulatingValueFactoryTest {
     @Test
     fun `constructs an order from all valid fields and preserves their values`() {
         val result: Either<NonEmptyList<DemoOrder.Error>, DemoOrder> = either {
-            DemoOrder.from(DemoOrderInput(reference = " ORD-1 ", quantity = 1, revision = 0))
+            DemoOrder.from(DemoOrderInput(reference = " ORD-1 ", quantity = 1, revision = 1))
         }
         val order = assertIs<Either.Right<DemoOrder>>(result).value
 
         assertEquals(" ORD-1 ", order.reference.value)
         assertEquals(1, order.quantity.value)
-        assertEquals(0, order.revision.value)
+        assertEquals(1, order.revision.value)
     }
 
     @Test
@@ -72,7 +71,7 @@ class AccumulatingValueFactoryTest {
                 DemoCheckout.Error.InvalidOrder(nonEmptyListOf(
                     DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
                     DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                    DemoOrder.Error.InvalidRevision(NonNegativeInt.Error.Negative(-1)),
+                    DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
                 )),
                 DemoCheckout.Error.InvalidCustomer(NonBlankString.Error.Blank),
             )),
@@ -93,7 +92,7 @@ class AccumulatingValueFactoryTest {
             Either.Left(DemoCheckout.Error.InvalidOrder(nonEmptyListOf(
                 DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
                 DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                DemoOrder.Error.InvalidRevision(NonNegativeInt.Error.Negative(-1)),
+                DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
             ))),
             result,
         )
@@ -122,12 +121,12 @@ private data class DemoOrderInput(val reference: String, val quantity: Int, val 
 private class DemoOrder private constructor(
     val reference: NonBlankString,
     val quantity: PositiveInt,
-    val revision: NonNegativeInt,
+    val revision: PositiveInt,
 ) {
     sealed interface Error {
         data class InvalidReference(val cause: NonBlankString.Error) : Error
         data class InvalidQuantity(val cause: PositiveInt.Error) : Error
-        data class InvalidRevision(val cause: NonNegativeInt.Error) : Error
+        data class InvalidRevision(val cause: PositiveInt.Error) : Error
     }
 
     companion object : ValueFactory<DemoOrderInput, NonEmptyList<Error>, DemoOrder> {
@@ -135,7 +134,7 @@ private class DemoOrder private constructor(
         override fun from(value: DemoOrderInput): DemoOrder = validate {
             val reference by NonBlankString.field(value.reference, Error::InvalidReference)
             val quantity by PositiveInt.field(value.quantity, Error::InvalidQuantity)
-            val revision by NonNegativeInt.field(value.revision, Error::InvalidRevision)
+            val revision by PositiveInt.field(value.revision, Error::InvalidRevision)
             DemoOrder(reference, quantity, revision)
         }
     }

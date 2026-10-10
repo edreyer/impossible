@@ -20,55 +20,6 @@ class DateTypesTest {
     private val latest = LocalDate(999_999, 12, 31)
 
     @Test
-    fun `future dates are strictly after an explicit reference date`() {
-        for (date in listOf(today.minus(DatePeriod(days = 1)), today)) {
-            assertEquals(Either.Left(FutureDate.Error.NotFuture(date, today)),
-                either<FutureDate.Error, FutureDate> { FutureDate.from(FutureDate.Input(date, today)) })
-        }
-        val future = assertIs<Either.Right<FutureDate>>(either {
-            FutureDate.from(FutureDate.Input(today.plus(DatePeriod(days = 1)), today))
-        }).value
-        assertEquals(today.plus(DatePeriod(days = 1)), future.value)
-        assertEquals(today, future.asOf)
-    }
-
-    @Test
-    fun `past dates are strictly before an explicit reference date`() {
-        for (date in listOf(today, today.plus(DatePeriod(days = 1)))) {
-            assertEquals(Either.Left(PastDate.Error.NotPast(date, today)),
-                either<PastDate.Error, PastDate> { PastDate.from(PastDate.Input(date, today)) })
-        }
-        val past = assertIs<Either.Right<PastDate>>(either {
-            PastDate.from(PastDate.Input(today.minus(DatePeriod(days = 1)), today))
-        }).value
-        assertEquals(today.minus(DatePeriod(days = 1)), past.value)
-        assertEquals(today, past.asOf)
-    }
-
-    @Test
-    fun `relative dates support extreme dates without date arithmetic`() {
-        val result = either {
-            assertEquals(latest, FutureDate.from(FutureDate.Input(latest, earliest)).value)
-            assertEquals(earliest, PastDate.from(PastDate.Input(earliest, latest)).value)
-        }
-        assertEquals(Either.Right(Unit), result)
-    }
-
-    @Test
-    fun `relative date equality includes the validation reference date`() {
-        val result = either {
-            val future = FutureDate.from(FutureDate.Input(today.plus(DatePeriod(days = 1)), today))
-            val same = FutureDate.from(FutureDate.Input(today.plus(DatePeriod(days = 1)), today))
-            val earlierReference = FutureDate.from(FutureDate.Input(today.plus(DatePeriod(days = 1)), today.minus(DatePeriod(days = 1))))
-            assertEquals(2, setOf(future, same, earlierReference).size)
-            val past = PastDate.from(PastDate.Input(today.minus(DatePeriod(days = 1)), today))
-            assertEquals(past, PastDate.from(PastDate.Input(today.minus(DatePeriod(days = 1)), today)))
-            assertEquals(past.hashCode(), PastDate.from(PastDate.Input(today.minus(DatePeriod(days = 1)), today)).hashCode())
-        }
-        assertEquals(Either.Right(Unit), result)
-    }
-
-    @Test
     fun `range rejects reversed endpoints with a precise relationship failure`() {
         assertEquals(Either.Left(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
             either<DateRange.Error, DateRange> { DateRange.from(DateRange.Input(today, today.minus(DatePeriod(days = 1)))) })
@@ -112,5 +63,41 @@ class DateTypesTest {
         data class InvalidPeriod(val cause: DateRange.Error)
         assertEquals(Either.Left(InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1))))),
             either<InvalidPeriod, DateRange> { DateRange.from(DateRange.Input(today, today.minus(DatePeriod(days = 1))), onError = ::InvalidPeriod) })
+    }
+
+    @Test
+    fun `range counts and lists its dates including both endpoints`() {
+        val result = either {
+            val range = DateRange.from(DateRange.Input(LocalDate(2026, 2, 27), LocalDate(2026, 3, 2)))
+            assertEquals(4L, range.days)
+            assertEquals(
+                listOf(LocalDate(2026, 2, 27), LocalDate(2026, 2, 28), LocalDate(2026, 3, 1), LocalDate(2026, 3, 2)),
+                range.dates().toList(),
+            )
+            val oneDay = DateRange.from(DateRange.Input(today, today))
+            assertEquals(1L, oneDay.days)
+            assertEquals(listOf(today), oneDay.dates().toList())
+            assertEquals(latest, DateRange.from(DateRange.Input(latest, latest)).dates().single())
+        }
+        assertEquals(Either.Right(Unit), result)
+    }
+
+    @Test
+    fun `effective periods make the missing end date an explicit state`() {
+        val result = either {
+            val from = EffectivePeriod.OpenEnded(today)
+            val bounded = EffectivePeriod.Bounded(DateRange.from(DateRange.Input(today, today.plus(DatePeriod(days = 2)))))
+            val before = EffectivePeriod.Bounded(DateRange.from(DateRange.Input(earliest, today.minus(DatePeriod(days = 1)))))
+            assertTrue(latest in from)
+            assertFalse(today.minus(DatePeriod(days = 1)) in from)
+            assertFalse(today.plus(DatePeriod(days = 3)) in bounded)
+            assertTrue(from.overlaps(bounded))
+            assertTrue(bounded.overlaps(from))
+            assertFalse(from.overlaps(before))
+            assertFalse(before.overlaps(from))
+            assertTrue(from.overlaps(EffectivePeriod.OpenEnded(latest)))
+            assertEquals(today, bounded.start)
+        }
+        assertEquals(Either.Right(Unit), result)
     }
 }

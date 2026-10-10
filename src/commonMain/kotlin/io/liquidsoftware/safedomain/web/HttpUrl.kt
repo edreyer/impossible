@@ -6,7 +6,7 @@ import arrow.core.raise.ensureNotNull
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
- * An absolute HTTP/HTTPS URL with a server host and an optional port in 0..65535.
+ * An absolute HTTP/HTTPS URL with a server host and an optional port in 1..65535.
  * Parsed in common code following RFC 3986 and the JDK's `java.net.URI` rules, so
  * validation is identical on every platform. Allows user information, query, and
  * fragment; [value] preserves the input exactly, without trimming, encoding, or path
@@ -27,9 +27,9 @@ class HttpUrl private constructor(
 ) {
     sealed interface Error {
         data class InvalidSyntax(val value: String) : Error
-        data object NotAbsolute : Error
+        data class NotAbsolute(val value: String) : Error
         data class UnsupportedScheme(val scheme: String) : Error
-        data object MissingHost : Error
+        data class MissingHost(val value: String) : Error
         data class InvalidPort(val port: Int) : Error
     }
 
@@ -83,11 +83,11 @@ class HttpUrl private constructor(
             raise.ensure(scheme == null || beforeFragment.length > scheme.length + 1) { syntaxError }
             raise.ensure(authority != "" || path.isNotEmpty() || query != null || fragment != null) { syntaxError }
 
-            raise.ensure(scheme != null) { Error.NotAbsolute }
+            raise.ensure(scheme != null) { Error.NotAbsolute(value) }
             raise.ensure(scheme.equals("http", ignoreCase = true) || scheme.equals("https", ignoreCase = true)) {
                 Error.UnsupportedScheme(scheme)
             }
-            raise.ensure(!authority.isNullOrEmpty()) { Error.MissingHost }
+            raise.ensure(!authority.isNullOrEmpty()) { Error.MissingHost(value) }
 
             val at = authority.lastIndexOf('@')
             val userInfo = if (at < 0) null else authority.substring(0, at)
@@ -113,7 +113,7 @@ class HttpUrl private constructor(
                 raise.ensure(portText.all { it in '0'..'9' }) { syntaxError }
                 raise.ensureNotNull(portText.toIntOrNull()) { syntaxError }
             }
-            raise.ensure(port == null || port in 0..65535) { Error.InvalidPort(port) }
+            raise.ensure(port == null || port in 1..65535) { Error.InvalidPort(port) }
 
             return HttpUrl(value, scheme, userInfo, host, port, path, query, fragment)
         }

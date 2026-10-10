@@ -11,7 +11,7 @@ class HttpUrlTest {
     @Test
     fun `accepts absolute HTTP and HTTPS addresses including IP hosts and explicit ports`() {
         for (raw in listOf("https://example.com", "HTTP://Example.com:8080/a%20b?q=1#part", "http://localhost",
-            "https://127.0.0.1:0/", "http://[::1]:65535/", "https://xn--bcher-kva.example/é",
+            "https://127.0.0.1:1/", "http://[::1]:65535/", "https://xn--bcher-kva.example/é",
             "https://user:pass@example.com/path", "https://example.com./")) {
             val url = assertIs<Either.Right<HttpUrl>>(either { HttpUrl.from(raw) }).value
             assertEquals(raw, url.value)
@@ -22,7 +22,7 @@ class HttpUrlTest {
     fun `rejects relative addresses and other schemes with precise errors`() {
         for (raw in listOf("", "relative/path", "//example.com/path")) {
             val result: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
-            assertEquals(Either.Left(HttpUrl.Error.NotAbsolute), result)
+            assertEquals(Either.Left(HttpUrl.Error.NotAbsolute(raw)), result)
         }
         for ((raw, scheme) in listOf("ftp://example.com" to "ftp", "mailto:a@example.com" to "mailto", "file:///tmp/a" to "file")) {
             val result: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
@@ -34,7 +34,7 @@ class HttpUrlTest {
     fun `HTTP scheme alone does not establish a server host`() {
         for (raw in listOf("https:opaque", "https:/path", "https:///path")) {
             val result: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
-            assertEquals(Either.Left(HttpUrl.Error.MissingHost), result)
+            assertEquals(Either.Left(HttpUrl.Error.MissingHost(raw)), result)
         }
     }
 
@@ -50,7 +50,7 @@ class HttpUrlTest {
 
     @Test
     fun `rejects numeric ports outside the unsigned sixteen bit range`() {
-        for (port in listOf(65536, 99999)) {
+        for (port in listOf(0, 65536, 99999)) {
             val result: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from("https://example.com:$port/") }
             assertEquals(Either.Left(HttpUrl.Error.InvalidPort(port)), result)
         }
@@ -77,7 +77,7 @@ class HttpUrlTest {
         val result: Either<InvalidEndpoint, HttpUrl> = either {
             HttpUrl.from("relative", onError = ::InvalidEndpoint)
         }
-        assertEquals(Either.Left(InvalidEndpoint(HttpUrl.Error.NotAbsolute)), result)
+        assertEquals(Either.Left(InvalidEndpoint(HttpUrl.Error.NotAbsolute("relative"))), result)
     }
 
     @Test

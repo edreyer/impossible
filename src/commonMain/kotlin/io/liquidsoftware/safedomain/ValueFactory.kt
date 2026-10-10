@@ -1,6 +1,9 @@
 package io.liquidsoftware.safedomain
 
+import arrow.core.getOrElse
 import arrow.core.raise.Raise
+import arrow.core.raise.ensureNotNull
+import arrow.core.raise.either
 import arrow.core.raise.withError
 
 /**
@@ -24,3 +27,50 @@ interface ValueFactory<in Input, out Error, out Value> {
     fun <MappedError> from(value: Input, onError: (Error) -> MappedError): Value =
         raise.withError(onError) { from(value) }
 }
+
+/**
+ * Lifts this factory to nullable input: null becomes a null value, and any other input
+ * is validated in full (so blank text is still rejected, never treated as absent).
+ * This is the explicit way to model a genuinely optional field; the result type is
+ * nullable, so callers keep Kotlin's null checks.
+ */
+fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.optional(): ValueFactory<Input?, Error, Value?> {
+    val factory = this
+    return object : ValueFactory<Input?, Error, Value?> {
+        context(raise: Raise<Error>)
+        override fun from(value: Input?): Value? = value?.let { factory.from(it) }
+    }
+}
+
+/** Why a [required] value could not be constructed. */
+sealed interface RequiredError<out Error> {
+    /** The input was null. */
+    data object Missing : RequiredError<Nothing>
+
+    /** The input was present but invalid. */
+    data class Invalid<out Error>(val cause: Error) : RequiredError<Error>
+}
+
+/**
+ * Lifts this factory to nullable input that must be present: null raises
+ * [RequiredError.Missing], so nullable boundary data (a DTO field, a form value)
+ * becomes a non-null domain value without `!!` or a silent default.
+ */
+fun <Input : Any, Error, Value> ValueFactory<Input, Error, Value>.required(): ValueFactory<Input?, RequiredError<Error>, Value> {
+    val factory = this
+    return object : ValueFactory<Input?, RequiredError<Error>, Value> {
+        context(raise: Raise<RequiredError<Error>>)
+        override fun from(value: Input?): Value {
+            val present = raise.ensureNotNull(value) { RequiredError.Missing }
+            return factory.from(present) { RequiredError.Invalid(it) }
+        }
+    }
+}
+
+/**
+ * Constructs a value from input the caller already knows is valid: a literal, a
+ * constant, or data validated earlier. Invalid input is a programmer error and throws
+ * [IllegalArgumentException]. Never use this for untrusted input.
+ */
+fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromTrusted(value: Input): Value =
+    either { from(value) }.getOrElse { throw IllegalArgumentException("Invalid trusted input: $it") }

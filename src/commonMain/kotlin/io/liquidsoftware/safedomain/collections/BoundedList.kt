@@ -5,40 +5,12 @@ import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
- * An ordered list whose size is within the inclusive [bounds]. Duplicates are allowed.
+ * An ordered list whose size is within the inclusive size [bounds]. Duplicates are allowed.
  *
  * [value] is an unmodifiable snapshot; elements are retained as supplied.
  * Equality and hashing include the ordered elements and bounds within this type.
  */
-class BoundedList<A> private constructor(val value: List<A>, val bounds: Bounds) : Iterable<A> {
-    /** Validated inclusive size bounds: 0 <= [minimum] <= [maximum]. */
-    class Bounds private constructor(val minimum: Int, val maximum: Int) {
-        data class Input(val minimum: Int, val maximum: Int)
-
-        sealed interface Error {
-            data class NegativeMinimum(val minimum: Int) : Error
-            data class MaximumBelowMinimum(val minimum: Int, val maximum: Int) : Error
-        }
-
-        override fun equals(other: Any?): Boolean =
-            other is Bounds && minimum == other.minimum && maximum == other.maximum
-
-        override fun hashCode(): Int = 31 * minimum + maximum
-
-        override fun toString(): String = "Bounds(minimum=$minimum, maximum=$maximum)"
-
-        companion object : ValueFactory<Input, Error, Bounds> {
-            context(raise: Raise<Error>)
-            override fun from(value: Input): Bounds {
-                raise.ensure(value.minimum >= 0) { Error.NegativeMinimum(value.minimum) }
-                raise.ensure(value.maximum >= value.minimum) {
-                    Error.MaximumBelowMinimum(value.minimum, value.maximum)
-                }
-                return Bounds(value.minimum, value.maximum)
-            }
-        }
-    }
-
+class BoundedList<A> private constructor(val value: List<A>, val bounds: IntRange) : Iterable<A> {
     sealed interface Error {
         data class TooSmall(val minimum: Int, val actual: Int) : Error
         data class TooLarge(val maximum: Int, val actual: Int) : Error
@@ -69,15 +41,24 @@ class BoundedList<A> private constructor(val value: List<A>, val bounds: Bounds)
     override fun toString(): String = "BoundedList(value=$value, bounds=$bounds)"
 
     companion object {
-        fun <A> factory(bounds: Bounds): ValueFactory<Iterable<A>, Error, BoundedList<A>> =
-            object : ValueFactory<Iterable<A>, Error, BoundedList<A>> {
+        /**
+         * Returns a factory accepting sizes within [bounds], such as `1..50`. Bounds are
+         * programmer configuration, so an empty range or a negative minimum throws
+         * [IllegalArgumentException].
+         */
+        fun <A> factory(bounds: IntRange): ValueFactory<Iterable<A>, Error, BoundedList<A>> {
+            require(!bounds.isEmpty() && bounds.first >= 0) {
+                "Size bounds must be a non-empty range of non-negative sizes: $bounds"
+            }
+            return object : ValueFactory<Iterable<A>, Error, BoundedList<A>> {
                 context(raise: Raise<Error>)
                 override fun from(value: Iterable<A>): BoundedList<A> {
                     val snapshot = value.immutableListSnapshot()
-                    raise.ensure(snapshot.size >= bounds.minimum) { Error.TooSmall(bounds.minimum, snapshot.size) }
-                    raise.ensure(snapshot.size <= bounds.maximum) { Error.TooLarge(bounds.maximum, snapshot.size) }
+                    raise.ensure(snapshot.size >= bounds.first) { Error.TooSmall(bounds.first, snapshot.size) }
+                    raise.ensure(snapshot.size <= bounds.last) { Error.TooLarge(bounds.last, snapshot.size) }
                     return BoundedList(snapshot, bounds)
                 }
             }
+        }
     }
 }

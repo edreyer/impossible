@@ -11,7 +11,6 @@ import kotlin.uuid.Uuid
 class TypedIdTest {
     private interface CustomerTag
     private interface OrderTag
-    private interface ItemTag<T>
     private val raw = "550e8400-e29b-41d4-a716-446655440000"
     private val customers = TypedId.factory<CustomerTag>()
     private val orders = TypedId.factory<OrderTag>()
@@ -43,32 +42,28 @@ class TypedIdTest {
             assertEquals(first.hashCode(), second.hashCode())
             assertEquals(1, setOf(first, second).size)
             assertEquals("customer", mapOf(first to "customer")[second])
-            assertEquals(first, TypedId.create<CustomerTag>(Uuid.parse(raw)))
+            assertEquals(first, TypedId.of<CustomerTag>(Uuid.parse(raw)))
         }
         assertEquals(Either.Right(Unit), result)
     }
 
     @Test
-    fun `different tags remain unequal even after identifiers are placed in a heterogeneous collection`() {
+    fun `tags are compile-time only, so the same UUID under different tags is equal at runtime`() {
         val result = either {
             val customer = customers.from(raw)
             val order = orders.from(raw)
-            assertNotEquals(customer as Any, order as Any)
-            assertEquals(2, setOf<Any>(customer, order).size)
+            assertEquals(customer as Any, order as Any)
+            assertEquals(customer.value, order.value)
         }
         assertEquals(Either.Right(Unit), result)
     }
 
     @Test
-    fun `generic marker type arguments also participate in runtime identity`() {
-        val result = either {
-            val text = TypedId.factory<ItemTag<String>>().from(raw)
-            val number = TypedId.factory<ItemTag<Int>>().from(raw)
-            assertNotEquals(text as Any, number as Any)
-            assertEquals(2, setOf<Any>(text, number).size)
-            assertEquals(text, TypedId.create<ItemTag<String>>(Uuid.parse(raw)))
-        }
-        assertEquals(Either.Right(Unit), result)
+    fun `random ids are distinct version 4 UUIDs`() {
+        val first = TypedId.random<CustomerTag>()
+        val second = TypedId.random<CustomerTag>()
+        assertNotEquals(first, second)
+        assertEquals('4', first.value.toString()[14])
     }
 
     @Test
