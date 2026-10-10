@@ -307,8 +307,10 @@ when stored in a heterogeneous collection.
 `TypedId.factory<Tag>()` returns a reusable `ValueFactory` with the usual
 `from(raw, onError = ...)` overload. Input must have the full `8-4-4-4-12` UUID
 hexadecimal shape. Uppercase hexadecimal is accepted; shortened forms such as
-`1-1-1-1-1`, braces, and whitespace are rejected. The stored `UUID` renders
-canonical lowercase. `TypedId.create<Tag>(uuid)` wraps an already typed UUID.
+`1-1-1-1-1`, braces, and whitespace are rejected. The stored `Uuid` renders
+canonical lowercase. `TypedId.create<Tag>(uuid)` wraps an already typed
+`kotlin.uuid.Uuid`; code holding a `java.util.UUID` can convert it with
+the standard library's `toKotlinUuid()`.
 Nil UUIDs and all versions are accepted; entity existence and additional ID
 policies belong to the consuming domain.
 

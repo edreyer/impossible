@@ -2,11 +2,11 @@ package io.liquidsoftware.safedomain.identity
 
 import arrow.core.Either
 import arrow.core.raise.either
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
+import kotlin.uuid.Uuid
 
 class TypedIdTest {
     private interface CustomerTag
@@ -20,7 +20,7 @@ class TypedIdTest {
     fun `typed ID accepts canonical UUID shape and normalizes hexadecimal case`() {
         for (input in listOf(raw, raw.uppercase(), "00000000-0000-0000-0000-000000000000")) {
             val id = assertIs<Either.Right<TypedId<CustomerTag>>>(either { customers.from(input) }).value
-            assertEquals(UUID.fromString(input), id.value)
+            assertEquals(Uuid.parse(input), id.value)
         }
         val id = assertIs<Either.Right<TypedId<CustomerTag>>>(either { customers.from(raw.uppercase()) }).value
         assertEquals(raw, id.value.toString())
@@ -43,7 +43,7 @@ class TypedIdTest {
             assertEquals(first.hashCode(), second.hashCode())
             assertEquals(1, setOf(first, second).size)
             assertEquals("customer", mapOf(first to "customer")[second])
-            assertEquals(first, TypedId.create<CustomerTag>(UUID.fromString(raw)))
+            assertEquals(first, TypedId.create<CustomerTag>(Uuid.parse(raw)))
         }
         assertEquals(Either.Right(Unit), result)
     }
@@ -66,7 +66,7 @@ class TypedIdTest {
             val number = TypedId.factory<ItemTag<Int>>().from(raw)
             assertNotEquals(text as Any, number as Any)
             assertEquals(2, setOf<Any>(text, number).size)
-            assertEquals(text, TypedId.create<ItemTag<String>>(UUID.fromString(raw)))
+            assertEquals(text, TypedId.create<ItemTag<String>>(Uuid.parse(raw)))
         }
         assertEquals(Either.Right(Unit), result)
     }

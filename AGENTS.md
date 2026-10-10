@@ -88,6 +88,11 @@ their domain names, policies, authorization decisions, and workflows.
 - Keep operations invariant-preserving. If arithmetic is introduced, handle
   overflow and invalid results explicitly through precise typed failures.
 - Do not duplicate Arrow's result types or build a generic validation framework.
+- Prefer Kotlin standard library types over Java equivalents where Kotlin has
+  one (for example `kotlin.uuid.Uuid` instead of `java.util.UUID`). Keep JDK
+  types where the standard library has no equivalent (`BigDecimal`,
+  `java.time`, `URI`, `java.util.Currency`), and do not add a dependency just
+  to replace one without confirmation.
 - Do not add serialization, framework integrations, arithmetic APIs, or new
   types speculatively.
 
