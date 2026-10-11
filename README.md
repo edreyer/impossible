@@ -1,4 +1,6 @@
-# safe-domain
+# impossible
+
+Make invalid domain states impossible to represent.
 
 Small, immutable Kotlin value types for common business invariants, with
 precise validation failures expressed through Arrow's `Raise` DSL.
@@ -806,7 +808,7 @@ shows the whole flow.
 
 ## Property-based testing
 
-The `safe-domain-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
+The `impossible-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
 generators for every type, so you can property-test the business types you build
 from them. Each generator is an extension on the type's companion and produces
 values through the type's real factory, so a generated value has passed the same
@@ -891,7 +893,7 @@ so validation behaves the same on every platform. Dependencies:
   npm dependency that gives `TimeZoneId` the IANA database there. It is the newest
   release compatible with the `@js-joda/core` version kotlinx-datetime uses.
 - [kotest-property 6.2.5](https://kotest.io/docs/proptest/property-based-testing.html),
-  an API dependency of `safe-domain-testing` only; the library itself does not use it.
+  an API dependency of `impossible-testing` only; the library itself does not use it.
   That module's tests also use kotlinx-coroutines-test 1.10.2 to run suspending checks.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:

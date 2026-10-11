@@ -1,4 +1,4 @@
-# safe-domain
+# impossible
 
 Build a small Kotlin library of safe, commonly useful business value types.
 Shared types enforce explicit, reusable invariants; consuming applications own
@@ -134,7 +134,7 @@ their domain names, policies, authorization decisions, and workflows.
 - Test actual contracts: invalid inputs, valid boundaries, exact preservation,
   value semantics, and typed failure composition. Keep tests deterministic.
 - Property tests and the published kotest generators live in the
-  `safe-domain-testing` module (`testing/`). Every new type gets a generator there,
+  `impossible-testing` module (`testing/`). Every new type gets a generator there,
   built through the type's real factory, and joins the relevant law tests
   (`RoundTripLawsTest`, `ParserLawsTest`, and so on). Keep their fixed seed.
 - On Kotlin/JS, `Regex.matches` takes the first match and checks its length without
