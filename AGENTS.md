@@ -137,6 +137,11 @@ their domain names, policies, authorization decisions, and workflows.
   `impossible-testing` module (`testing/`). Every new type gets a generator there,
   built through the type's real factory, and joins the relevant law tests
   (`RoundTripLawsTest`, `ParserLawsTest`, and so on). Keep their fixed seed.
+- Every new type gets a serializer in `impossible-serialization` (`serialization/`)
+  built with `asSerializer`, so decoding runs the real factory; add it to
+  `safeDomainSerializersModule` when it needs no configuration, and to
+  `SerializationLawsTest`. Never decode through `fromTrusted`, never write a
+  `Secret`, and never quote rejected input in a serialization error.
 - On Kotlin/JS, `Regex.matches` takes the first match and checks its length without
   backtracking to a longer one. End a validation pattern with `$` when an optional
   or alternative part could match a shorter prefix, as `LanguageTag` does.

@@ -806,6 +806,66 @@ plain data; render it as `application/problem+json` with your JSON library.
 [PathValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/PathValidationTest.kt)
 shows the whole flow.
 
+## JSON and other formats
+
+The `impossible-serialization` module (in `serialization/`) has a
+[kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) serializer for
+every type. Decoding runs the type's real factory, so invalid data never becomes a
+value; there is no `fromTrusted` hidden in a decoder.
+
+```kotlin
+@Serializable
+data class Signup(
+    @Serializable(with = EmailSerializer::class) val email: Email,
+    @Serializable(with = SecretSerializer::class) val password: Secret,
+    @Serializable(with = TypedIdSerializer::class) val referrer: TypedId<User>? = null,
+)
+
+try {
+    Json.decodeFromString<Signup>(body)
+} catch (e: InvalidValueException) {
+    e.error     // Email.Error.InvalidFormat, the factory's typed error
+    e.messages  // [ErrorMessage(code = "email.invalid_format", ...)]
+}
+```
+
+Or register `safeDomainSerializersModule` once and mark fields `@Contextual`:
+`Json { serializersModule = safeDomainSerializersModule }`.
+
+| Type | Wire form |
+| --- | --- |
+| Text, contact, locale, web types, `Currency`, `TimeZoneId` | a string |
+| `TypedId` | canonical UUID text |
+| `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt` | a number |
+| `Decimal` and its refinements, `Percentage` | a string such as `"12.30"`, so no platform rounds it through a double |
+| `Money` and its sign refinements | `{"amount": "12.30", "currency": "EUR"}` |
+| `DateRange`, `TimeWindow` | `{"start": ..., "endInclusive": ...}` and `{"start": ..., "endExclusive": ...}` with ISO 8601 text |
+| `PositiveDuration` | ISO 8601 duration text such as `"PT1H30M"` |
+| `GeoPoint` | `{"latitude": 52.37, "longitude": 4.89}` |
+| `UniqueList`, `BoundedList` | an array |
+
+Some things to know:
+- **Failures.** A value the factory rejects throws `InvalidValueException`, a
+  `SerializationException` carrying the typed error and its `ErrorMessages` codes.
+  Data the format cannot read, such as a malformed date, throws a plain
+  `SerializationException`. Neither message quotes the rejected input.
+- **Secrets.** `SecretSerializer` reads secrets but refuses to write one, so a
+  password cannot end up in a response or a log by accident.
+- **Configured types.** `BoundedInt` and `BoundedList` need their bounds, so declare a
+  serializer per use, e.g. `object RatingSerializer : KSerializer<BoundedInt> by BoundedIntSerializer(1..5)`.
+- **`TypedId` and `@Contextual`.** The serialization plugin in Kotlin 2.4.20 crashes on
+  `@Contextual` for a generic value class, so mark `TypedId` fields
+  `@Serializable(with = TypedIdSerializer::class)`.
+- **Your own types.** `asSerializer` turns any `ValueFactory` into a validating
+  serializer: `Sku.asSerializer("com.example.Sku", String.serializer(), Sku::value) { listOf(describe(it)) }`.
+
+A decoder stops at the first invalid field. When a client needs every problem at once,
+decode into a DTO of plain strings and numbers and build the domain value with the
+path-aware helpers under [Field paths, messages, and problem details](#field-paths-messages-and-problem-details).
+[SerializersTest](serialization/src/commonTest/kotlin/io/liquidsoftware/safedomain/serialization/SerializersTest.kt)
+shows each case, and `SerializationLawsTest` checks that every serializer reads back
+what it writes and turns arbitrary text into a value or an `InvalidValueException`.
+
 ## Property-based testing
 
 The `impossible-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
@@ -863,7 +923,8 @@ validation depends on platform data: each target resolves ids with its own time 
 database, so a zone added recently may be known on one platform and not another.
 
 External data, including model-produced structured output, should pass through
-the factories. Future serialization adapters must enforce the same validation.
+the factories. The serializers in `impossible-serialization` do; any other adapter
+must enforce the same validation.
 
 ## Build
 
@@ -895,6 +956,9 @@ so validation behaves the same on every platform. Dependencies:
 - [kotest-property 6.2.5](https://kotest.io/docs/proptest/property-based-testing.html),
   an API dependency of `impossible-testing` only; the library itself does not use it.
   That module's tests also use kotlinx-coroutines-test 1.10.2 to run suspending checks.
+- [kotlinx.serialization 1.11.0](https://github.com/Kotlin/kotlinx.serialization), an
+  API dependency of `impossible-serialization` only (core; its tests use the JSON
+  format). That module applies the Kotlin serialization compiler plugin.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
 `Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,
