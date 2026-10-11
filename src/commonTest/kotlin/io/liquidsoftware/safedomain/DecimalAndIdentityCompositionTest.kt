@@ -21,20 +21,27 @@ class DecimalAndIdentityCompositionTest {
         val result: Either<NonEmptyList<Offer.Error>, Offer> = either {
             Offer.from(OfferInput(Decimal.ZERO, Decimal.parse("-1"), Decimal.parse("101"), "invalid", "relative"))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Offer.Error.InvalidQuantity(PositiveDecimal.Error.NonPositive(Decimal.ZERO)),
-            Offer.Error.InvalidInventory(NonNegativeDecimal.Error.Negative(Decimal.parse("-1"))),
-            Offer.Error.InvalidDiscount(Percentage.Error.OutOfRange(Decimal.parse("101"))),
-            Offer.Error.InvalidCustomer(TypedId.Error.InvalidFormat("invalid")),
-            Offer.Error.InvalidEndpoint(HttpUrl.Error.NotAbsolute("relative")),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Offer.Error.InvalidQuantity(PositiveDecimal.Error.NonPositive(Decimal.ZERO)),
+                    Offer.Error.InvalidInventory(NonNegativeDecimal.Error.Negative(Decimal.parse("-1"))),
+                    Offer.Error.InvalidDiscount(Percentage.Error.OutOfRange(Decimal.parse("101"))),
+                    Offer.Error.InvalidCustomer(TypedId.Error.InvalidFormat("invalid")),
+                    Offer.Error.InvalidEndpoint(HttpUrl.Error.NotAbsolute("relative")),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
     fun `parent constructs all typed fields without dropping decimal precision or endpoint spelling`() {
         val rawId = "550e8400-e29b-41d4-a716-446655440000"
         val result = either {
-            Offer.from(OfferInput(Decimal.parse("2.500"), Decimal.parse("10.00"), Decimal.parse("12.50"), rawId, "HTTPS://Example.com/offers"))
+            Offer.from(
+                OfferInput(Decimal.parse("2.500"), Decimal.parse("10.00"), Decimal.parse("12.50"), rawId, "HTTPS://Example.com/offers"),
+            )
         }
         val offer = assertIs<Either.Right<Offer>>(result).value
         assertEquals(Decimal.parse("2.500"), offer.quantity.value)

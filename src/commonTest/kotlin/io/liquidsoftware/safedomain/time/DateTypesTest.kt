@@ -2,15 +2,14 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.Either
 import arrow.core.raise.either
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DateTypesTest {
     private val today = LocalDate(2026, 10, 5)
@@ -21,8 +20,12 @@ class DateTypesTest {
 
     @Test
     fun `range rejects reversed endpoints with a precise relationship failure`() {
-        assertEquals(Either.Left(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
-            either<DateRange.Error, DateRange> { DateRange.from(DateRange.Input(today, today.minus(DatePeriod(days = 1)))) })
+        assertEquals(
+            Either.Left(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
+            either<DateRange.Error, DateRange> {
+                DateRange.from(DateRange.Input(today, today.minus(DatePeriod(days = 1))))
+            },
+        )
     }
 
     @Test
@@ -61,8 +64,15 @@ class DateTypesTest {
     @Test
     fun `date relationship failures can be mapped without matching error branches`() {
         data class InvalidPeriod(val cause: DateRange.Error)
-        assertEquals(Either.Left(InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1))))),
-            either<InvalidPeriod, DateRange> { DateRange.from(DateRange.Input(today, today.minus(DatePeriod(days = 1))), onError = ::InvalidPeriod) })
+        assertEquals(
+            Either.Left(InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1))))),
+            either<InvalidPeriod, DateRange> {
+                DateRange.from(
+                    DateRange.Input(today, today.minus(DatePeriod(days = 1))),
+                    onError = ::InvalidPeriod,
+                )
+            },
+        )
     }
 
     @Test

@@ -1,3 +1,6 @@
+// Digit ranges and exponent thresholds follow java.math.BigDecimal and read best inline.
+@file:Suppress("MagicNumber")
+
 package io.liquidsoftware.safedomain.numeric
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
@@ -128,10 +131,10 @@ class Decimal private constructor(
         }
     }
 
-    /** A scale-independent hash matching numeric comparison, including extreme scales. */
     /** The unscaled value as a [Long], or null when it does not fit. */
     internal fun unscaledLongOrNull(): Long? = unscaled.toString().toLongOrNull()
 
+    /** A scale-independent hash matching numeric comparison, including extreme scales. */
     internal fun numericHashCode(): Int {
         if (sign == 0) return 0
         val digits = unscaled.toString()
@@ -161,6 +164,7 @@ class Decimal private constructor(
          * point, and an optional exponent (`-12.30`, `1E+4`, `.5`). Digits must be ASCII and
          * the resulting scale must fit in an [Int]. Whitespace, `NaN` and `Infinity` are rejected.
          */
+        @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.
         fun parseOrNull(text: String): Decimal? {
             var index = 0
             val negative = text.startsWith('-')

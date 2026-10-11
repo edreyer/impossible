@@ -1,12 +1,12 @@
 package io.liquidsoftware.safedomain.testing
 
+import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.liquidsoftware.safedomain.fromTrusted
 import io.liquidsoftware.safedomain.time.DateChecks
 import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.PositiveDuration
 import io.liquidsoftware.safedomain.time.TimeWindow
-import io.liquidsoftware.safedomain.fromTrusted
-import io.kotest.property.Arb
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.TimeZone
@@ -39,7 +39,9 @@ class TimeLawsTest {
             assertEquals(a.overlaps(b), b.overlaps(a))
             assertTrue(a.overlaps(a))
             val touching = DateRange.fromTrusted(DateRange.Input(a.endInclusive, a.endInclusive.plus(DatePeriod(days = 1))))
-            val adjacent = DateRange.fromTrusted(DateRange.Input(a.endInclusive.plus(DatePeriod(days = 1)), b.endInclusive.plus(DatePeriod(days = 400_000))))
+            val adjacent = DateRange.fromTrusted(
+                DateRange.Input(a.endInclusive.plus(DatePeriod(days = 1)), b.endInclusive.plus(DatePeriod(days = 400_000))),
+            )
             assertTrue(a.overlaps(touching))
             assertFalse(a.overlaps(adjacent))
         }

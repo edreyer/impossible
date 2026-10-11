@@ -16,8 +16,17 @@ class PhoneTest {
 
     @Test
     fun `rejects national formatting extensions leading zero and non ASCII digits`() {
-        for (raw in listOf("", "+", "14155552671", "+012345", "+1234567890123456", "+1 415 555 2671", "+1-415-555-2671", "+14155552671x123", " +14155552671", "+14155552671\n", "+١٢٣")) {
-            assertEquals(Either.Left(Phone.Error.InvalidFormat(raw)), either<Phone.Error, Phone> { Phone.from(raw) }, raw)
+        for (raw in listOf(
+            "", "+", "14155552671", "+012345", "+1234567890123456", "+1 415 555 2671", "+1-415-555-2671",
+            "+14155552671x123", " +14155552671", "+14155552671\n", "+١٢٣",
+        )) {
+            assertEquals(
+                Either.Left(Phone.Error.InvalidFormat(raw)),
+                either<Phone.Error, Phone> {
+                    Phone.from(raw)
+                },
+                raw,
+            )
         }
     }
 

@@ -26,4 +26,3 @@ fun Slug.Companion.arb(): Arb<Slug> =
 /** Non-blank secrets of up to [maxLength] characters. */
 fun Secret.Companion.arb(maxLength: Int = 60): Arb<Secret> =
     Arb.untrustedText(1..maxLength).filter { it.isNotBlank() }.map { Secret.fromTrusted(it) }
-

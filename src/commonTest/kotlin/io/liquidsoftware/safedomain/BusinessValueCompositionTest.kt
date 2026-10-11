@@ -10,18 +10,18 @@ import io.liquidsoftware.safedomain.contact.Email
 import io.liquidsoftware.safedomain.contact.Phone
 import io.liquidsoftware.safedomain.money.Currency
 import io.liquidsoftware.safedomain.money.Money
-import io.liquidsoftware.safedomain.time.DateRange
 import io.liquidsoftware.safedomain.time.DateChecks
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.time.Clock
-import kotlin.time.Instant
+import io.liquidsoftware.safedomain.time.DateRange
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class BusinessValueCompositionTest {
     private val today = LocalDate(2026, 10, 5)
@@ -39,34 +39,50 @@ class BusinessValueCompositionTest {
 
     @Test
     fun `composite collects all field failures including a complete nested money batch`() {
-        val result: Either<NonEmptyList<Booking.Error>, Booking> = book(valid.copy(
-            arrival = today,
-            ordered = today,
-            period = DateRange.Input(today, today.minus(DatePeriod(days = 1))),
-            price = Money.Text("oops", "ZZZ"),
-            email = "invalid",
-            phone = "123",
-        ))
-        assertEquals(Either.Left(nonEmptyListOf(
-            Booking.Error.InvalidArrival(DateChecks.Error.NotFuture(today, today)),
-            Booking.Error.InvalidOrderDate(DateChecks.Error.NotPast(today, today)),
-            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
-            Booking.Error.InvalidPrice(nonEmptyListOf(
-                Money.Error.InvalidAmount("oops"),
-                Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
-            )),
-            Booking.Error.InvalidEmail(Email.Error.InvalidFormat("invalid")),
-            Booking.Error.InvalidPhone(Phone.Error.InvalidFormat("123")),
-        )), result)
+        val result: Either<NonEmptyList<Booking.Error>, Booking> = book(
+            valid.copy(
+                arrival = today,
+                ordered = today,
+                period = DateRange.Input(today, today.minus(DatePeriod(days = 1))),
+                price = Money.Text("oops", "ZZZ"),
+                email = "invalid",
+                phone = "123",
+            ),
+        )
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Booking.Error.InvalidArrival(DateChecks.Error.NotFuture(today, today)),
+                    Booking.Error.InvalidOrderDate(DateChecks.Error.NotPast(today, today)),
+                    Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
+                    Booking.Error.InvalidPrice(
+                        nonEmptyListOf(
+                            Money.Error.InvalidAmount("oops"),
+                            Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
+                        ),
+                    ),
+                    Booking.Error.InvalidEmail(Email.Error.InvalidFormat("invalid")),
+                    Booking.Error.InvalidPhone(Phone.Error.InvalidFormat("123")),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
     fun `cross field range failure accumulates alongside an unrelated contact failure`() {
-        val result: Either<NonEmptyList<Booking.Error>, Booking> = book(valid.copy(period = DateRange.Input(today, today.minus(DatePeriod(days = 1))), email = "invalid"))
-        assertEquals(Either.Left(nonEmptyListOf(
-            Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
-            Booking.Error.InvalidEmail(Email.Error.InvalidFormat("invalid")),
-        )), result)
+        val result: Either<NonEmptyList<Booking.Error>, Booking> = book(
+            valid.copy(period = DateRange.Input(today, today.minus(DatePeriod(days = 1))), email = "invalid"),
+        )
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Booking.Error.InvalidPeriod(DateRange.Error.EndBeforeStart(today, today.minus(DatePeriod(days = 1)))),
+                    Booking.Error.InvalidEmail(Email.Error.InvalidFormat("invalid")),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test

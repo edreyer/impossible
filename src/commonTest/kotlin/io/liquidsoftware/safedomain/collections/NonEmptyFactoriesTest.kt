@@ -13,12 +13,18 @@ import kotlin.test.assertIs
 class NonEmptyFactoriesTest {
     @Test
     fun `empty inputs raise each adapter's precise error`() {
-        assertEquals(Either.Left(NonEmptyError.Empty), either<NonEmptyError, NonEmptyList<String>> {
-            NonEmptyList.factory<String>().from(emptyList())
-        })
-        assertEquals(Either.Left(NonEmptyError.Empty), either<NonEmptyError, NonEmptySet<String>> {
-            NonEmptySet.factory<String>().from(emptyList())
-        })
+        assertEquals(
+            Either.Left(NonEmptyError.Empty),
+            either<NonEmptyError, NonEmptyList<String>> {
+                NonEmptyList.factory<String>().from(emptyList())
+            },
+        )
+        assertEquals(
+            Either.Left(NonEmptyError.Empty),
+            either<NonEmptyError, NonEmptySet<String>> {
+                NonEmptySet.factory<String>().from(emptyList())
+            },
+        )
     }
 
     @Test
@@ -62,14 +68,27 @@ class NonEmptyFactoriesTest {
     @Test
     fun `distinct set factory reports every repeat instead of collapsing it`() {
         val result = either { NonEmptySet.distinctFactory<String>().from(listOf("a", "b", "a", "c", "b", "a")) }
-        assertEquals(Either.Left(nonEmptyListOf(
-            DistinctError.Duplicate(0, 2),
-            DistinctError.Duplicate(1, 4),
-            DistinctError.Duplicate(0, 5),
-        )), result)
-        assertEquals(Either.Left(nonEmptyListOf(DistinctError.Empty)),
-            either<NonEmptyList<DistinctError>, NonEmptySet<String>> { NonEmptySet.distinctFactory<String>().from(emptyList()) })
-        val set = assertIs<Either.Right<NonEmptySet<String>>>(either { NonEmptySet.distinctFactory<String>().from(listOf("b", "a")) }).value
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    DistinctError.Duplicate(0, 2),
+                    DistinctError.Duplicate(1, 4),
+                    DistinctError.Duplicate(0, 5),
+                ),
+            ),
+            result,
+        )
+        assertEquals(
+            Either.Left(nonEmptyListOf(DistinctError.Empty)),
+            either<NonEmptyList<DistinctError>, NonEmptySet<String>> {
+                NonEmptySet.distinctFactory<String>().from(emptyList())
+            },
+        )
+        val set = assertIs<Either.Right<NonEmptySet<String>>>(
+            either {
+                NonEmptySet.distinctFactory<String>().from(listOf("b", "a"))
+            },
+        ).value
         assertEquals(listOf("b", "a"), set.toList())
     }
 

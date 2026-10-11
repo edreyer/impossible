@@ -28,10 +28,15 @@ class ValidationTest {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
             Order.from(OrderInput("Alice", Money.Text("x", "ZZZ"), listOf(LineInput("A", 1)), 1, 1))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Order.Error.InvalidPrice(Money.Error.InvalidAmount("x")),
-            Order.Error.InvalidPrice(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ"))),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Order.Error.InvalidPrice(Money.Error.InvalidAmount("x")),
+                    Order.Error.InvalidPrice(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ"))),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -39,13 +44,21 @@ class ValidationTest {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
             Order.from(OrderInput("Alice", Money.Text("1", "USD"), listOf(LineInput("", 0), LineInput("B", 1), LineInput("C", -1)), 1, 1))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Order.Error.InvalidLine(0, nonEmptyListOf(
-                Line.Error.InvalidSku(NonBlankString.Error.Blank),
-                Line.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-            )),
-            Order.Error.InvalidLine(2, nonEmptyListOf(Line.Error.InvalidQuantity(PositiveInt.Error.NonPositive(-1)))),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Order.Error.InvalidLine(
+                        0,
+                        nonEmptyListOf(
+                            Line.Error.InvalidSku(NonBlankString.Error.Blank),
+                            Line.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
+                        ),
+                    ),
+                    Order.Error.InvalidLine(2, nonEmptyListOf(Line.Error.InvalidQuantity(PositiveInt.Error.NonPositive(-1)))),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -53,10 +66,15 @@ class ValidationTest {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
             Order.from(OrderInput("", Money.Text("1", "USD"), listOf(LineInput("A", 1)), 5, -1))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
-            Order.Error.InvalidMaximum(PositiveInt.Error.NonPositive(-1)),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
+                    Order.Error.InvalidMaximum(PositiveInt.Error.NonPositive(-1)),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -64,10 +82,15 @@ class ValidationTest {
         val result: Either<NonEmptyList<Order.Error>, Order> = either {
             Order.from(OrderInput("", Money.Text("1", "USD"), listOf(LineInput("A", 1)), 5, 2))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
-            Order.Error.MaximumBelowMinimum(5, 2),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Order.Error.InvalidCustomer(NonBlankString.Error.Blank),
+                    Order.Error.MaximumBelowMinimum(5, 2),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -86,9 +109,11 @@ class ValidationTest {
 
     @Test
     fun `builds the composite when every field is valid`() {
-        val order = assertIs<Either.Right<Order>>(either {
-            Order.from(OrderInput(" Alice ", Money.Text("9.990", "USD"), listOf(LineInput("A", 2), LineInput("B", 1)), 1, 3))
-        }).value
+        val order = assertIs<Either.Right<Order>>(
+            either {
+                Order.from(OrderInput(" Alice ", Money.Text("9.990", "USD"), listOf(LineInput("A", 2), LineInput("B", 1)), 1, 3))
+            },
+        ).value
         assertEquals(" Alice ", order.customer.value)
         assertEquals(999L, order.price.minor)
         assertEquals(listOf("A", "B"), order.lines.map { it.sku.value })

@@ -13,8 +13,16 @@ class NumericOperationsTest {
     @Test
     fun `positive integers add until they overflow and widen without validation`() {
         val two = PositiveInt.fromTrusted(2)
-        assertEquals(Either.Right(PositiveInt.fromTrusted(3)), either<PositiveInt.Overflow, PositiveInt> { two + PositiveInt.ONE })
-        assertEquals(Either.Left(PositiveInt.Overflow), either<PositiveInt.Overflow, PositiveInt> { PositiveInt.fromTrusted(Int.MAX_VALUE) + PositiveInt.ONE })
+        assertEquals(
+            Either.Right(PositiveInt.fromTrusted(3)),
+            either<PositiveInt.Overflow, PositiveInt> {
+                two + PositiveInt.ONE
+            },
+        )
+        assertEquals(
+            Either.Left(PositiveInt.Overflow),
+            either<PositiveInt.Overflow, PositiveInt> { PositiveInt.fromTrusted(Int.MAX_VALUE) + PositiveInt.ONE },
+        )
         assertEquals(2L, two.toPositiveLong().value)
         assertEquals(PositiveDecimal.fromTrusted(Decimal.of(2)), two.toPositiveDecimal())
         assertTrue(PositiveInt.ONE < two)
@@ -22,8 +30,16 @@ class NumericOperationsTest {
 
     @Test
     fun `positive longs reject zero and overflow`() {
-        assertEquals(Either.Left(PositiveLong.Error.NonPositive(0)), either<PositiveLong.Error, PositiveLong> { PositiveLong.from(0) })
-        assertEquals(Either.Left(PositiveLong.Overflow), either<PositiveLong.Overflow, PositiveLong> { PositiveLong.fromTrusted(Long.MAX_VALUE) + PositiveLong.ONE })
+        assertEquals(
+            Either.Left(PositiveLong.Error.NonPositive(0)),
+            either<PositiveLong.Error, PositiveLong> {
+                PositiveLong.from(0)
+            },
+        )
+        assertEquals(
+            Either.Left(PositiveLong.Overflow),
+            either<PositiveLong.Overflow, PositiveLong> { PositiveLong.fromTrusted(Long.MAX_VALUE) + PositiveLong.ONE },
+        )
         assertEquals(Long.MAX_VALUE, PositiveLong.fromTrusted(Long.MAX_VALUE).value)
     }
 
@@ -42,10 +58,16 @@ class NumericOperationsTest {
     }
 
     @Test
+    @Suppress("InvalidRange") // An empty range is part of what this test checks.
     fun `bounded integers are inclusive and include their bounds in equality`() {
         val rating = BoundedInt.factory(1..5)
         for (value in listOf(0, 6, Int.MIN_VALUE)) {
-            assertEquals(Either.Left(BoundedInt.Error.OutOfRange(value, 1..5)), either<BoundedInt.Error, BoundedInt> { rating.from(value) })
+            assertEquals(
+                Either.Left(BoundedInt.Error.OutOfRange(value, 1..5)),
+                either<BoundedInt.Error, BoundedInt> {
+                    rating.from(value)
+                },
+            )
         }
         assertEquals(listOf(1, 5), listOf(1, 5).map { rating.fromTrusted(it).value })
         assertEquals(rating.fromTrusted(3), BoundedInt.factory(1..5).fromTrusted(3))

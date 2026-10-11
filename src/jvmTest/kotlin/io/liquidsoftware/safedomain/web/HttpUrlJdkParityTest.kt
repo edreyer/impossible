@@ -10,13 +10,23 @@ import kotlin.test.assertEquals
 /** The common parser must classify inputs exactly as the former java.net.URI-based implementation did. */
 class HttpUrlJdkParityTest {
     private fun jdk(value: String): String {
-        val uri = try { URI(value) } catch (_: URISyntaxException) { return "InvalidSyntax" }
+        val uri = try {
+            URI(value)
+        } catch (_: URISyntaxException) {
+            return "InvalidSyntax"
+        }
         if (!uri.isAbsolute) return "NotAbsolute"
         if (!uri.scheme.equals("http", true) && !uri.scheme.equals("https", true)) return "UnsupportedScheme(${uri.scheme})"
-        val server = try { uri.parseServerAuthority() } catch (_: URISyntaxException) { return "InvalidSyntax" }
+        val server = try {
+            uri.parseServerAuthority()
+        } catch (_: URISyntaxException) {
+            return "InvalidSyntax"
+        }
         if (server.isOpaque || server.host == null) return "MissingHost"
         if (server.port != -1 && server.port !in 1..65535) return "InvalidPort(${server.port})"
-        return "Ok(${server.host},${server.port.takeIf { it != -1 }},${server.rawPath},${server.rawQuery},${server.rawFragment},${server.rawUserInfo})"
+        return "Ok(${server.host},${server.port.takeIf {
+            it != -1
+        }},${server.rawPath},${server.rawQuery},${server.rawFragment},${server.rawUserInfo})"
     }
 
     private fun common(value: String): String = when (val result = either { HttpUrl.from(value) }) {
@@ -49,12 +59,20 @@ class HttpUrlJdkParityTest {
         "http:/path", "ftp://example.com", "mailto:x@example.com", "urn:isbn:123", "1http://example.com", "+http://x",
         "", "/path", "//example.com", "?q", "#f", "a:b", " https://example.com", "https://example.com ", "https://exa mple.com",
         "https://example.com/\t", "https:?q", "https:#f", "//", "https://?q", "https://#f", "https://1234.1.1.1",
-        "https://123.example", "https://a.123", "https://a.b-", "https://a-b.c-d.example", "https://[::1.2.3.4]", "https://[1:2::300.1.1.1]", "https://example.com/a;b=c", "https://example.com/a,b\$c&d+e=f!g*h'i(j)k~l",
+        "https://123.example", "https://a.123", "https://a.b-", "https://a-b.c-d.example", "https://[::1.2.3.4]",
+        "https://[1:2::300.1.1.1]", "https://example.com/a;b=c", "https://example.com/a,b\$c&d+e=f!g*h'i(j)k~l",
     )
 
     @Test
     fun `classifies every corpus input like java net URI`() {
-        val mismatches = corpus.mapNotNull { raw -> (raw to (jdk(raw) to common(raw))).takeIf { it.second.first != it.second.second } }
-        assertEquals(emptyList(), mismatches.map { (raw, results) -> "'$raw' jdk=${results.first} common=${results.second}" })
+        val mismatches = corpus.mapNotNull { raw ->
+            (raw to (jdk(raw) to common(raw))).takeIf { it.second.first != it.second.second }
+        }
+        assertEquals(
+            emptyList(),
+            mismatches.map { (raw, results) ->
+                "'$raw' jdk=${results.first} common=${results.second}"
+            },
+        )
     }
 }

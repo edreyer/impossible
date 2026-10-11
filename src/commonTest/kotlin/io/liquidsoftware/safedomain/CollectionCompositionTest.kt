@@ -8,7 +8,6 @@ import arrow.core.raise.Raise
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.collections.BoundedList
 import io.liquidsoftware.safedomain.collections.NonEmptyError
-
 import io.liquidsoftware.safedomain.collections.UniqueList
 import io.liquidsoftware.safedomain.collections.factory
 import io.liquidsoftware.safedomain.text.NonBlankString
@@ -20,22 +19,32 @@ class CollectionCompositionTest {
     @Test
     fun `parent collects every indexed element error and independent collection failures`() {
         val result: Either<NonEmptyList<DispatchPlan.Error>, DispatchPlan> = either {
-            DispatchPlan.from(DispatchInput(
-                recipients = listOf("", "Alice", " "),
-                labels = listOf("urgent", "urgent", "urgent"),
-                attachments = emptyList(),
-                channels = emptyList(),
-            ))
+            DispatchPlan.from(
+                DispatchInput(
+                    recipients = listOf("", "Alice", " "),
+                    labels = listOf("urgent", "urgent", "urgent"),
+                    attachments = emptyList(),
+                    channels = emptyList(),
+                ),
+            )
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            DispatchPlan.Error.InvalidRecipient(0, NonBlankString.Error.Blank),
-            DispatchPlan.Error.InvalidRecipient(2, NonBlankString.Error.Blank),
-            DispatchPlan.Error.InvalidLabels(nonEmptyListOf(
-                UniqueList.Error.Duplicate(0, 1), UniqueList.Error.Duplicate(0, 2),
-            )),
-            DispatchPlan.Error.InvalidAttachments(BoundedList.Error.TooSmall(1, 0)),
-            DispatchPlan.Error.InvalidChannels(NonEmptyError.Empty),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    DispatchPlan.Error.InvalidRecipient(0, NonBlankString.Error.Blank),
+                    DispatchPlan.Error.InvalidRecipient(2, NonBlankString.Error.Blank),
+                    DispatchPlan.Error.InvalidLabels(
+                        nonEmptyListOf(
+                            UniqueList.Error.Duplicate(0, 1),
+                            UniqueList.Error.Duplicate(0, 2),
+                        ),
+                    ),
+                    DispatchPlan.Error.InvalidAttachments(BoundedList.Error.TooSmall(1, 0)),
+                    DispatchPlan.Error.InvalidChannels(NonEmptyError.Empty),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -43,20 +52,27 @@ class CollectionCompositionTest {
         val result: Either<NonEmptyList<DispatchPlan.Error>, DispatchPlan> = either {
             DispatchPlan.from(DispatchInput(emptyList(), emptyList(), listOf("a.pdf"), listOf("email")))
         }
-        assertEquals(Either.Left(nonEmptyListOf(
-            DispatchPlan.Error.InvalidRecipients(NonEmptyError.Empty),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    DispatchPlan.Error.InvalidRecipients(NonEmptyError.Empty),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
     fun `valid composite preserves typed elements order and each collection's semantics`() {
         val result = either {
-            DispatchPlan.from(DispatchInput(
-                recipients = listOf(" Alice ", "Bob"),
-                labels = listOf("urgent", "private"),
-                attachments = listOf("a.pdf", "a.pdf"),
-                channels = listOf("email", "sms", "email"),
-            ))
+            DispatchPlan.from(
+                DispatchInput(
+                    recipients = listOf(" Alice ", "Bob"),
+                    labels = listOf("urgent", "private"),
+                    attachments = listOf("a.pdf", "a.pdf"),
+                    channels = listOf("email", "sms", "email"),
+                ),
+            )
         }
         val plan = assertIs<Either.Right<DispatchPlan>>(result).value
         assertEquals(listOf(" Alice ", "Bob"), plan.recipients.map { it.value }.all)

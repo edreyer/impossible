@@ -29,13 +29,14 @@ class DomainName private constructor(val value: String) {
     override fun toString(): String = "DomainName(value=$value)"
 
     companion object : ValueFactory<String, Error, DomainName> {
+        private const val MAX_LENGTH = 253
         private val label = Regex("[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?")
 
         context(raise: Raise<Error>)
         override fun from(value: String): DomainName {
             val labels = value.split('.')
             raise.ensure(
-                value.length <= 253 &&
+                value.length <= MAX_LENGTH &&
                     labels.all(label::matches) &&
                     !labels.last().all { it in '0'..'9' },
             ) { Error.InvalidFormat(value) }

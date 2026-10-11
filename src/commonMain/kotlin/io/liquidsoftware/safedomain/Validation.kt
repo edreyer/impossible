@@ -136,7 +136,9 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
 ): PathField<List<Value>> = PathField(name) { path ->
     scope.accumulating {
         withNel {
-            mapOrAccumulate(values.withIndex()) { (index, raw) -> from(raw) { FieldError(path.index(index), onError(it)) } }
+            mapOrAccumulate(values.withIndex()) { (index, raw) ->
+                from(raw) { FieldError(path.index(index), onError(it)) }
+            }
         }
     }
 }
@@ -153,7 +155,9 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value
     onError: (Error) -> Mapped,
 ): PathField<Value> = PathField(name) { path ->
     scope.accumulating {
-        withNel { withError({ errors: NonEmptyList<Error> -> errors.map { FieldError(path, onError(it)) } }) { from(value) } }
+        withNel {
+            withError({ errors: NonEmptyList<Error> -> errors.map { FieldError(path, onError(it)) } }) { from(value) }
+        }
     }
 }
 
@@ -171,7 +175,9 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Er
 ): PathField<Value> = PathField(name) { path ->
     scope.accumulating {
         withNel {
-            withError({ errors: NonEmptyList<FieldError<Error>> -> errors.map { it.under(path).map(onError) } }) { from(value) }
+            withError({ errors: NonEmptyList<FieldError<Error>> ->
+                errors.map { it.under(path).map(onError) }
+            }) { from(value) }
         }
     }
 }

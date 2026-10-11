@@ -14,8 +14,18 @@ class BoundedTextTest {
     fun `bounded text limits length in code points and preserves input by default`() {
         val name = NonBlankString.bounded(five)
         assertEquals(" abc ", name.fromTrusted(" abc ").value)
-        assertEquals(Either.Left(NonBlankString.Error.TooLong(5, 6)), either<NonBlankString.Error, NonBlankString> { name.from("abcdef") })
-        assertEquals(Either.Left(NonBlankString.Error.Blank), either<NonBlankString.Error, NonBlankString> { name.from("   ") })
+        assertEquals(
+            Either.Left(NonBlankString.Error.TooLong(5, 6)),
+            either<NonBlankString.Error, NonBlankString> {
+                name.from("abcdef")
+            },
+        )
+        assertEquals(
+            Either.Left(NonBlankString.Error.Blank),
+            either<NonBlankString.Error, NonBlankString> {
+                name.from("   ")
+            },
+        )
         // Five emoji are ten UTF-16 units but five code points.
         assertEquals(10, "😀😀😀😀😀".length)
         assertEquals("😀😀😀😀😀", name.fromTrusted("😀😀😀😀😀").value)
@@ -26,7 +36,12 @@ class BoundedTextTest {
         val name = NonBlankString.bounded(five, trim = true)
         assertEquals("abc", name.fromTrusted("  abc  ").value)
         assertEquals("abcde", name.fromTrusted(" abcde ").value)
-        assertEquals(Either.Left(NonBlankString.Error.Blank), either<NonBlankString.Error, NonBlankString> { name.from("  ") })
+        assertEquals(
+            Either.Left(NonBlankString.Error.Blank),
+            either<NonBlankString.Error, NonBlankString> {
+                name.from("  ")
+            },
+        )
     }
 
     @Test

@@ -1,3 +1,6 @@
+// Octets, group counts and bit masks are protocol constants, clearer inline.
+@file:Suppress("MagicNumber")
+
 package io.liquidsoftware.safedomain.web
 
 import arrow.core.raise.Raise
@@ -42,7 +45,9 @@ sealed class IpAddress {
 
     class V6 private constructor(override val bytes: ByteArray) : IpAddress() {
         override fun toString(): String {
-            val groups = IntArray(8) { ((bytes[2 * it].toInt() and 0xFF) shl 8) or (bytes[2 * it + 1].toInt() and 0xFF) }
+            val groups = IntArray(8) {
+                ((bytes[2 * it].toInt() and 0xFF) shl 8) or (bytes[2 * it + 1].toInt() and 0xFF)
+            }
             // RFC 5952: compress the longest run of two or more zero groups, the first if tied.
             var bestStart = -1
             var bestLength = 1
@@ -88,6 +93,7 @@ sealed class IpAddress {
             return ByteArray(4) { octets[it].toByte() }
         }
 
+        @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.
         private fun parseIpv6(text: String): ByteArray? {
             val halves = text.split("::")
             if (halves.size > 2) return null
@@ -97,7 +103,9 @@ sealed class IpAddress {
             val ipv4 = sides.last().lastOrNull()?.takeIf { '.' in it }?.let { parseIpv4(it) ?: return null }
             val hexCount = all.size - if (ipv4 == null) 0 else 1
             val units = hexCount + if (ipv4 == null) 0 else 2
-            if (halves.size == 2 && units > 7 || halves.size == 1 && units != 8) return null
+            // With "::" the explicit groups must leave room for at least one zero group.
+            val fitsGroupCount = if (halves.size == 2) units < 8 else units == 8
+            if (!fitsGroupCount) return null
             val groups = all.take(hexCount)
             if (!groups.all(hexGroup::matches)) return null
 

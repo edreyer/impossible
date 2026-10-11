@@ -19,7 +19,13 @@ class NetworkTypesTest {
         for (value in listOf("example.com", "localhost", "a-b.c0", "xn--bcher-kva.example", "1.example", "${"a".repeat(63)}.com")) {
             assertTrue(domain(value).isRight(), value)
         }
-        for (value in listOf("", ".", "example.com.", "a..b", "-a.com", "a-.com", "exa mple.com", "bücher.de", "1.2.3.4", "${"a".repeat(64)}.com", List(127) { "a" }.joinToString(".") + ".bc")) {
+        for (value in listOf(
+            "", ".", "example.com.", "a..b", "-a.com", "a-.com", "exa mple.com", "bücher.de", "1.2.3.4",
+            "${"a".repeat(
+                64,
+            )}.com",
+            List(127) { "a" }.joinToString(".") + ".bc",
+        )) {
             assertEquals(Either.Left(DomainName.Error.InvalidFormat(value)), domain(value), value)
         }
     }
@@ -62,7 +68,10 @@ class NetworkTypesTest {
             assertEquals(canonical, address.toString(), input)
         }
         assertEquals(ip("::1"), ip("0000:0::0001"))
-        for (value in listOf(":", ":::", "1::2::3", "1:2:3:4:5:6:7", "1:2:3:4:5:6:7:8:9", "1:2:3:4:5:6:7::8", "12345::", "g::", "fe80::1%eth0", "[::1]", "::1.2.3", "1.2.3.4::", "::01.2.3.4")) {
+        for (value in listOf(
+            ":", ":::", "1::2::3", "1:2:3:4:5:6:7", "1:2:3:4:5:6:7:8:9", "1:2:3:4:5:6:7::8", "12345::", "g::",
+            "fe80::1%eth0", "[::1]", "::1.2.3", "1.2.3.4::", "::01.2.3.4",
+        )) {
             assertEquals(Either.Left(IpAddress.Error.InvalidFormat(value)), ip(value), value)
         }
     }

@@ -2,8 +2,8 @@ package io.liquidsoftware.safedomain
 
 import arrow.core.getOrElse
 import arrow.core.raise.Raise
-import arrow.core.raise.ensureNotNull
 import arrow.core.raise.either
+import arrow.core.raise.ensureNotNull
 import arrow.core.raise.withError
 
 /**

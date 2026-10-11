@@ -46,7 +46,9 @@ private const val URL_UNRESERVED = ALPHANUMERIC + "-_.~"
  */
 fun HttpUrl.Companion.arb(): Arb<HttpUrl> {
     val urlHostLabels = dnsLabel(maxLength = 15, startWithLetter = true)
-    val escape = arbitrary { rs -> "%" + "0123456789abcdefABCDEF".random(rs.random) + "0123456789ABCDEF".random(rs.random) }
+    val escape = arbitrary { rs ->
+        "%" + "0123456789abcdefABCDEF".random(rs.random) + "0123456789ABCDEF".random(rs.random)
+    }
     fun part(extra: String) = arbitrary { rs ->
         buildString {
             repeat(rs.random.nextInt(1, 12)) {
@@ -66,7 +68,9 @@ fun HttpUrl.Companion.arb(): Arb<HttpUrl> {
                 0 -> append(IpAddress.V4.arb().bind())
                 1 -> append('[').append(IpAddress.V6.arb().bind()).append(']')
                 else -> {
-                    val labels = (1 until random.nextInt(1, 4)).map { dnsLabel(maxLength = 15).bind() } + urlHostLabels.bind()
+                    val labels = (1 until random.nextInt(1, 4)).map {
+                        dnsLabel(maxLength = 15).bind()
+                    } + urlHostLabels.bind()
                     append(labels.joinToString("."))
                 }
             }

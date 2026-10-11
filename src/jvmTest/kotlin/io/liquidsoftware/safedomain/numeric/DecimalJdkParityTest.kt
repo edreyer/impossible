@@ -41,20 +41,30 @@ class DecimalJdkParityTest {
 
     @Test
     fun `arithmetic comparison and rounding match BigDecimal`() {
-        for (a in samples) for (b in samples) {
-            val (x, y) = Decimal.parse(a) to Decimal.parse(b)
-            val (p, q) = BigDecimal(a) to BigDecimal(b)
-            assertEquals(p.compareTo(q), x.compareTo(y), "$a <=> $b")
-            assertEquals(p == q, x == y, "$a == $b")
-            same({ p.add(q) }, { x + y }, "$a + $b")
-            same({ p.subtract(q) }, { x - y }, "$a - $b")
-            same({ p.multiply(q) }, { x * y }, "$a * $b")
-            for (m in RoundingMode.entries) for (scale in listOf(-2, 0, 2, 5)) {
-                same({ p.divide(q, scale, mode(m)) }, { x.divide(y, scale, m) }, "$a / $b @$scale $m")
+        for (a in samples) {
+            for (b in samples) {
+                val (x, y) = Decimal.parse(a) to Decimal.parse(b)
+                val (p, q) = BigDecimal(a) to BigDecimal(b)
+                assertEquals(p.compareTo(q), x.compareTo(y), "$a <=> $b")
+                assertEquals(p == q, x == y, "$a == $b")
+                same({ p.add(q) }, { x + y }, "$a + $b")
+                same({ p.subtract(q) }, { x - y }, "$a - $b")
+                same({ p.multiply(q) }, { x * y }, "$a * $b")
+                for (m in RoundingMode.entries) {
+                    for (scale in listOf(-2, 0, 2, 5)) {
+                        same({ p.divide(q, scale, mode(m)) }, { x.divide(y, scale, m) }, "$a / $b @$scale $m")
+                    }
+                }
             }
         }
-        for (a in samples) for (m in RoundingMode.entries) for (scale in -3..4) {
-            same({ BigDecimal(a).setScale(scale, mode(m)) }, { Decimal.parse(a).setScale(scale, m) }, "$a setScale $scale $m")
+        for (a in samples) {
+            for (m in RoundingMode.entries) {
+                for (scale in -3..4) {
+                    same({
+                        BigDecimal(a).setScale(scale, mode(m))
+                    }, { Decimal.parse(a).setScale(scale, m) }, "$a setScale $scale $m")
+                }
+            }
         }
     }
 
@@ -70,7 +80,11 @@ class DecimalJdkParityTest {
             val target = random.nextInt(-5, 30)
             val m = RoundingMode.entries.random(random)
             same({ p.setScale(target, mode(m)) }, { x.setScale(target, m) }, "$p setScale $target $m")
-            same({ p.divide(BigDecimal.valueOf(divisor), target, mode(m)) }, { x.divide(Decimal.of(divisor), target, m) }, "$p / $divisor @$target $m")
+            same(
+                { p.divide(BigDecimal.valueOf(divisor), target, mode(m)) },
+                { x.divide(Decimal.of(divisor), target, m) },
+                "$p / $divisor @$target $m",
+            )
         }
     }
 
@@ -79,10 +93,18 @@ class DecimalJdkParityTest {
         val tiny = Decimal.of(1, Int.MAX_VALUE)
         assertEquals(BigDecimal(java.math.BigInteger.ONE, Int.MAX_VALUE).toString(), tiny.toString())
         assertEquals(BigDecimal(java.math.BigInteger.TEN, Int.MIN_VALUE).toString(), Decimal.of(10, Int.MIN_VALUE).toString())
-        same({ BigDecimal("5").setScale(2, java.math.RoundingMode.UP) }, { Decimal.of(5).setScale(2, RoundingMode.UP) }, "upscale")
-        same({ BigDecimal(java.math.BigInteger.ONE, 1_000_000).setScale(0, java.math.RoundingMode.UP) },
-            { Decimal.of(1, 1_000_000).setScale(0, RoundingMode.UP) }, "tiny round up")
-        same({ BigDecimal("7").divide(BigDecimal("1E+1000000"), 0, java.math.RoundingMode.CEILING) },
-            { Decimal.of(7).divide(Decimal.parse("1E+1000000"), 0, RoundingMode.CEILING) }, "tiny quotient")
+        same({
+            BigDecimal("5").setScale(2, java.math.RoundingMode.UP)
+        }, { Decimal.of(5).setScale(2, RoundingMode.UP) }, "upscale")
+        same(
+            { BigDecimal(java.math.BigInteger.ONE, 1_000_000).setScale(0, java.math.RoundingMode.UP) },
+            { Decimal.of(1, 1_000_000).setScale(0, RoundingMode.UP) },
+            "tiny round up",
+        )
+        same(
+            { BigDecimal("7").divide(BigDecimal("1E+1000000"), 0, java.math.RoundingMode.CEILING) },
+            { Decimal.of(7).divide(Decimal.parse("1E+1000000"), 0, RoundingMode.CEILING) },
+            "tiny quotient",
+        )
     }
 }

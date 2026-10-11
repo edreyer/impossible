@@ -140,14 +140,28 @@ class MoneyLawsTest {
         forAll(arbitrary { NonNegativeMoney.arb().bind() to PositiveInt.arb(1..20).bind() }) { (amount, count) ->
             assertTrue(amount.split(count).all { it.money.sign >= 0 })
         }
-        forAll(NegativeMoney.arb()) { negative -> assertEquals(Either.Right(negative), attempt<Money.ArithmeticError, NegativeMoney> { negative.negate().negate() }) }
+        forAll(
+            NegativeMoney.arb(),
+        ) { negative ->
+            assertEquals(
+                Either.Right(negative),
+                attempt<Money.ArithmeticError, NegativeMoney> {
+                    negative.negate().negate()
+                },
+            )
+        }
     }
 
     @Test
     fun `sum of a list equals pairwise addition`() = runTest {
         forAll(arbitrary { sameCurrency(Arb.int(1..8).bind()).bind() }) { amounts ->
             val list = amounts.toNonEmptyListOrNull()!!
-            assertEquals(attempt { list.tail.fold(list.head) { total, next -> total.add(next) } }, attempt { Money.sum(list) })
+            assertEquals(
+                attempt {
+                    list.tail.fold(list.head) { total, next -> total.add(next) }
+                },
+                attempt { Money.sum(list) },
+            )
         }
     }
 }
