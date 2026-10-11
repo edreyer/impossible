@@ -16,7 +16,7 @@ package holds the construction contract shared by every type.
 
 | Package | Contents |
 | --- | --- |
-| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()` and `fromTrusted`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
+| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()`, `fromTrusted` and the combinators `map`, `mapError`, `andThen` and `ensure`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
 | `.text` | `NonBlankString`, `Slug`, `Secret` |
 | `.contact` | `Email`, `Phone` |
 | `.numeric` | `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt`, `PositiveDecimal`, `NegativeDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
@@ -217,6 +217,63 @@ Exception-based integrations can explicitly map a materialized result using
 `ValueFactory` is optional for consuming domain types; ordinary named `Raise`
 functions and `withError` remain available. No experimental callable-reference
 features or additional dependencies are required.
+
+## Defining your own types with combinators
+
+A consuming domain can define a refined type from existing factories instead of
+writing a companion by hand. Each combinator returns a new `ValueFactory`:
+
+| Combinator | Result |
+| --- | --- |
+| `map { ... }` | wraps each constructed value, typically with a private constructor; the function must not fail |
+| `mapError { ... }` | maps every failure into another error model, usually the new type's own |
+| `andThen(next)` | refines a constructed value through another factory with the same error model |
+| `andThen(next) { ... }` | the same, mapping `next`'s failures into this error model |
+| `ensure({ predicate }) { error }` | raises `error` for a constructed value that fails `predicate` |
+
+```kotlin
+import io.liquidsoftware.safedomain.ValueFactory
+import io.liquidsoftware.safedomain.ensure
+import io.liquidsoftware.safedomain.fromTrusted
+import io.liquidsoftware.safedomain.map
+import io.liquidsoftware.safedomain.mapError
+import io.liquidsoftware.safedomain.numeric.PositiveInt
+import io.liquidsoftware.safedomain.text.NonBlankString
+import kotlin.jvm.JvmInline
+
+/** A stock-keeping unit: 1 to 12 uppercase ASCII letters, digits and hyphens. */
+@JvmInline
+value class Sku private constructor(val value: String) {
+    sealed interface Error {
+        data class InvalidText(val cause: NonBlankString.Error) : Error
+        data object UnsupportedCharacter : Error
+    }
+
+    // Parentheses let the chain use trailing lambdas inside a class header.
+    companion object : ValueFactory<String, Error, Sku> by (
+        NonBlankString.bounded(PositiveInt.fromTrusted(12))
+            .mapError(Error::InvalidText)
+            .ensure({ text -> text.value.all { it in 'A'..'Z' || it in '0'..'9' || it == '-' } }) { Error.UnsupportedCharacter }
+            .map { Sku(it.value) }
+    )
+}
+```
+
+`Sku` then works like any library type: `Sku.from(raw)`, `Sku.optional()`,
+`Sku.required()`, the mapped `from(raw, onError = ...)` overload and `validate`
+fields. The constructor stays private, so the factory chain is the only way in.
+
+Every step runs in order and stops at the first failure: a later function never
+sees a value an earlier step rejected, and `map`, `mapError` and `ensure`'s
+functions run only for the outcome they handle. `mapError` on an accumulating
+factory such as `GeoPoint` receives its whole error batch at once. Unexpected
+exceptions propagate unchanged.
+
+The combinators do not widen errors on their own. Because `ValueFactory` is
+covariant in its error, Kotlin would infer a shared supertype (often `Any`) for
+`ensure` or `andThen` with an unrelated error, so call `mapError` first and let
+both steps share the new type's error model, as `Sku` does, or use the `onError`
+form of `andThen`.
 
 ## Accumulating composites with `validate`
 
@@ -999,7 +1056,8 @@ through multiple domain layers, accumulation, short-circuiting, and exception
 propagation. `ValidationTest` covers the `validate` DSL: declaration order,
 flattened and indexed nested errors, dependent field blocks, cross-field checks,
 and early reads. `OptionalityTest` covers `optional()`, `required()` and
-`fromTrusted`. `BusinessValueCompositionTest` demonstrates a composite with
+`fromTrusted`. `ValueFactoryCombinatorsTest` defines a type from combinators and
+covers their ordering, short-circuiting, error mapping and exception propagation. `BusinessValueCompositionTest` demonstrates a composite with
 clock-checked dates, a range relationship failure alongside contact failures, and a
 nested money error batch. `DecimalAndIdentityCompositionTest` demonstrates
 accumulating construction with decimals, percentages, tagged IDs, and HTTP URLs.
