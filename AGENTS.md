@@ -126,6 +126,13 @@ their domain names, policies, authorization decisions, and workflows.
   declared, pinned dependencies for a build or test does not need confirmation.
 - Test actual contracts: invalid inputs, valid boundaries, exact preservation,
   value semantics, and typed failure composition. Keep tests deterministic.
+- Property tests and the published kotest generators live in the
+  `safe-domain-testing` module (`testing/`). Every new type gets a generator there,
+  built through the type's real factory, and joins the relevant law tests
+  (`RoundTripLawsTest`, `ParserLawsTest`, and so on). Keep their fixed seed.
+- On Kotlin/JS, `Regex.matches` takes the first match and checks its length without
+  backtracking to a longer one. End a validation pattern with `$` when an optional
+  or alternative part could match a shorter prefix, as `LanguageTag` does.
 - Backticked test names must compile on Kotlin/Native: no `,` `.` `;` `:` `/`
   `<` `>` `[` `]` or `\`. JVM and JS accept them, so only native builds catch it.
 - Use `./gradlew allTests` for tests (or `jvmTest` and `jsNodeTest` for a fast

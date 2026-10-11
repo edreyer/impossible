@@ -23,11 +23,14 @@ value class LanguageTag private constructor(val value: String) {
     val language: String get() = value.substringBefore('-')
 
     companion object : ValueFactory<String, Error, LanguageTag> {
+        // The trailing `$` matters on JS, where Regex.matches accepts only the first match
+        // and does not backtrack to a longer one: without it, `de-1996` matches `de-199`
+        // with `199` as a region and is rejected, while the JVM accepts the variant.
         private val syntax = Regex(
             "[a-z]{2,3}" +
                 "(?:-[A-Z][a-z]{3})?" +
                 "(?:-(?:[A-Z]{2}|[0-9]{3}))?" +
-                "(?:-(?:[a-z0-9]{5,8}|[0-9][a-z0-9]{3}))*",
+                "(?:-(?:[a-z0-9]{5,8}|[0-9][a-z0-9]{3}))*$",
         )
 
         context(raise: Raise<Error>)

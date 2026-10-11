@@ -19,7 +19,7 @@ class LocaleTypesTest {
 
     @Test
     fun `language tags accept the common canonical subset`() {
-        for (raw in listOf("en", "en-US", "zh-Hant-TW", "es-419", "sr-Latn", "de-CH-1996", "ast")) {
+        for (raw in listOf("en", "en-US", "zh-Hant-TW", "es-419", "sr-Latn", "de-CH-1996", "ast", "de-1996", "cn-3494-09tz")) {
             assertEquals(raw, LanguageTag.fromTrusted(raw).value)
         }
         assertEquals("zh", LanguageTag.fromTrusted("zh-Hant-TW").language)

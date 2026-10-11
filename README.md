@@ -758,6 +758,50 @@ demonstrates indexed element validation, nonempty lists and sets, uniqueness,
 size bounds, and accumulation across all four fields. Relationships that depend
 on valid elements run after their prerequisites succeed.
 
+## Property-based testing
+
+The `safe-domain-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
+generators for every type, so you can property-test the business types you build
+from them. Each generator is an extension on the type's companion and produces
+values through the type's real factory, so a generated value has passed the same
+validation as production input:
+
+```kotlin
+import io.liquidsoftware.safedomain.testing.arb
+
+// Your type, built from already validated parts.
+data class OrderLine(val sku: Slug, val quantity: PositiveInt, val unitPrice: NonNegativeMoney)
+
+val usd = Currency.fromTrusted("USD")
+val orderLines = arbitrary {
+    OrderLine(Slug.arb().bind(), PositiveInt.arb(1..100).bind(), NonNegativeMoney.arb(Arb.constant(usd)).bind())
+}
+checkAll(orderLines) { line -> /* your invariants */ }
+```
+
+Generators cover the edge cases each type documents: zero, both ends of a range,
+`Int.MIN_VALUE`, the nil UUID, `::` and `::1`, the poles and the antimeridian, and so
+on. `Money.arb()` defaults to amounts of about a billion major units at most, so sums
+of a few never overflow; pass a wider `minor` range to test overflow handling.
+`Arb.untrustedText()` and `Arb.nearMiss(valid)` produce input for exercising your own
+parsers: mixed scripts, odd whitespace and surrogate pairs, or valid text one edit away.
+
+The module's own tests are laws the library promises on every platform:
+
+| Law | Test |
+| --- | --- |
+| Rendering and reparsing gives an equal value with the same hash | `RoundTripLawsTest` |
+| Every parser returns a value or a typed error on any text, never an exception, and reparses its own output | `ParserLawsTest` |
+| Equality and hashing agree with each normalization (email domains, DNS case, IP text forms, decimal scale), and rejected personal data never reaches error text | `ValueSemanticsLawsTest` |
+| Sign-refined arithmetic is exact or reports overflow; rounding brackets the exact value | `NumericLawsTest` |
+| Money addition is commutative and associative, currencies never mix, and allocation and splitting never lose a minor unit | `MoneyLawsTest` |
+| Date ranges and half-open time windows overlap consistently; past and future checks split dates around today | `TimeLawsTest` |
+| Collection invariants survive their operations, and validation reports one error per failure | `CollectionLawsTest` |
+
+The tests use a fixed seed, so runs are deterministic. These laws found a JS-only
+bug on their first run: `LanguageTag` rejected `de-1996` on JS while the JVM accepted
+it, because Kotlin/JS `Regex.matches` does not backtrack to a longer match.
+
 ## Current scope
 
 This library supplies validated construction, mapped factories, value semantics,
@@ -799,6 +843,9 @@ so validation behaves the same on every platform. Dependencies:
 - [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), a JS-only
   npm dependency that gives `TimeZoneId` the IANA database there. It is the newest
   release compatible with the `@js-joda/core` version kotlinx-datetime uses.
+- [kotest-property 6.2.5](https://kotest.io/docs/proptest/property-based-testing.html),
+  an API dependency of `safe-domain-testing` only; the library itself does not use it.
+  That module's tests also use kotlinx-coroutines-test 1.10.2 to run suspending checks.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
 `Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,
