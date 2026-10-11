@@ -153,6 +153,10 @@ their domain names, policies, authorization decisions, and workflows.
 - Use `./gradlew allTests` for tests (or `jvmTest` and `jsNodeTest` for a fast
   check) and `./gradlew build` for the complete build. Apple targets need macOS.
   Report failures and checks that could not run; do not claim unverified success.
+- Public API changes must be deliberate: `./gradlew checkKotlinAbi` compares the
+  compiled API with each module's committed `api/` dumps. Run
+  `./gradlew updateKotlinAbi` only for an intended change, commit the dumps with
+  it, and never remove or change a published declaration without saying so.
 - Run `./gradlew detekt koverVerify` before pushing; CI runs both on every pull
   request. Fix findings rather than suppressing them. When a rule truly does not
   fit, change it in `config/detekt/detekt.yml` with a comment saying why, or

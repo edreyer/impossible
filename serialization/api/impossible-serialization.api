@@ -1,0 +1,330 @@
+public final class io/liquidsoftware/safedomain/serialization/BoundedIntSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Lkotlin/ranges/IntRange;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/BoundedInt;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/BoundedInt;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/BoundedListSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Lkotlinx/serialization/KSerializer;Lkotlin/ranges/IntRange;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/collections/BoundedList;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/collections/BoundedList;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/CountryCodeSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/CountryCodeSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-2Q1mxvw (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-ljjzNzY (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/CurrencySerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/CurrencySerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-cPERVk0 (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-UEbxpqI (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/DateRangeSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/DateRangeSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/time/DateRange;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/time/DateRange;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/DecimalSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/DecimalSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/Decimal;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/Decimal;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/DomainNameSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/DomainNameSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/web/DomainName;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/web/DomainName;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/EmailSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/EmailSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/contact/Email;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/contact/Email;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/GeoPointSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/GeoPointSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/geo/GeoPoint;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/geo/GeoPoint;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/HttpUrlSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/HttpUrlSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/web/HttpUrl;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/web/HttpUrl;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/InvalidValueException : kotlinx/serialization/SerializationException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;)V
+	public final fun getError ()Ljava/lang/Object;
+	public final fun getMessages ()Ljava/util/List;
+	public final fun getSerialName ()Ljava/lang/String;
+}
+
+public final class io/liquidsoftware/safedomain/serialization/IpAddressSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/IpAddressSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/web/IpAddress;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/web/IpAddress;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/Ipv4AddressSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/Ipv4AddressSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/web/IpAddress$V4;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/web/IpAddress$V4;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/Ipv6AddressSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/Ipv6AddressSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/web/IpAddress$V6;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/web/IpAddress$V6;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/LanguageTagSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/LanguageTagSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-bmwfB3k (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-DdxJX1E (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/MoneySerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/MoneySerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/money/Money;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/money/Money;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NegativeDecimalSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NegativeDecimalSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/NegativeDecimal;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/NegativeDecimal;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NegativeIntSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NegativeIntSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-W1_GPjk (Lkotlinx/serialization/encoding/Decoder;)I
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-nRveVfg (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NegativeLongSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NegativeLongSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-e7n-oEY (Lkotlinx/serialization/encoding/Decoder;)J
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-TSvGWBM (Lkotlinx/serialization/encoding/Encoder;J)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NegativeMoneySerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NegativeMoneySerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-2DmMtkc (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/money/Money;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-hJXUAag (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/money/Money;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NonBlankStringSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NonBlankStringSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-CWcCAjA (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-n5KeRaA (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NonNegativeDecimalSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NonNegativeDecimalSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/NonNegativeMoneySerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/NonNegativeMoneySerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-NbSEWH8 (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/money/Money;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-8WL3284 (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/money/Money;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PercentageSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PercentageSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/Percentage;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/Percentage;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PhoneSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PhoneSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-klRocSQ (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-AGG9NYc (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PositiveDecimalSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PositiveDecimalSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/numeric/PositiveDecimal;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/numeric/PositiveDecimal;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PositiveDurationSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PositiveDurationSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-ZAc2yME (Lkotlinx/serialization/encoding/Decoder;)J
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-pAAfHa4 (Lkotlinx/serialization/encoding/Encoder;J)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PositiveIntSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PositiveIntSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-kUkJZZo (Lkotlinx/serialization/encoding/Decoder;)I
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-CaojFUg (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PositiveLongSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PositiveLongSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-FO3xBM0 (Lkotlinx/serialization/encoding/Decoder;)J
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-fNVAAY4 (Lkotlinx/serialization/encoding/Encoder;J)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/PositiveMoneySerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/PositiveMoneySerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-qCQWeKg (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/money/Money;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-erc5MAU (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/money/Money;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/SafeDomainSerializersModuleKt {
+	public static final fun getSafeDomainSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+}
+
+public final class io/liquidsoftware/safedomain/serialization/SecretSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/SecretSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/text/Secret;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/text/Secret;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/SlugSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/SlugSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-f7G-1zU (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/String;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-M8YG0Ok (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/String;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/TimeWindowSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/TimeWindowSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/time/TimeWindow;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/time/TimeWindow;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/TimeZoneIdSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lio/liquidsoftware/safedomain/serialization/TimeZoneIdSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/time/TimeZoneId;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/time/TimeZoneId;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/TypedIdSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> ()V
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-qQ6620I (Lkotlinx/serialization/encoding/Decoder;)Lkotlin/uuid/Uuid;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-PE2z0Co (Lkotlinx/serialization/encoding/Encoder;Lkotlin/uuid/Uuid;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/UniqueListSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Lkotlinx/serialization/KSerializer;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lio/liquidsoftware/safedomain/collections/UniqueList;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lio/liquidsoftware/safedomain/collections/UniqueList;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class io/liquidsoftware/safedomain/serialization/ValidatingSerializerKt {
+	public static final fun asSerializer (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/KSerializer;
+}
+

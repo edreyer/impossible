@@ -1005,6 +1005,7 @@ iOS simulator tests on macOS. The same checks run locally:
 | --- | --- |
 | Lint and formatting ([detekt](https://detekt.dev) with ktlint's rules) | `./gradlew detekt`; `./gradlew detekt -PdetektAutoCorrect` fixes formatting |
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
+| Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
@@ -1014,6 +1015,14 @@ All three modules compile in Kotlin's
 every declaration visible outside the module states its visibility (`public`,
 `internal` or `private`) and every public function or property states its type,
 so nothing becomes public API by default. A missing modifier fails compilation.
+
+Each module's public API is recorded in its `api/` folder: a `.api` file for the JVM
+and a `.klib.api` file for JS and native targets. `checkKotlinAbi` fails when the
+compiled API differs from those files, so every addition, removal or signature change
+shows up in review as a diff to them. After an intended API change, run
+`./gradlew updateKotlinAbi` and commit the updated files with the change. The
+validation is an experimental Kotlin Gradle plugin feature, built in, with no extra
+dependency.
 
 Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types,
 so validation behaves the same on every platform. Dependencies:

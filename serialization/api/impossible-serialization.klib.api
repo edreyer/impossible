@@ -1,0 +1,311 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, linuxX64, macosArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.liquidsoftware:impossible-serialization>
+final class <#A: kotlin/Any?> io.liquidsoftware.safedomain.serialization/BoundedListSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.collections/BoundedList<#A>> { // io.liquidsoftware.safedomain.serialization/BoundedListSerializer|null[0]
+    constructor <init>(kotlinx.serialization/KSerializer<#A>, kotlin.ranges/IntRange) // io.liquidsoftware.safedomain.serialization/BoundedListSerializer.<init>|<init>(kotlinx.serialization.KSerializer<1:0>;kotlin.ranges.IntRange){}[0]
+
+    final val descriptor // io.liquidsoftware.safedomain.serialization/BoundedListSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/BoundedListSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.collections/BoundedList<#A> // io.liquidsoftware.safedomain.serialization/BoundedListSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.collections/BoundedList<#A>) // io.liquidsoftware.safedomain.serialization/BoundedListSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.collections.BoundedList<1:0>){}[0]
+}
+
+final class <#A: kotlin/Any?> io.liquidsoftware.safedomain.serialization/TypedIdSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.identity/TypedId<#A>> { // io.liquidsoftware.safedomain.serialization/TypedIdSerializer|null[0]
+    constructor <init>() // io.liquidsoftware.safedomain.serialization/TypedIdSerializer.<init>|<init>(){}[0]
+
+    final val descriptor // io.liquidsoftware.safedomain.serialization/TypedIdSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/TypedIdSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.identity/TypedId<#A> // io.liquidsoftware.safedomain.serialization/TypedIdSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.identity/TypedId<#A>) // io.liquidsoftware.safedomain.serialization/TypedIdSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.identity.TypedId<1:0>){}[0]
+}
+
+final class <#A: kotlin/Any?> io.liquidsoftware.safedomain.serialization/UniqueListSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.collections/UniqueList<#A>> { // io.liquidsoftware.safedomain.serialization/UniqueListSerializer|null[0]
+    constructor <init>(kotlinx.serialization/KSerializer<#A>) // io.liquidsoftware.safedomain.serialization/UniqueListSerializer.<init>|<init>(kotlinx.serialization.KSerializer<1:0>){}[0]
+
+    final val descriptor // io.liquidsoftware.safedomain.serialization/UniqueListSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/UniqueListSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.collections/UniqueList<#A> // io.liquidsoftware.safedomain.serialization/UniqueListSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.collections/UniqueList<#A>) // io.liquidsoftware.safedomain.serialization/UniqueListSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.collections.UniqueList<1:0>){}[0]
+}
+
+final class io.liquidsoftware.safedomain.serialization/BoundedIntSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/BoundedInt> { // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer|null[0]
+    constructor <init>(kotlin.ranges/IntRange) // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer.<init>|<init>(kotlin.ranges.IntRange){}[0]
+
+    final val descriptor // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/BoundedInt // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/BoundedInt) // io.liquidsoftware.safedomain.serialization/BoundedIntSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.BoundedInt){}[0]
+}
+
+final class io.liquidsoftware.safedomain.serialization/InvalidValueException : kotlinx.serialization/SerializationException { // io.liquidsoftware.safedomain.serialization/InvalidValueException|null[0]
+    constructor <init>(kotlin/String, kotlin/Any?, kotlin.collections/List<io.liquidsoftware.safedomain/ErrorMessage>) // io.liquidsoftware.safedomain.serialization/InvalidValueException.<init>|<init>(kotlin.String;kotlin.Any?;kotlin.collections.List<io.liquidsoftware.safedomain.ErrorMessage>){}[0]
+
+    final val error // io.liquidsoftware.safedomain.serialization/InvalidValueException.error|{}error[0]
+        final fun <get-error>(): kotlin/Any? // io.liquidsoftware.safedomain.serialization/InvalidValueException.error.<get-error>|<get-error>(){}[0]
+    final val messages // io.liquidsoftware.safedomain.serialization/InvalidValueException.messages|{}messages[0]
+        final fun <get-messages>(): kotlin.collections/List<io.liquidsoftware.safedomain/ErrorMessage> // io.liquidsoftware.safedomain.serialization/InvalidValueException.messages.<get-messages>|<get-messages>(){}[0]
+    final val serialName // io.liquidsoftware.safedomain.serialization/InvalidValueException.serialName|{}serialName[0]
+        final fun <get-serialName>(): kotlin/String // io.liquidsoftware.safedomain.serialization/InvalidValueException.serialName.<get-serialName>|<get-serialName>(){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/CountryCodeSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.locale/CountryCode> { // io.liquidsoftware.safedomain.serialization/CountryCodeSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/CountryCodeSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/CountryCodeSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.locale/CountryCode // io.liquidsoftware.safedomain.serialization/CountryCodeSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.locale/CountryCode) // io.liquidsoftware.safedomain.serialization/CountryCodeSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.locale.CountryCode){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/CurrencySerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.money/Currency> { // io.liquidsoftware.safedomain.serialization/CurrencySerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/CurrencySerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/CurrencySerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.money/Currency // io.liquidsoftware.safedomain.serialization/CurrencySerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.money/Currency) // io.liquidsoftware.safedomain.serialization/CurrencySerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.money.Currency){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/DateRangeSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.time/DateRange> { // io.liquidsoftware.safedomain.serialization/DateRangeSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/DateRangeSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/DateRangeSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.time/DateRange // io.liquidsoftware.safedomain.serialization/DateRangeSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.time/DateRange) // io.liquidsoftware.safedomain.serialization/DateRangeSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.time.DateRange){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/DecimalSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/Decimal> { // io.liquidsoftware.safedomain.serialization/DecimalSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/DecimalSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/DecimalSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/Decimal // io.liquidsoftware.safedomain.serialization/DecimalSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/Decimal) // io.liquidsoftware.safedomain.serialization/DecimalSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.Decimal){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/DomainNameSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.web/DomainName> { // io.liquidsoftware.safedomain.serialization/DomainNameSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/DomainNameSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/DomainNameSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.web/DomainName // io.liquidsoftware.safedomain.serialization/DomainNameSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.web/DomainName) // io.liquidsoftware.safedomain.serialization/DomainNameSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.web.DomainName){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/EmailSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.contact/Email> { // io.liquidsoftware.safedomain.serialization/EmailSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/EmailSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/EmailSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.contact/Email // io.liquidsoftware.safedomain.serialization/EmailSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.contact/Email) // io.liquidsoftware.safedomain.serialization/EmailSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.contact.Email){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/GeoPointSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.geo/GeoPoint> { // io.liquidsoftware.safedomain.serialization/GeoPointSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/GeoPointSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/GeoPointSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.geo/GeoPoint // io.liquidsoftware.safedomain.serialization/GeoPointSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.geo/GeoPoint) // io.liquidsoftware.safedomain.serialization/GeoPointSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.geo.GeoPoint){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/HttpUrlSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.web/HttpUrl> { // io.liquidsoftware.safedomain.serialization/HttpUrlSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/HttpUrlSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/HttpUrlSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.web/HttpUrl // io.liquidsoftware.safedomain.serialization/HttpUrlSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.web/HttpUrl) // io.liquidsoftware.safedomain.serialization/HttpUrlSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.web.HttpUrl){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/IpAddressSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.web/IpAddress> { // io.liquidsoftware.safedomain.serialization/IpAddressSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/IpAddressSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/IpAddressSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.web/IpAddress // io.liquidsoftware.safedomain.serialization/IpAddressSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.web/IpAddress) // io.liquidsoftware.safedomain.serialization/IpAddressSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.web.IpAddress){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.web/IpAddress.V4> { // io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.web/IpAddress.V4 // io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.web/IpAddress.V4) // io.liquidsoftware.safedomain.serialization/Ipv4AddressSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.web.IpAddress.V4){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.web/IpAddress.V6> { // io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.web/IpAddress.V6 // io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.web/IpAddress.V6) // io.liquidsoftware.safedomain.serialization/Ipv6AddressSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.web.IpAddress.V6){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/LanguageTagSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.locale/LanguageTag> { // io.liquidsoftware.safedomain.serialization/LanguageTagSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/LanguageTagSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/LanguageTagSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.locale/LanguageTag // io.liquidsoftware.safedomain.serialization/LanguageTagSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.locale/LanguageTag) // io.liquidsoftware.safedomain.serialization/LanguageTagSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.locale.LanguageTag){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/MoneySerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.money/Money> { // io.liquidsoftware.safedomain.serialization/MoneySerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/MoneySerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/MoneySerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.money/Money // io.liquidsoftware.safedomain.serialization/MoneySerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.money/Money) // io.liquidsoftware.safedomain.serialization/MoneySerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.money.Money){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/NegativeDecimal> { // io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/NegativeDecimal // io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/NegativeDecimal) // io.liquidsoftware.safedomain.serialization/NegativeDecimalSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.NegativeDecimal){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NegativeIntSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/NegativeInt> { // io.liquidsoftware.safedomain.serialization/NegativeIntSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NegativeIntSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NegativeIntSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/NegativeInt // io.liquidsoftware.safedomain.serialization/NegativeIntSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/NegativeInt) // io.liquidsoftware.safedomain.serialization/NegativeIntSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.NegativeInt){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NegativeLongSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/NegativeLong> { // io.liquidsoftware.safedomain.serialization/NegativeLongSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NegativeLongSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NegativeLongSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/NegativeLong // io.liquidsoftware.safedomain.serialization/NegativeLongSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/NegativeLong) // io.liquidsoftware.safedomain.serialization/NegativeLongSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.NegativeLong){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.money/NegativeMoney> { // io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.money/NegativeMoney // io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.money/NegativeMoney) // io.liquidsoftware.safedomain.serialization/NegativeMoneySerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.money.NegativeMoney){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.text/NonBlankString> { // io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.text/NonBlankString // io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.text/NonBlankString) // io.liquidsoftware.safedomain.serialization/NonBlankStringSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.text.NonBlankString){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/NonNegativeDecimal> { // io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/NonNegativeDecimal // io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/NonNegativeDecimal) // io.liquidsoftware.safedomain.serialization/NonNegativeDecimalSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.NonNegativeDecimal){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.money/NonNegativeMoney> { // io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.money/NonNegativeMoney // io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.money/NonNegativeMoney) // io.liquidsoftware.safedomain.serialization/NonNegativeMoneySerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.money.NonNegativeMoney){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PercentageSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/Percentage> { // io.liquidsoftware.safedomain.serialization/PercentageSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PercentageSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PercentageSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/Percentage // io.liquidsoftware.safedomain.serialization/PercentageSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/Percentage) // io.liquidsoftware.safedomain.serialization/PercentageSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.Percentage){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PhoneSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.contact/Phone> { // io.liquidsoftware.safedomain.serialization/PhoneSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PhoneSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PhoneSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.contact/Phone // io.liquidsoftware.safedomain.serialization/PhoneSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.contact/Phone) // io.liquidsoftware.safedomain.serialization/PhoneSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.contact.Phone){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/PositiveDecimal> { // io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/PositiveDecimal // io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/PositiveDecimal) // io.liquidsoftware.safedomain.serialization/PositiveDecimalSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.PositiveDecimal){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.time/PositiveDuration> { // io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.time/PositiveDuration // io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.time/PositiveDuration) // io.liquidsoftware.safedomain.serialization/PositiveDurationSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.time.PositiveDuration){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PositiveIntSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/PositiveInt> { // io.liquidsoftware.safedomain.serialization/PositiveIntSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PositiveIntSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PositiveIntSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/PositiveInt // io.liquidsoftware.safedomain.serialization/PositiveIntSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/PositiveInt) // io.liquidsoftware.safedomain.serialization/PositiveIntSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.PositiveInt){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PositiveLongSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.numeric/PositiveLong> { // io.liquidsoftware.safedomain.serialization/PositiveLongSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PositiveLongSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PositiveLongSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.numeric/PositiveLong // io.liquidsoftware.safedomain.serialization/PositiveLongSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.numeric/PositiveLong) // io.liquidsoftware.safedomain.serialization/PositiveLongSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.numeric.PositiveLong){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.money/PositiveMoney> { // io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.money/PositiveMoney // io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.money/PositiveMoney) // io.liquidsoftware.safedomain.serialization/PositiveMoneySerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.money.PositiveMoney){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/SecretSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.text/Secret> { // io.liquidsoftware.safedomain.serialization/SecretSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/SecretSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/SecretSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.text/Secret // io.liquidsoftware.safedomain.serialization/SecretSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.text/Secret) // io.liquidsoftware.safedomain.serialization/SecretSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.text.Secret){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/SlugSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.text/Slug> { // io.liquidsoftware.safedomain.serialization/SlugSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/SlugSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/SlugSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.text/Slug // io.liquidsoftware.safedomain.serialization/SlugSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.text/Slug) // io.liquidsoftware.safedomain.serialization/SlugSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.text.Slug){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/TimeWindowSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.time/TimeWindow> { // io.liquidsoftware.safedomain.serialization/TimeWindowSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/TimeWindowSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/TimeWindowSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.time/TimeWindow // io.liquidsoftware.safedomain.serialization/TimeWindowSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.time/TimeWindow) // io.liquidsoftware.safedomain.serialization/TimeWindowSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.time.TimeWindow){}[0]
+}
+
+final object io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer : kotlinx.serialization/KSerializer<io.liquidsoftware.safedomain.time/TimeZoneId> { // io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer|null[0]
+    final val descriptor // io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer.descriptor|{}descriptor[0]
+        final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): io.liquidsoftware.safedomain.time/TimeZoneId // io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, io.liquidsoftware.safedomain.time/TimeZoneId) // io.liquidsoftware.safedomain.serialization/TimeZoneIdSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.liquidsoftware.safedomain.time.TimeZoneId){}[0]
+}
+
+final val io.liquidsoftware.safedomain.serialization/safeDomainSerializersModule // io.liquidsoftware.safedomain.serialization/safeDomainSerializersModule|{}safeDomainSerializersModule[0]
+    final fun <get-safeDomainSerializersModule>(): kotlinx.serialization.modules/SerializersModule // io.liquidsoftware.safedomain.serialization/safeDomainSerializersModule.<get-safeDomainSerializersModule>|<get-safeDomainSerializersModule>(){}[0]
+
+final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> (io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain.serialization/asSerializer(kotlin/String, kotlinx.serialization/KSerializer<#A>, kotlin/Function1<#C, #A>, kotlin/Function1<#B, kotlin.collections/List<io.liquidsoftware.safedomain/ErrorMessage>>): kotlinx.serialization/KSerializer<#C> // io.liquidsoftware.safedomain.serialization/asSerializer|asSerializer@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(kotlin.String;kotlinx.serialization.KSerializer<0:0>;kotlin.Function1<0:2,0:0>;kotlin.Function1<0:1,kotlin.collections.List<io.liquidsoftware.safedomain.ErrorMessage>>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
