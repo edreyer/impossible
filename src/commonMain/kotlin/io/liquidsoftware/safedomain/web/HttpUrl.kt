@@ -1,3 +1,6 @@
+// Octets, ports, escape widths and code points are protocol constants, clearer inline.
+@file:Suppress("MagicNumber")
+
 package io.liquidsoftware.safedomain.web
 
 import arrow.core.raise.Raise
@@ -52,6 +55,9 @@ class HttpUrl private constructor(
     override fun toString(): String = value
 
     companion object : ValueFactory<String, Error, HttpUrl> {
+        private const val MAX_PORT = 65535
+
+        @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.
         context(raise: Raise<Error>)
         override fun from(value: String): HttpUrl {
             val syntaxError = Error.InvalidSyntax(value)
@@ -75,10 +81,10 @@ class HttpUrl private constructor(
             val authority = if (hasAuthority) hierarchical.substring(2).substringBefore('/') else null
             val path = if (hasAuthority) hierarchical.substring(2 + authority!!.length) else hierarchical
 
-            raise.ensure(fragment == null || fragment.isValid(queryChars)) { syntaxError }
-            raise.ensure(query == null || query.isValid(queryChars)) { syntaxError }
-            raise.ensure(path.isValid(pathChars)) { syntaxError }
-            raise.ensure(authority == null || authority.isValid(authorityChars)) { syntaxError }
+            raise.ensure(fragment == null || fragment.isValid(QUERY_CHARS)) { syntaxError }
+            raise.ensure(query == null || query.isValid(QUERY_CHARS)) { syntaxError }
+            raise.ensure(path.isValid(PATH_CHARS)) { syntaxError }
+            raise.ensure(authority == null || authority.isValid(AUTHORITY_CHARS)) { syntaxError }
             // As in the JDK: a scheme needs a scheme-specific part, and "//" cannot end the input.
             raise.ensure(scheme == null || beforeFragment.length > scheme.length + 1) { syntaxError }
             raise.ensure(authority != "" || path.isNotEmpty() || query != null || fragment != null) { syntaxError }
@@ -91,7 +97,7 @@ class HttpUrl private constructor(
 
             val at = authority.lastIndexOf('@')
             val userInfo = if (at < 0) null else authority.substring(0, at)
-            raise.ensure(userInfo == null || userInfo.isValid(userInfoChars)) { syntaxError }
+            raise.ensure(userInfo == null || userInfo.isValid(USER_INFO_CHARS)) { syntaxError }
             val hostAndPort = authority.substring(at + 1)
 
             val portSeparator = if (hostAndPort.startsWith("[")) {
@@ -113,7 +119,7 @@ class HttpUrl private constructor(
                 raise.ensure(portText.all { it in '0'..'9' }) { syntaxError }
                 raise.ensureNotNull(portText.toIntOrNull()) { syntaxError }
             }
-            raise.ensure(port == null || port in 1..65535) { Error.InvalidPort(port) }
+            raise.ensure(port == null || port in 1..MAX_PORT) { Error.InvalidPort(port) }
 
             return HttpUrl(value, scheme, userInfo, host, port, path, query, fragment)
         }
@@ -125,12 +131,13 @@ class HttpUrl private constructor(
 
         // Character sets follow java.net.URI: unreserved and punctuation marks, escapes,
         // and (outside the authority) non-ASCII characters that are neither controls nor spaces.
-        private const val unreserved = "-_.!~*'()"
-        private const val userInfoChars = "$unreserved;:&=+$,"
-        private const val pathChars = "$unreserved:@&=+$,;/"
-        private const val queryChars = "$pathChars?[]"
-        private const val authorityChars = "$unreserved;:&=+$,@[]"
+        private const val UNRESERVED = "-_.!~*'()"
+        private const val USER_INFO_CHARS = "$UNRESERVED;:&=+$,"
+        private const val PATH_CHARS = "$UNRESERVED:@&=+$,;/"
+        private const val QUERY_CHARS = "$PATH_CHARS?[]"
+        private const val AUTHORITY_CHARS = "$UNRESERVED;:&=+$,@[]"
 
+        @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.
         private fun String.isValid(allowed: String): Boolean {
             var index = 0
             while (index < length) {
@@ -143,7 +150,7 @@ class HttpUrl private constructor(
                     }
                     char.isLetterOrDigit() && char.code < 128 -> Unit
                     char in allowed -> Unit
-                    char.code >= 128 && allowed != authorityChars && !char.isISOControl() && !char.isWhitespace() -> Unit
+                    char.code >= 128 && allowed != AUTHORITY_CHARS && !char.isISOControl() && !char.isWhitespace() -> Unit
                     else -> return false
                 }
                 index++

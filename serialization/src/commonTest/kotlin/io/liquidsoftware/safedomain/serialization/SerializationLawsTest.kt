@@ -10,6 +10,7 @@ import io.liquidsoftware.safedomain.collections.BoundedList
 import io.liquidsoftware.safedomain.collections.UniqueList
 import io.liquidsoftware.safedomain.contact.Email
 import io.liquidsoftware.safedomain.contact.Phone
+import io.liquidsoftware.safedomain.fromTrusted
 import io.liquidsoftware.safedomain.geo.GeoPoint
 import io.liquidsoftware.safedomain.identity.TypedId
 import io.liquidsoftware.safedomain.locale.CountryCode
@@ -29,7 +30,6 @@ import io.liquidsoftware.safedomain.numeric.Percentage
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.numeric.PositiveLong
-import io.liquidsoftware.safedomain.fromTrusted
 import io.liquidsoftware.safedomain.testing.arb
 import io.liquidsoftware.safedomain.testing.untrustedText
 import io.liquidsoftware.safedomain.text.NonBlankString
@@ -148,6 +148,3 @@ class SerializationLawsTest {
         }
     }
 }
-
-
-

@@ -25,11 +25,20 @@ class SignedMoneyTest {
     @Test
     fun `each refinement accepts exactly its sign`() {
         val (negative, zero, positive) = Triple(minor(-1), minor(0), minor(1))
-        assertEquals(Either.Left(PositiveMoney.Error.NonPositive(zero)), either<PositiveMoney.Error, PositiveMoney> { PositiveMoney.from(zero) })
+        assertEquals(
+            Either.Left(PositiveMoney.Error.NonPositive(zero)),
+            either<PositiveMoney.Error, PositiveMoney> { PositiveMoney.from(zero) },
+        )
         assertEquals(positive, PositiveMoney.fromTrusted(positive).money)
-        assertEquals(Either.Left(NonNegativeMoney.Error.Negative(negative)), either<NonNegativeMoney.Error, NonNegativeMoney> { NonNegativeMoney.from(negative) })
+        assertEquals(
+            Either.Left(NonNegativeMoney.Error.Negative(negative)),
+            either<NonNegativeMoney.Error, NonNegativeMoney> { NonNegativeMoney.from(negative) },
+        )
         assertEquals(zero, NonNegativeMoney.fromTrusted(zero).money)
-        assertEquals(Either.Left(NegativeMoney.Error.NonNegative(zero)), either<NegativeMoney.Error, NegativeMoney> { NegativeMoney.from(zero) })
+        assertEquals(
+            Either.Left(NegativeMoney.Error.NonNegative(zero)),
+            either<NegativeMoney.Error, NegativeMoney> { NegativeMoney.from(zero) },
+        )
         assertEquals(negative, NegativeMoney.fromTrusted(negative).money)
     }
 
@@ -39,22 +48,42 @@ class SignedMoneyTest {
         assertEquals(NonNegativeMoney.fromTrusted(minor(500)), price.toNonNegativeMoney())
         assertEquals(NegativeMoney.fromTrusted(minor(-500)), price.negate())
         assertEquals(Either.Right(price), calc { price.negate().negate() })
-        assertEquals(Either.Left(Money.ArithmeticError.Overflow), calc { NegativeMoney.fromTrusted(minor(Long.MIN_VALUE)).negate() })
+        assertEquals(
+            Either.Left(Money.ArithmeticError.Overflow),
+            calc {
+                NegativeMoney.fromTrusted(minor(Long.MIN_VALUE)).negate()
+            },
+        )
     }
 
     @Test
     fun `arithmetic keeps the sign and still checks currency and overflow`() {
         val one = PositiveMoney.fromTrusted(minor(100))
         assertEquals(Either.Right(PositiveMoney.fromTrusted(minor(300))), calc { one.add(one).add(one) })
-        assertEquals(Either.Right(PositiveMoney.fromTrusted(minor(300))), calc { one.multiply(PositiveInt.fromTrusted(3)) })
-        assertEquals(Either.Left(Money.ArithmeticError.Overflow), calc { PositiveMoney.fromTrusted(minor(Long.MAX_VALUE)).add(one) })
+        assertEquals(
+            Either.Right(PositiveMoney.fromTrusted(minor(300))),
+            calc {
+                one.multiply(PositiveInt.fromTrusted(3))
+            },
+        )
+        assertEquals(
+            Either.Left(Money.ArithmeticError.Overflow),
+            calc {
+                PositiveMoney.fromTrusted(minor(Long.MAX_VALUE)).add(one)
+            },
+        )
         assertEquals(
             Either.Left(Money.ArithmeticError.CurrencyMismatch(usd, eur)),
             calc { one.add(PositiveMoney.fromTrusted(minor(100, eur))) },
         )
         val refund = NegativeMoney.fromTrusted(minor(-100))
         assertEquals(Either.Right(NegativeMoney.fromTrusted(minor(-200))), calc { refund.add(refund) })
-        assertEquals(Either.Left(Money.ArithmeticError.Overflow), calc { NegativeMoney.fromTrusted(minor(Long.MIN_VALUE)).add(refund) })
+        assertEquals(
+            Either.Left(Money.ArithmeticError.Overflow),
+            calc {
+                NegativeMoney.fromTrusted(minor(Long.MIN_VALUE)).add(refund)
+            },
+        )
         assertEquals(Either.Right(-1), calc { refund.compare(NegativeMoney.fromTrusted(minor(-50))) })
     }
 
@@ -68,6 +97,11 @@ class SignedMoneyTest {
             calc { total.multiply(Percentage.fromTrusted(Decimal.parse("8.25")), RoundingMode.HALF_UP) },
         )
         assertEquals(listOf(334L, 333L, 333L), total.split(PositiveInt.fromTrusted(3)).map { it.money.minor })
-        assertEquals(listOf(1L, 0L), NonNegativeMoney.fromTrusted(minor(1)).allocate(nonEmptyListOf(PositiveInt.ONE, PositiveInt.ONE)).map { it.money.minor })
+        assertEquals(
+            listOf(1L, 0L),
+            NonNegativeMoney.fromTrusted(minor(1)).allocate(nonEmptyListOf(PositiveInt.ONE, PositiveInt.ONE)).map {
+                it.money.minor
+            },
+        )
     }
 }

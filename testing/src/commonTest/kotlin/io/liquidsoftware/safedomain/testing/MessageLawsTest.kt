@@ -47,12 +47,21 @@ class MessageLawsTest {
         { text -> attempt { DomainName.from(text) }.leftOrNull()?.let(ErrorMessages::describe) },
         { text -> attempt { IpAddress.from(text) }.leftOrNull()?.let(ErrorMessages::describe) },
         { text -> attempt { HttpUrl.from(text) }.leftOrNull()?.let(ErrorMessages::describe) },
-        { text -> attempt { Money.parser.from(Money.Text(text, text)) }.leftOrNull()?.head?.let(ErrorMessages::describe) },
+        { text ->
+            attempt { Money.parser.from(Money.Text(text, text)) }.leftOrNull()?.head?.let(ErrorMessages::describe)
+        },
     )
 
     @Test
     fun `descriptions have stable codes and never quote the rejected text`() = runTest {
-        val inputs = Arb.choice(Arb.untrustedText(4..40), Arb.nearMiss(Email.arb().let { arb -> arbitrary { arb.bind().value } }))
+        val inputs = Arb.choice(
+            Arb.untrustedText(4..40),
+            Arb.nearMiss(
+                Email.arb().let { arb ->
+                    arbitrary { arb.bind().value }
+                },
+            ),
+        )
         forAll(inputs) { text ->
             for (describe in describers) {
                 val message = describe(text) ?: continue
@@ -60,7 +69,12 @@ class MessageLawsTest {
                 assertTrue(message.text.isNotBlank())
                 if (text.isNotBlank()) {
                     assertFalse(text in message.text, "${message.code} quoted \"$text\"")
-                    assertFalse(message.arguments.values.any { text in it }, "${message.code} quoted \"$text\" in its arguments")
+                    assertFalse(
+                        message.arguments.values.any {
+                            text in it
+                        },
+                        "${message.code} quoted \"$text\" in its arguments",
+                    )
                 }
             }
         }

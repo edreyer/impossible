@@ -36,19 +36,23 @@ class Email private constructor(val value: String) {
     override fun toString(): String = "Email(value=$value)"
 
     companion object : ValueFactory<String, Error, Email> {
+        private const val MAX_LENGTH = 254
+        private const val MAX_LOCAL_PART_LENGTH = 64
         private val localAtom = Regex("[A-Za-z0-9!#\u0024%&'*+/=?^_`{|}~-]+")
         private val domainLabel = Regex("[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?")
 
         context(raise: Raise<Error>)
         override fun from(value: String): Email {
             val at = value.indexOf('@')
-            raise.ensure(value.length <= 254 && at in 1..64 && at == value.lastIndexOf('@')) {
+            raise.ensure(value.length <= MAX_LENGTH && at in 1..MAX_LOCAL_PART_LENGTH && at == value.lastIndexOf('@')) {
                 Error.InvalidFormat(value)
             }
             val local = value.substring(0, at)
             val domain = value.substring(at + 1)
-            raise.ensure(local.split('.').all(localAtom::matches) &&
-                domain.split('.').all(domainLabel::matches)) { Error.InvalidFormat(value) }
+            raise.ensure(
+                local.split('.').all(localAtom::matches) &&
+                    domain.split('.').all(domainLabel::matches),
+            ) { Error.InvalidFormat(value) }
             return Email(value)
         }
     }

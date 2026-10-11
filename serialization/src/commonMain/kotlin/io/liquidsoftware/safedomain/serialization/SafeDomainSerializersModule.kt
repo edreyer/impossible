@@ -36,10 +36,11 @@ import kotlinx.serialization.modules.SerializersModule
  * Contextual serializers for every type whose wire form needs no configuration, so a
  * class can mark fields `@Contextual val email: Email` and a format built with
  * `Json { serializersModule = safeDomainSerializersModule }` validates them on decode.
- * [io.liquidsoftware.safedomain.numeric.BoundedInt] and [io.liquidsoftware.safedomain.collections.BoundedList] need bounds, so they are not included; register
+ * [io.liquidsoftware.safedomain.numeric.BoundedInt] and
+ * [io.liquidsoftware.safedomain.collections.BoundedList] need bounds, so they are not included; register
  * your own [BoundedIntSerializer] or [BoundedListSerializer] for each use.
  * [io.liquidsoftware.safedomain.identity.TypedId] is not included either: the
- * serialization plugin (Kotlin 2.4.20) crashes on `@Contextual` for a generic value
+ * serialization plugin (Kotlin 2.4.21) crashes on `@Contextual` for a generic value
  * class, so mark those fields `@Serializable(with = TypedIdSerializer::class)`.
  */
 val safeDomainSerializersModule: SerializersModule = SerializersModule {

@@ -1,10 +1,10 @@
 package io.liquidsoftware.safedomain.testing
 
 import arrow.core.Either
+import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
-import io.kotest.property.Arb
 import io.liquidsoftware.safedomain.numeric.Decimal
 import io.liquidsoftware.safedomain.numeric.NegativeInt
 import io.liquidsoftware.safedomain.numeric.NegativeLong
@@ -60,7 +60,11 @@ class NumericLawsTest {
 
     @Test
     fun `negation round trips between sign pairs`() = runTest {
-        forAll(PositiveInt.arb()) { positive -> assertEquals(Either.Right(positive), attempt<NegativeInt.Overflow, PositiveInt> { -(-positive) }) }
+        forAll(
+            PositiveInt.arb(),
+        ) { positive ->
+            assertEquals(Either.Right(positive), attempt<NegativeInt.Overflow, PositiveInt> { -(-positive) })
+        }
         forAll(NegativeInt.arb()) { negative ->
             val magnitude = attempt { -negative }
             if (negative.value == Int.MIN_VALUE) {

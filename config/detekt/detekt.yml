@@ -1,0 +1,41 @@
+# Changes to detekt's default rules for this repository; everything else uses the defaults.
+# Keep each change explained.
+
+complexity:
+  # Value types such as Money and Decimal, and the ErrorMessages catalogue with one
+  # overload per error type, grow by design.
+  TooManyFunctions:
+    active: false
+
+style:
+  MaxLineLength:
+    # Long test names and JSON samples read better unwrapped.
+    maxLineLength: 140
+  # Parsers return early on each failed guard; forcing a single return hides that.
+  ReturnCount:
+    active: false
+  MagicNumber:
+    # Generators in the testing module are made of ranges and sizes.
+    excludes: ['**/test/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**', '**/testing/src/**']
+
+ktlint:
+  # style.MaxLineLength already checks line length.
+  MaximumLineLength:
+    active: false
+  ArgumentListWrapping:
+    maxLineLength: 140
+  BinaryExpressionWrapping:
+    maxLineLength: 140
+  ParameterListWrapping:
+    maxLineLength: 140
+  PropertyWrapping:
+    maxLineLength: 140
+  # The code wraps a signature or expression body when it reads better that way;
+  # these rules would join it back onto one line whenever it fits.
+  FunctionSignature:
+    active: false
+  ClassSignature:
+    active: false
+  # A blank line between every `when` branch spreads short tables over twice the lines.
+  BlankLineBetweenWhenConditions:
+    active: false

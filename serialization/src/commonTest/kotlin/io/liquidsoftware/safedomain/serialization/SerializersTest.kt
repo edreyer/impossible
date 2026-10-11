@@ -64,7 +64,11 @@ class SerializersTest {
 
     @Test
     fun `values are written in their plain wire form`() {
-        val order = Order(PositiveInt.fromTrusted(3), PositiveMoney.fromTrusted(Money.fromTrusted(Money.Input(Decimal.parse("12.30"), "EUR"))), BoundedInt.factory(1..5).fromTrusted(4))
+        val order = Order(
+            PositiveInt.fromTrusted(3),
+            PositiveMoney.fromTrusted(Money.fromTrusted(Money.Input(Decimal.parse("12.30"), "EUR"))),
+            BoundedInt.factory(1..5).fromTrusted(4),
+        )
         val text = json.encodeToString(Order.serializer(), order)
         assertEquals("""{"quantity":3,"price":{"amount":"12.30","currency":"EUR"},"rating":4}""", text)
         assertEquals(order, json.decodeFromString(Order.serializer(), text))
@@ -76,8 +80,16 @@ class SerializersTest {
         assertEquals("io.liquidsoftware.safedomain.contact.Email", error.serialName)
         assertEquals(listOf("email.invalid_format"), error.messages.map { it.code })
         assertTrue(error.error is Email.Error)
-        assertEquals(listOf("positive_int.non_positive"), rejects<Order>("""{"quantity":0,"price":{"amount":"1","currency":"EUR"},"rating":1}""").messages.map { it.code })
-        assertEquals("io.liquidsoftware.safedomain.numeric.BoundedInt", rejects<Order>("""{"quantity":1,"price":{"amount":"1","currency":"EUR"},"rating":6}""").serialName)
+        assertEquals(
+            listOf("positive_int.non_positive"),
+            rejects<Order>("""{"quantity":0,"price":{"amount":"1","currency":"EUR"},"rating":1}""").messages.map {
+                it.code
+            },
+        )
+        assertEquals(
+            "io.liquidsoftware.safedomain.numeric.BoundedInt",
+            rejects<Order>("""{"quantity":1,"price":{"amount":"1","currency":"EUR"},"rating":6}""").serialName,
+        )
     }
 
     @Test
@@ -111,7 +123,10 @@ class SerializersTest {
         val text = """{"email":"a@example.com","password":"x","referrer":"6f1c2c4e-8b1d-4a8e-9f6a-0c2b1e3d4f5a"}"""
         val signup = json.decodeFromString(Signup.serializer(), text)
         assertEquals("6f1c2c4e-8b1d-4a8e-9f6a-0c2b1e3d4f5a", signup.referrer?.value.toString())
-        assertEquals(listOf("typed_id.invalid_format"), rejects<Signup>("""{"email":"a@example.com","password":"x","referrer":"nope"}""").messages.map { it.code })
+        assertEquals(
+            listOf("typed_id.invalid_format"),
+            rejects<Signup>("""{"email":"a@example.com","password":"x","referrer":"nope"}""").messages.map { it.code },
+        )
     }
 
     @Test
@@ -120,7 +135,12 @@ class SerializersTest {
         val value = json.decodeFromString(Profile.serializer(), text)
         assertEquals(Money.fromTrusted(Money.Input(Decimal.parse("-5"), "EUR")), value.total)
         assertEquals(text, json.encodeToString(Profile.serializer(), value))
-        assertEquals(listOf("unique_list.duplicate"), rejects<Profile>(text.replace("\"b\"", "\"a\"")).messages.map { it.code })
+        assertEquals(
+            listOf("unique_list.duplicate"),
+            rejects<Profile>(text.replace("\"b\"", "\"a\"")).messages.map {
+                it.code
+            },
+        )
     }
 
     @Test
@@ -128,14 +148,27 @@ class SerializersTest {
         val range = DateRange.fromTrusted(DateRange.Input(LocalDate(2026, 1, 1), LocalDate(2026, 1, 31)))
         assertEquals("""{"start":"2026-01-01","endInclusive":"2026-01-31"}""", json.encodeToString(DateRangeSerializer, range))
         assertEquals(range, json.decodeFromString(DateRangeSerializer, json.encodeToString(DateRangeSerializer, range)))
-        assertFailsWith<InvalidValueException> { json.decodeFromString(DateRangeSerializer, """{"start":"2026-02-01","endInclusive":"2026-01-31"}""") }
+        assertFailsWith<InvalidValueException> {
+            json.decodeFromString(
+                DateRangeSerializer,
+                """{"start":"2026-02-01","endInclusive":"2026-01-31"}""",
+            )
+        }
 
         val window = TimeWindow.fromTrusted(TimeWindow.Input(Instant.parse("2026-01-01T00:00:00Z"), Instant.parse("2026-01-01T01:00:00Z")))
         assertEquals(window, json.decodeFromString(TimeWindowSerializer, json.encodeToString(TimeWindowSerializer, window)))
 
         val point = GeoPoint.fromTrusted(GeoPoint.Input(52.37, 4.89))
         assertEquals("""{"latitude":52.37,"longitude":4.89}""", json.encodeToString(GeoPointSerializer, point))
-        assertEquals(2, assertFailsWith<InvalidValueException> { json.decodeFromString(GeoPointSerializer, """{"latitude":91.0,"longitude":181.0}""") }.messages.size)
+        assertEquals(
+            2,
+            assertFailsWith<InvalidValueException> {
+                json.decodeFromString(
+                    GeoPointSerializer,
+                    """{"latitude":91.0,"longitude":181.0}""",
+                )
+            }.messages.size,
+        )
 
         val duration = PositiveDuration.fromTrusted(90.minutes)
         assertEquals("\"PT1H30M\"", json.encodeToString(PositiveDurationSerializer, duration))
@@ -147,7 +180,12 @@ class SerializersTest {
         val big = Decimal.parse("12345678901234567890.120")
         assertEquals("\"12345678901234567890.120\"", json.encodeToString(DecimalSerializer, big))
         assertEquals(big, json.decodeFromString(DecimalSerializer, "\"12345678901234567890.120\""))
-        assertEquals(listOf("decimal.invalid_format"), assertFailsWith<InvalidValueException> { json.decodeFromString(DecimalSerializer, "\"1,5\"") }.messages.map { it.code })
+        assertEquals(
+            listOf("decimal.invalid_format"),
+            assertFailsWith<InvalidValueException> {
+                json.decodeFromString(DecimalSerializer, "\"1,5\"")
+            }.messages.map { it.code },
+        )
     }
 
     @Test

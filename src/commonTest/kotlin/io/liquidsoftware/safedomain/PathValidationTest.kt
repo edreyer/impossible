@@ -62,7 +62,9 @@ private data class Shipment(
     companion object : ValueFactory<Input, NonEmptyList<FieldError<Error>>, Shipment> {
         context(raise: Raise<NonEmptyList<FieldError<Error>>>)
         override fun from(value: Input): Shipment = validate {
-            val contact by Email.required().fieldAt(value.contact, onMissing = { Error.ContactMissing }) { Error.Contact(it) }
+            val contact by Email.required().fieldAt(value.contact, onMissing = {
+                Error.ContactMissing
+            }) { Error.Contact(it) }
             val address by Address.nestedFieldAt(value.address) { Error.Address(it) }
             val quantities by PositiveInt.eachFieldAt(value.quantities) { Error.Quantity(it) }
             val price by Money.parser.flatFieldAt(value.price, name = "unit_price") { Error.Price(it) }
@@ -92,36 +94,51 @@ class PathValidationTest {
     @Test
     fun `each failure is reported at the property that declared it`() {
         val result = shipment(valid.copy(contact = null, quantities = listOf(1, 0, -3)))
-        assertEquals(Either.Left(nonEmptyListOf(
-            FieldError(FieldPath.of("contact"), Shipment.Error.ContactMissing),
-            FieldError(FieldPath.of("quantities").index(1), Shipment.Error.Quantity(PositiveInt.Error.NonPositive(0))),
-            FieldError(FieldPath.of("quantities").index(2), Shipment.Error.Quantity(PositiveInt.Error.NonPositive(-3))),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    FieldError(FieldPath.of("contact"), Shipment.Error.ContactMissing),
+                    FieldError(FieldPath.of("quantities").index(1), Shipment.Error.Quantity(PositiveInt.Error.NonPositive(0))),
+                    FieldError(FieldPath.of("quantities").index(2), Shipment.Error.Quantity(PositiveInt.Error.NonPositive(-3))),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
     fun `nested composites prefix their own paths`() {
         val result = shipment(valid.copy(address = Address.Input(" ", "XX")))
-        assertEquals(Either.Left(nonEmptyListOf(
-            FieldError(
-                FieldPath.of("address").child("street"),
-                Shipment.Error.Address(Address.Error.Street(NonBlankString.Error.Blank)),
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    FieldError(
+                        FieldPath.of("address").child("street"),
+                        Shipment.Error.Address(Address.Error.Street(NonBlankString.Error.Blank)),
+                    ),
+                    FieldError(
+                        FieldPath.of("address").child("country"),
+                        Shipment.Error.Address(Address.Error.Country(CountryCode.Error.UnsupportedCode("XX"))),
+                    ),
+                ),
             ),
-            FieldError(
-                FieldPath.of("address").child("country"),
-                Shipment.Error.Address(Address.Error.Country(CountryCode.Error.UnsupportedCode("XX"))),
-            ),
-        )), result)
+            result,
+        )
     }
 
     @Test
     fun `an explicit name overrides the property name and every flat error shares it`() {
         val result = shipment(valid.copy(price = Money.Text("x", "ZZZ")))
         val path = FieldPath.of("unit_price")
-        assertEquals(Either.Left(nonEmptyListOf(
-            FieldError(path, Shipment.Error.Price(Money.Error.InvalidAmount("x"))),
-            FieldError(path, Shipment.Error.Price(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")))),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    FieldError(path, Shipment.Error.Price(Money.Error.InvalidAmount("x"))),
+                    FieldError(path, Shipment.Error.Price(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")))),
+                ),
+            ),
+            result,
+        )
     }
 
     @Test
@@ -137,9 +154,11 @@ class PathValidationTest {
     fun `invalid contact text is reported with its cause`() {
         val result = shipment(valid.copy(contact = "not an email"))
         assertEquals(
-            Either.Left(nonEmptyListOf(
-                FieldError(FieldPath.of("contact"), Shipment.Error.Contact(Email.Error.InvalidFormat("not an email"))),
-            )),
+            Either.Left(
+                nonEmptyListOf(
+                    FieldError(FieldPath.of("contact"), Shipment.Error.Contact(Email.Error.InvalidFormat("not an email"))),
+                ),
+            ),
             result,
         )
     }

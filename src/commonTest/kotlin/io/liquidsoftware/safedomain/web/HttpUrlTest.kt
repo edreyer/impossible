@@ -10,9 +10,16 @@ import kotlin.test.assertNotEquals
 class HttpUrlTest {
     @Test
     fun `accepts absolute HTTP and HTTPS addresses including IP hosts and explicit ports`() {
-        for (raw in listOf("https://example.com", "HTTP://Example.com:8080/a%20b?q=1#part", "http://localhost",
-            "https://127.0.0.1:1/", "http://[::1]:65535/", "https://xn--bcher-kva.example/é",
-            "https://user:pass@example.com/path", "https://example.com./")) {
+        for (raw in listOf(
+            "https://example.com",
+            "HTTP://Example.com:8080/a%20b?q=1#part",
+            "http://localhost",
+            "https://127.0.0.1:1/",
+            "http://[::1]:65535/",
+            "https://xn--bcher-kva.example/é",
+            "https://user:pass@example.com/path",
+            "https://example.com./",
+        )) {
             val url = assertIs<Either.Right<HttpUrl>>(either { HttpUrl.from(raw) }).value
             assertEquals(raw, url.value)
         }
@@ -40,9 +47,11 @@ class HttpUrlTest {
 
     @Test
     fun `rejects malformed URI syntax and malformed server authority without repairing input`() {
-        for (raw in listOf(" https://example.com", "https://example.com ", "https://example.com/\n", "https://example.com/%zz",
+        for (raw in listOf(
+            " https://example.com", "https://example.com ", "https://example.com/\n", "https://example.com/%zz",
             "https://bad_host.example", "https://-bad.example", "https://example.com:abc", "https://example.com:-1",
-            "https://bücher.example", "http://[invalid]/")) {
+            "https://bücher.example", "http://[invalid]/",
+        )) {
             val result: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
             assertEquals(Either.Left(HttpUrl.Error.InvalidSyntax(raw)), result, raw)
         }
@@ -82,9 +91,11 @@ class HttpUrlTest {
 
     @Test
     fun `exposes parsed components without changing their spelling`() {
-        val url = assertIs<Either.Right<HttpUrl>>(either {
-            HttpUrl.from("HTTPS://user:p%41ss@Example.com:8443/a/B?q=[1]&r#Frag")
-        }).value
+        val url = assertIs<Either.Right<HttpUrl>>(
+            either {
+                HttpUrl.from("HTTPS://user:p%41ss@Example.com:8443/a/B?q=[1]&r#Frag")
+            },
+        ).value
         assertEquals("HTTPS", url.scheme)
         assertEquals("user:p%41ss", url.userInfo)
         assertEquals("Example.com", url.host)
@@ -104,8 +115,16 @@ class HttpUrlTest {
             }
         }
         assertEquals(Either.Right(Unit), result)
-        for (raw in listOf("http://[1::2::3]/", "http://[1:2:3:4:5:6:7:8:9]/", "http://[12345::]/", "http://[::1]x/",
-            "https://a.example/b[1]", "https://example.com/#a#b", "https://:80/", "https://example.com:99999999999/")) {
+        for (raw in listOf(
+            "http://[1::2::3]/",
+            "http://[1:2:3:4:5:6:7:8:9]/",
+            "http://[12345::]/",
+            "http://[::1]x/",
+            "https://a.example/b[1]",
+            "https://example.com/#a#b",
+            "https://:80/",
+            "https://example.com:99999999999/",
+        )) {
             val failed: Either<HttpUrl.Error, HttpUrl> = either { HttpUrl.from(raw) }
             assertEquals(Either.Left(HttpUrl.Error.InvalidSyntax(raw)), failed, raw)
         }

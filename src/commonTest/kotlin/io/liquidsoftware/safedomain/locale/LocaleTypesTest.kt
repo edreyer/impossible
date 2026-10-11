@@ -13,7 +13,10 @@ class LocaleTypesTest {
             assertEquals(raw, CountryCode.fromTrusted(raw).value)
         }
         for (raw in listOf("", "de", "USA", "EU", "XK", "ZZ", " DE")) {
-            assertEquals(Either.Left(CountryCode.Error.UnsupportedCode(raw)), either<CountryCode.Error, CountryCode> { CountryCode.from(raw) })
+            assertEquals(
+                Either.Left(CountryCode.Error.UnsupportedCode(raw)),
+                either<CountryCode.Error, CountryCode> { CountryCode.from(raw) },
+            )
         }
     }
 
@@ -24,7 +27,10 @@ class LocaleTypesTest {
         }
         assertEquals("zh", LanguageTag.fromTrusted("zh-Hant-TW").language)
         for (raw in listOf("", "EN", "en-us", "en_US", "e", "english", "en-", "en-US-x-private", "i-klingon", "zh-hant")) {
-            assertEquals(Either.Left(LanguageTag.Error.InvalidFormat(raw)), either<LanguageTag.Error, LanguageTag> { LanguageTag.from(raw) })
+            assertEquals(
+                Either.Left(LanguageTag.Error.InvalidFormat(raw)),
+                either<LanguageTag.Error, LanguageTag> { LanguageTag.from(raw) },
+            )
         }
     }
 }

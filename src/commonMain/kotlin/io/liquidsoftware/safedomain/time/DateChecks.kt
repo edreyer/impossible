@@ -3,10 +3,10 @@ package io.liquidsoftware.safedomain.time
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import io.liquidsoftware.safedomain.ValueFactory
-import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * Checks of a [LocalDate] against today, read from a [Clock] in a [TimeZone] supplied

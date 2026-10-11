@@ -20,10 +20,14 @@ class TimeTypesTest {
 
     @Test
     fun `time windows are half open and never empty`() {
-        assertEquals(Either.Left(TimeWindow.Error.NotAfterStart(ten, ten)),
-            either<TimeWindow.Error, TimeWindow> { TimeWindow.from(TimeWindow.Input(ten, ten)) })
-        assertEquals(Either.Left(TimeWindow.Error.NotAfterStart(ten, nine)),
-            either<TimeWindow.Error, TimeWindow> { TimeWindow.from(TimeWindow.Input(ten, nine)) })
+        assertEquals(
+            Either.Left(TimeWindow.Error.NotAfterStart(ten, ten)),
+            either<TimeWindow.Error, TimeWindow> { TimeWindow.from(TimeWindow.Input(ten, ten)) },
+        )
+        assertEquals(
+            Either.Left(TimeWindow.Error.NotAfterStart(ten, nine)),
+            either<TimeWindow.Error, TimeWindow> { TimeWindow.from(TimeWindow.Input(ten, nine)) },
+        )
         val window = assertIs<Either.Right<TimeWindow>>(either { TimeWindow.from(TimeWindow.Input(nine, ten)) }).value
         assertTrue(nine in window)
         assertFalse(ten in window)
@@ -47,12 +51,23 @@ class TimeTypesTest {
     @Test
     fun `positive durations reject zero negative and infinite durations`() {
         for (value in listOf(Duration.ZERO, (-1).nanoseconds, -Duration.INFINITE)) {
-            assertEquals(Either.Left(PositiveDuration.Error.NonPositive(value)),
-                either<PositiveDuration.Error, PositiveDuration> { PositiveDuration.from(value) })
+            assertEquals(
+                Either.Left(PositiveDuration.Error.NonPositive(value)),
+                either<PositiveDuration.Error, PositiveDuration> { PositiveDuration.from(value) },
+            )
         }
-        assertEquals(Either.Left(PositiveDuration.Error.Infinite),
-            either<PositiveDuration.Error, PositiveDuration> { PositiveDuration.from(Duration.INFINITE) })
-        assertEquals(1.nanoseconds, assertIs<Either.Right<PositiveDuration>>(either { PositiveDuration.from(1.nanoseconds) }).value.value)
+        assertEquals(
+            Either.Left(PositiveDuration.Error.Infinite),
+            either<PositiveDuration.Error, PositiveDuration> { PositiveDuration.from(Duration.INFINITE) },
+        )
+        assertEquals(
+            1.nanoseconds,
+            assertIs<Either.Right<PositiveDuration>>(
+                either {
+                    PositiveDuration.from(1.nanoseconds)
+                },
+            ).value.value,
+        )
         val result = either { assertTrue(PositiveDuration.from(1.minutes) < PositiveDuration.from(1.hours)) }
         assertEquals(Either.Right(Unit), result)
     }

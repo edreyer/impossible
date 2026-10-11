@@ -1,6 +1,50 @@
 plugins {
-  kotlin("multiplatform") version "2.4.20"
-  kotlin("plugin.serialization") version "2.4.20" apply false
+  kotlin("multiplatform") version "2.4.21"
+  kotlin("plugin.serialization") version "2.4.21" apply false
+  id("dev.detekt") version "2.0.0-alpha.6"
+  id("org.jetbrains.kotlinx.kover") version "0.9.9"
+}
+
+// Lint and coverage apply to every module, so a new module is checked without extra setup.
+allprojects {
+  apply(plugin = "dev.detekt")
+  apply(plugin = "org.jetbrains.kotlinx.kover")
+
+  detekt {
+    // Start from detekt's defaults; config/detekt/detekt.yml records only this repository's changes.
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    parallel = true
+    // `./gradlew detekt -PdetektAutoCorrect` applies ktlint's formatting fixes.
+    autoCorrect = providers.gradleProperty("detektAutoCorrect").isPresent
+  }
+
+  // In a multiplatform module the plain detekt task has no sources of its own; make it
+  // analyse every source set, so `./gradlew detekt` checks everything.
+  tasks.named("detekt") {
+    dependsOn(tasks.withType<dev.detekt.gradle.Detekt>().matching { it.name.endsWith("SourceSet") })
+  }
+
+  dependencies {
+    // ktlint's formatting rules, run by detekt.
+    "detektPlugins"("dev.detekt:detekt-rules-ktlint-wrapper:2.0.0-alpha.6")
+  }
+}
+
+// One coverage report for the whole repository, measured by the JVM tests.
+dependencies {
+  subprojects.forEach { kover(it) }
+}
+
+kover {
+  reports {
+    verify {
+      // `./gradlew koverVerify` fails when line coverage across all modules drops below this.
+      rule {
+        minBound(90)
+      }
+    }
+  }
 }
 
 group = "io.liquidsoftware"

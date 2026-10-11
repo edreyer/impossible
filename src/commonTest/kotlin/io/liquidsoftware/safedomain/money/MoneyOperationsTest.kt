@@ -54,14 +54,36 @@ class MoneyOperationsTest {
 
     @Test
     fun `fractional results need an explicit rounding mode`() {
-        assertEquals(Either.Right(usd("5.00")), calc { usd("50.00").multiply(Percentage.fromTrusted(Decimal.of(10)), RoundingMode.HALF_EVEN) })
-        assertEquals(Either.Right(usd("1.23")), calc { usd("9.87").multiply(Percentage.fromTrusted(Decimal.parse("12.5")), RoundingMode.HALF_EVEN) })
-        assertEquals(Either.Right(usd("1.24")), calc { usd("9.87").multiply(Percentage.fromTrusted(Decimal.parse("12.5")), RoundingMode.UP) })
-        assertEquals(Either.Right(usd("0.02")), calc { usd("0.10").multiply(Decimal.parse("0.15"), RoundingMode.HALF_UP) })
+        assertEquals(
+            Either.Right(usd("5.00")),
+            calc { usd("50.00").multiply(Percentage.fromTrusted(Decimal.of(10)), RoundingMode.HALF_EVEN) },
+        )
+        assertEquals(
+            Either.Right(usd("1.23")),
+            calc { usd("9.87").multiply(Percentage.fromTrusted(Decimal.parse("12.5")), RoundingMode.HALF_EVEN) },
+        )
+        assertEquals(
+            Either.Right(usd("1.24")),
+            calc { usd("9.87").multiply(Percentage.fromTrusted(Decimal.parse("12.5")), RoundingMode.UP) },
+        )
+        assertEquals(
+            Either.Right(usd("0.02")),
+            calc {
+                usd("0.10").multiply(Decimal.parse("0.15"), RoundingMode.HALF_UP)
+            },
+        )
         assertEquals(Either.Right(usd("0.33")), calc { usd("1").divide(Decimal.parse("3"), RoundingMode.DOWN) })
         assertEquals(Either.Right(usd("0.34")), calc { usd("1").divide(Decimal.parse("3"), RoundingMode.UP) })
-        assertEquals(Either.Left(Money.ArithmeticError.RoundingRequired), calc { usd("1").divide(Decimal.parse("3"), RoundingMode.UNNECESSARY) })
-        assertEquals(Either.Left(Money.ArithmeticError.DivisionByZero), calc { usd("1").divide(Decimal.ZERO, RoundingMode.DOWN) })
+        assertEquals(
+            Either.Left(Money.ArithmeticError.RoundingRequired),
+            calc { usd("1").divide(Decimal.parse("3"), RoundingMode.UNNECESSARY) },
+        )
+        assertEquals(
+            Either.Left(Money.ArithmeticError.DivisionByZero),
+            calc {
+                usd("1").divide(Decimal.ZERO, RoundingMode.DOWN)
+            },
+        )
         assertEquals(Either.Right(usd("0.50")), calc { usd("1").divide(Decimal.parse("2"), RoundingMode.UNNECESSARY) })
     }
 

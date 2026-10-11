@@ -88,7 +88,12 @@ class ValueSemanticsLawsTest {
 
     @Test
     fun `ordering is antisymmetric and agrees with equality`() = runTest {
-        val pairs = arbitrary { PositiveDecimal.arb(maxDigits = 3, scales = 0..2).bind() to PositiveDecimal.arb(maxDigits = 3, scales = 0..2).bind() }
+        val pairs = arbitrary {
+            PositiveDecimal.arb(
+                maxDigits = 3,
+                scales = 0..2,
+            ).bind() to PositiveDecimal.arb(maxDigits = 3, scales = 0..2).bind()
+        }
         forAll(pairs) { (left, right) ->
             assertEquals(-left.compareTo(right).coerceIn(-1, 1), right.compareTo(left).coerceIn(-1, 1))
             assertEquals(left.compareTo(right) == 0, left == right)

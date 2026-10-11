@@ -16,8 +16,18 @@ class EmailTest {
 
     @Test
     fun `rejects malformed or unsupported addresses without trimming`() {
-        for (raw in listOf("", "user", "@example.com", "user@", "a@@b.com", "a..b@example.com", ".a@example.com", "a.@example.com", "a b@example.com", "a@-example.com", "a@example-.com", "a@example..com", "a@example.com.", " a@example.com", "a@example.com\n", "\"a b\"@example.com", "ü@example.com", "a@bücher.example", "a@[127.0.0.1]")) {
-            assertEquals(Either.Left(Email.Error.InvalidFormat(raw)), either<Email.Error, Email> { Email.from(raw) }, raw)
+        for (raw in listOf(
+            "", "user", "@example.com", "user@", "a@@b.com", "a..b@example.com", ".a@example.com", "a.@example.com",
+            "a b@example.com", "a@-example.com", "a@example-.com", "a@example..com", "a@example.com.", " a@example.com",
+            "a@example.com\n", "\"a b\"@example.com", "ü@example.com", "a@bücher.example", "a@[127.0.0.1]",
+        )) {
+            assertEquals(
+                Either.Left(Email.Error.InvalidFormat(raw)),
+                either<Email.Error, Email> {
+                    Email.from(raw)
+                },
+                raw,
+            )
         }
     }
 
@@ -35,7 +45,12 @@ class EmailTest {
         val raw = "a".repeat(64) + "@" + "b".repeat(63) + "." + "c".repeat(63) + "." + "d".repeat(61)
         assertEquals(254, raw.length)
         assertIs<Either.Right<Email>>(either<Email.Error, Email> { Email.from(raw) })
-        assertEquals(Either.Left(Email.Error.InvalidFormat(raw + "d")), either<Email.Error, Email> { Email.from(raw + "d") })
+        assertEquals(
+            Either.Left(Email.Error.InvalidFormat(raw + "d")),
+            either<Email.Error, Email> {
+                Email.from(raw + "d")
+            },
+        )
     }
 
     @Test

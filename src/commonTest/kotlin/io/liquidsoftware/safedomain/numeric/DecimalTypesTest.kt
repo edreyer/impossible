@@ -24,16 +24,38 @@ class DecimalTypesTest {
             val result: Either<NonNegativeDecimal.Error, NonNegativeDecimal> = either { NonNegativeDecimal.from(input) }
             assertEquals(Either.Left(NonNegativeDecimal.Error.Negative(input)), result)
         }
-        val zero = assertIs<Either.Right<NonNegativeDecimal>>(either { NonNegativeDecimal.from(Decimal.parse("0.000")) }).value
+        val zero = assertIs<Either.Right<NonNegativeDecimal>>(
+            either {
+                NonNegativeDecimal.from(Decimal.parse("0.000"))
+            },
+        ).value
         assertEquals(Decimal.parse("0.000"), zero.value)
     }
 
     @Test
     fun `accepted decimals preserve precision and support the full Decimal scale range`() {
-        for (input in listOf(Decimal.parse("0.00100"), Decimal.parse("1E100"),
-            Decimal.of(1, Int.MAX_VALUE), Decimal.of(1, Int.MIN_VALUE))) {
-            assertEquals(input, assertIs<Either.Right<PositiveDecimal>>(either { PositiveDecimal.from(input) }).value.value)
-            assertEquals(input, assertIs<Either.Right<NonNegativeDecimal>>(either { NonNegativeDecimal.from(input) }).value.value)
+        for (input in listOf(
+            Decimal.parse("0.00100"),
+            Decimal.parse("1E100"),
+            Decimal.of(1, Int.MAX_VALUE),
+            Decimal.of(1, Int.MIN_VALUE),
+        )) {
+            assertEquals(
+                input,
+                assertIs<Either.Right<PositiveDecimal>>(
+                    either {
+                        PositiveDecimal.from(input)
+                    },
+                ).value.value,
+            )
+            assertEquals(
+                input,
+                assertIs<Either.Right<NonNegativeDecimal>>(
+                    either {
+                        NonNegativeDecimal.from(input)
+                    },
+                ).value.value,
+            )
         }
     }
 
@@ -46,8 +68,10 @@ class DecimalTypesTest {
             assertEquals(first.hashCode(), second.hashCode())
             assertEquals("value", mapOf(first to "value")[second])
             assertEquals(0, first.compareTo(second))
-            assertEquals(listOf(first, PositiveDecimal.from(Decimal.parse("13"))),
-                listOf(PositiveDecimal.from(Decimal.parse("13")), first).sorted())
+            assertEquals(
+                listOf(first, PositiveDecimal.from(Decimal.parse("13"))),
+                listOf(PositiveDecimal.from(Decimal.parse("13")), first).sorted(),
+            )
         }
         assertEquals(Either.Right(Unit), positive)
         val nonnegative = either {
@@ -58,8 +82,10 @@ class DecimalTypesTest {
             assertEquals(1, setOf(first, second).size)
             assertEquals(0, first.compareTo(second))
             assertEquals(-1, NonNegativeDecimal.from(Decimal.ZERO).compareTo(first))
-            assertEquals(NonNegativeDecimal.from(Decimal.parse("0.00")).hashCode(),
-                NonNegativeDecimal.from(Decimal.ZERO).hashCode())
+            assertEquals(
+                NonNegativeDecimal.from(Decimal.parse("0.00")).hashCode(),
+                NonNegativeDecimal.from(Decimal.ZERO).hashCode(),
+            )
         }
         assertEquals(Either.Right(Unit), nonnegative)
     }

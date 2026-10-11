@@ -34,16 +34,25 @@ class MoneyTest {
 
     @Test
     fun `amounts finer than the minor unit are rejected never rounded`() {
-        assertEquals(Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("1.005"), 2)),
-            either<Money.Error, Money> { Money.of(Decimal.parse("1.005"), usd) })
-        assertEquals(Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("0.5"), 0)),
-            either<Money.Error, Money> { Money.of(Decimal.parse("0.5"), jpy) })
+        assertEquals(
+            Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("1.005"), 2)),
+            either<Money.Error, Money> { Money.of(Decimal.parse("1.005"), usd) },
+        )
+        assertEquals(
+            Either.Left(Money.Error.NotInMinorUnits(Decimal.parse("0.5"), 0)),
+            either<Money.Error, Money> { Money.of(Decimal.parse("0.5"), jpy) },
+        )
         assertEquals(money("1.00"), money("1.000"))
     }
 
     @Test
     fun `currencies without minor units and amounts beyond Long are rejected`() {
-        assertEquals(Either.Left(Money.Error.NoMinorUnits(gold)), either<Money.Error, Money> { Money.of(Decimal.ONE, gold) })
+        assertEquals(
+            Either.Left(Money.Error.NoMinorUnits(gold)),
+            either<Money.Error, Money> {
+                Money.of(Decimal.ONE, gold)
+            },
+        )
         assertEquals(Either.Left(Money.Error.NoMinorUnits(gold)), either<Money.Error, Money> { Money.ofMinor(1, gold) })
         val huge = Decimal.parse("92233720368547758.08")
         assertEquals(Either.Left(Money.Error.OutOfRange(huge)), either<Money.Error, Money> { Money.of(huge, usd) })
@@ -64,26 +73,45 @@ class MoneyTest {
     @Test
     fun `parser accumulates amount and currency failures then checks minor units`() {
         val result: Either<NonEmptyList<Money.Error>, Money> = either { Money.parser.from(Money.Text("oops", "ZZZ")) }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Money.Error.InvalidAmount("oops"),
-            Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
-        )), result)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Money.Error.InvalidAmount("oops"),
+                    Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("ZZZ")),
+                ),
+            ),
+            result,
+        )
         for (raw in listOf("", "NaN", "Infinity", " 1.00", "1.00 ", "1,00", "1e2147483649")) {
             val invalid: Either<NonEmptyList<Money.Error>, Money> = either { Money.parser.from(Money.Text(raw, "USD")) }
             assertEquals(Either.Left(nonEmptyListOf(Money.Error.InvalidAmount(raw))), invalid)
         }
-        assertEquals(Either.Left(nonEmptyListOf(Money.Error.NotInMinorUnits(Decimal.parse("0.001"), 2))),
-            either<NonEmptyList<Money.Error>, Money> { Money.parser.from(Money.Text("0.001", "USD")) })
-        assertEquals(Either.Right(money("12.34")), either<NonEmptyList<Money.Error>, Money> { Money.parser.from(Money.Text("12.340", "USD")) })
+        assertEquals(
+            Either.Left(nonEmptyListOf(Money.Error.NotInMinorUnits(Decimal.parse("0.001"), 2))),
+            either<NonEmptyList<Money.Error>, Money> { Money.parser.from(Money.Text("0.001", "USD")) },
+        )
+        assertEquals(
+            Either.Right(money("12.34")),
+            either<NonEmptyList<Money.Error>, Money> { Money.parser.from(Money.Text("12.340", "USD")) },
+        )
     }
 
     @Test
     fun `typed input validates the currency and minor units`() {
-        assertEquals(Either.Right(money("-1.50")), either<Money.Error, Money> { Money.from(Money.Input(Decimal.parse("-1.50"), "USD")) })
-        assertEquals(Either.Left(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("usd"))),
-            either<Money.Error, Money> { Money.from(Money.Input(Decimal.ONE, "usd")) })
-        assertEquals(Either.Left(Money.Error.NoMinorUnits(Currency.fromTrusted("XXX"))),
-            either<Money.Error, Money> { Money.from(Money.Input(Decimal.ONE, "XXX")) })
+        assertEquals(
+            Either.Right(money("-1.50")),
+            either<Money.Error, Money> {
+                Money.from(Money.Input(Decimal.parse("-1.50"), "USD"))
+            },
+        )
+        assertEquals(
+            Either.Left(Money.Error.InvalidCurrency(Currency.Error.UnsupportedCode("usd"))),
+            either<Money.Error, Money> { Money.from(Money.Input(Decimal.ONE, "usd")) },
+        )
+        assertEquals(
+            Either.Left(Money.Error.NoMinorUnits(Currency.fromTrusted("XXX"))),
+            either<Money.Error, Money> { Money.from(Money.Input(Decimal.ONE, "XXX")) },
+        )
     }
 
     @Test

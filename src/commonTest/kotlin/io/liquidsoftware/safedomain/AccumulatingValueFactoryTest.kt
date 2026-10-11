@@ -19,11 +19,13 @@ class AccumulatingValueFactoryTest {
         }
 
         assertEquals(
-            Either.Left(nonEmptyListOf(
-                DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
-                DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
-            )),
+            Either.Left(
+                nonEmptyListOf(
+                    DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
+                    DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
+                    DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
+                ),
+            ),
             result,
         )
     }
@@ -60,21 +62,27 @@ class AccumulatingValueFactoryTest {
     @Test
     fun `checkout collects its own failure and preserves every nested order failure`() {
         val result: Either<NonEmptyList<DemoCheckout.Error>, DemoCheckout> = either {
-            DemoCheckout.from(DemoCheckoutInput(
-                order = DemoOrderInput(reference = "", quantity = 0, revision = -1),
-                customer = "",
-            ))
+            DemoCheckout.from(
+                DemoCheckoutInput(
+                    order = DemoOrderInput(reference = "", quantity = 0, revision = -1),
+                    customer = "",
+                ),
+            )
         }
 
         assertEquals(
-            Either.Left(nonEmptyListOf(
-                DemoCheckout.Error.InvalidOrder(nonEmptyListOf(
-                    DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
-                    DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                    DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
-                )),
-                DemoCheckout.Error.InvalidCustomer(NonBlankString.Error.Blank),
-            )),
+            Either.Left(
+                nonEmptyListOf(
+                    DemoCheckout.Error.InvalidOrder(
+                        nonEmptyListOf(
+                            DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
+                            DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
+                            DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
+                        ),
+                    ),
+                    DemoCheckout.Error.InvalidCustomer(NonBlankString.Error.Blank),
+                ),
+            ),
             result,
         )
     }
@@ -89,11 +97,15 @@ class AccumulatingValueFactoryTest {
         }
 
         assertEquals(
-            Either.Left(DemoCheckout.Error.InvalidOrder(nonEmptyListOf(
-                DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
-                DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
-                DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
-            ))),
+            Either.Left(
+                DemoCheckout.Error.InvalidOrder(
+                    nonEmptyListOf(
+                        DemoOrder.Error.InvalidReference(NonBlankString.Error.Blank),
+                        DemoOrder.Error.InvalidQuantity(PositiveInt.Error.NonPositive(0)),
+                        DemoOrder.Error.InvalidRevision(PositiveInt.Error.NonPositive(-1)),
+                    ),
+                ),
+            ),
             result,
         )
     }
@@ -101,10 +113,12 @@ class AccumulatingValueFactoryTest {
     @Test
     fun `constructs a checkout when both the nested order and customer are valid`() {
         val result: Either<NonEmptyList<DemoCheckout.Error>, DemoCheckout> = either {
-            DemoCheckout.from(DemoCheckoutInput(
-                order = DemoOrderInput(reference = "ORD-2", quantity = 2, revision = 3),
-                customer = " Alice ",
-            ))
+            DemoCheckout.from(
+                DemoCheckoutInput(
+                    order = DemoOrderInput(reference = "ORD-2", quantity = 2, revision = 3),
+                    customer = " Alice ",
+                ),
+            )
         }
         val checkout = assertIs<Either.Right<DemoCheckout>>(result).value
 

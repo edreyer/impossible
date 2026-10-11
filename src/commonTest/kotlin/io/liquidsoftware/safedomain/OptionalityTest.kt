@@ -18,27 +18,38 @@ class OptionalityTest {
     fun `optional maps null to null and still validates present input in full`() {
         val middleName = NonBlankString.optional()
         assertEquals(Either.Right(null), either<NonBlankString.Error, NonBlankString?> { middleName.from(null) })
-        assertEquals(Either.Left(NonBlankString.Error.Blank),
-            either<NonBlankString.Error, NonBlankString?> { middleName.from("") })
+        assertEquals(
+            Either.Left(NonBlankString.Error.Blank),
+            either<NonBlankString.Error, NonBlankString?> { middleName.from("") },
+        )
         assertEquals("Ann", either<NonBlankString.Error, NonBlankString?> { middleName.from("Ann") }.getOrNull()?.value)
     }
 
     @Test
     fun `required turns null into a typed missing error instead of a default`() {
         val email = Email.required()
-        assertEquals(Either.Left(RequiredError.Missing),
-            either<RequiredError<Email.Error>, Email> { email.from(null) })
-        assertEquals(Either.Left(RequiredError.Invalid(Email.Error.InvalidFormat("nope"))),
-            either<RequiredError<Email.Error>, Email> { email.from("nope") })
+        assertEquals(
+            Either.Left(RequiredError.Missing),
+            either<RequiredError<Email.Error>, Email> { email.from(null) },
+        )
+        assertEquals(
+            Either.Left(RequiredError.Invalid(Email.Error.InvalidFormat("nope"))),
+            either<RequiredError<Email.Error>, Email> { email.from("nope") },
+        )
     }
 
     @Test
     fun `a composite declares optional and required fields explicitly and accumulates both`() {
         val failed = either { Contact.from(ContactInput(email = null, middleName = " ", nickname = null)) }
-        assertEquals(Either.Left(nonEmptyListOf(
-            Contact.Error.MissingEmail,
-            Contact.Error.InvalidMiddleName(NonBlankString.Error.Blank),
-        )), failed)
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    Contact.Error.MissingEmail,
+                    Contact.Error.InvalidMiddleName(NonBlankString.Error.Blank),
+                ),
+            ),
+            failed,
+        )
 
         val invalid = either { Contact.from(ContactInput(email = "nope", middleName = null, nickname = null)) }
         assertEquals(Either.Left(nonEmptyListOf(Contact.Error.InvalidEmail(Email.Error.InvalidFormat("nope")))), invalid)

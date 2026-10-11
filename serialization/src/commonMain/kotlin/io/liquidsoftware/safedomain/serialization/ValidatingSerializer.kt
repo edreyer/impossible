@@ -13,18 +13,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Decoding found well-formed input that the type's factory rejected. [error] is the
- * factory's typed error (cast it to the type's `Error`), and [messages] describe it
- * with stable codes. The exception message lists only the codes, never the rejected
- * input, which may be personal data or a secret.
- */
-class InvalidValueException(
-    val serialName: String,
-    val error: Any?,
-    val messages: List<ErrorMessage>,
-) : SerializationException("Invalid $serialName: ${messages.joinToString { it.code }}")
-
-/**
  * A serializer that writes [render] of a value with [input] and reads by running the
  * decoded input through this factory, so invalid data never becomes a value. A failure
  * throws [InvalidValueException] carrying the typed error, described by [describe].
@@ -59,20 +47,21 @@ private class ValidatingSerializer<Input, Error, Value>(
         encoder.encodeSerializableValue(input, render(value))
     }
 
-    override fun deserialize(decoder: Decoder): Value {
-        val raw = try {
-            decoder.decodeSerializableValue(input)
-        } catch (e: SerializationException) {
-            throw e
-        } catch (_: IllegalArgumentException) {
-            // Date, instant and duration parsers throw plain IllegalArgumentExceptions whose
-            // messages quote the input; report malformed data as the format's own failure.
-            throw SerializationException("Malformed $serialName")
+    override fun deserialize(decoder: Decoder): Value = when (
+        val result = either {
+            factory.from(decodeInput(decoder))
         }
-        return when (val result = either { factory.from(raw) }) {
-            is Either.Right -> result.value
-            is Either.Left -> throw InvalidValueException(serialName, result.value, describe(result.value))
-        }
+    ) {
+        is Either.Right -> result.value
+        is Either.Left -> throw InvalidValueException(serialName, result.value, describe(result.value))
+    }
+
+    private fun decodeInput(decoder: Decoder): Input = try {
+        decoder.decodeSerializableValue(input)
+    } catch (e: IllegalArgumentException) {
+        // Date, instant and duration parsers throw plain IllegalArgumentExceptions whose
+        // messages quote the input; report malformed data as the format's own failure.
+        throw e as? SerializationException ?: SerializationException("Malformed $serialName")
     }
 }
 

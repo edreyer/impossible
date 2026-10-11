@@ -3,12 +3,12 @@ package io.liquidsoftware.safedomain.time
 import arrow.core.Either
 import arrow.core.raise.either
 import io.liquidsoftware.safedomain.fromTrusted
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toLocalDateTime
 
 class TimeZoneIdTest {
     private fun zone(value: String) = either<TimeZoneId.Error, TimeZoneId> { TimeZoneId.from(value) }

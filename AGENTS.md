@@ -150,6 +150,11 @@ their domain names, policies, authorization decisions, and workflows.
 - Use `./gradlew allTests` for tests (or `jvmTest` and `jsNodeTest` for a fast
   check) and `./gradlew build` for the complete build. Apple targets need macOS.
   Report failures and checks that could not run; do not claim unverified success.
+- Run `./gradlew detekt koverVerify` before pushing; CI runs both on every pull
+  request. Fix findings rather than suppressing them. When a rule truly does not
+  fit, change it in `config/detekt/detekt.yml` with a comment saying why, or
+  suppress it at the declaration with a reason. Use `-PdetektAutoCorrect` for
+  formatting, and keep line coverage at or above the 90% floor.
 - Keep the README and API documentation aligned with the implementation.
 - Use Context7 for external API behavior or version-specific guidance. Resolve
   the library ID first, query one concept at a time, and reuse verified results.

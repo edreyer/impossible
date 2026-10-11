@@ -853,7 +853,7 @@ Some things to know:
   password cannot end up in a response or a log by accident.
 - **Configured types.** `BoundedInt` and `BoundedList` need their bounds, so declare a
   serializer per use, e.g. `object RatingSerializer : KSerializer<BoundedInt> by BoundedIntSerializer(1..5)`.
-- **`TypedId` and `@Contextual`.** The serialization plugin in Kotlin 2.4.20 crashes on
+- **`TypedId` and `@Contextual`.** The serialization plugin in Kotlin 2.4.21 crashes on
   `@Contextual` for a generic value class, so mark `TypedId` fields
   `@Serializable(with = TypedIdSerializer::class)`.
 - **Your own types.** `asSerializer` turns any `ValueFactory` into a validating
@@ -928,7 +928,7 @@ must enforce the same validation.
 
 ## Build
 
-The library is Kotlin Multiplatform, built with Kotlin **2.4.20**, a **Java 26**
+The library is Kotlin Multiplatform, built with Kotlin **2.4.21**, a **Java 26**
 toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. Targets:
 
 | Target | Tests |
@@ -939,6 +939,18 @@ toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. Targets:
 | `macosArm64`, `iosArm64`, `iosSimulatorArm64` | `./gradlew macosArm64Test iosSimulatorArm64Test`; Apple targets build only on macOS |
 
 There is no Wasm target, because bignum does not publish one.
+
+Every pull request runs the [Checks](.github/workflows/checks.yml) workflow:
+detekt, the JVM, JS and Linux tests with a coverage floor on Linux, and the macOS and
+iOS simulator tests on macOS. The same checks run locally:
+
+| Check | Command |
+| --- | --- |
+| Lint and formatting ([detekt](https://detekt.dev) with ktlint's rules) | `./gradlew detekt`; `./gradlew detekt -PdetektAutoCorrect` fixes formatting |
+| Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
+
+[config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
+to detekt's defaults, each with its reason.
 
 Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types,
 so validation behaves the same on every platform. Dependencies:
@@ -959,6 +971,9 @@ so validation behaves the same on every platform. Dependencies:
 - [kotlinx.serialization 1.11.0](https://github.com/Kotlin/kotlinx.serialization), an
   API dependency of `impossible-serialization` only (core; its tests use the JSON
   format). That module applies the Kotlin serialization compiler plugin.
+- Build tooling only, not shipped: [detekt 2.0.0-alpha.6](https://detekt.dev) with its
+  ktlint rules (a detekt 2 pre-release, built on the Kotlin 2.4 compiler), and
+  [Kover 0.9.9](https://github.com/Kotlin/kotlinx-kover) for coverage.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
 `Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,

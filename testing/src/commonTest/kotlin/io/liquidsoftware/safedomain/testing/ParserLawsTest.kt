@@ -39,7 +39,13 @@ class ParserLawsTest {
     )
 
     private val parsers: List<Parser<*>> = listOf(
-        Parser("NonBlankString", NonBlankString.arb().map { it.value }, { it.value }) { attempt { NonBlankString.from(it) } },
+        Parser(
+            "NonBlankString",
+            NonBlankString.arb().map {
+                it.value
+            },
+            { it.value },
+        ) { attempt { NonBlankString.from(it) } },
         Parser("Slug", Slug.arb().map { it.value }, { it.value }) { attempt { Slug.from(it) } },
         Parser("Secret", Secret.arb().map { it.reveal() }, { it.reveal() }) { attempt { Secret.from(it) } },
         Parser("Email", Email.arb().map { it.value }, { it.value }) { attempt { Email.from(it) } },
@@ -52,7 +58,13 @@ class ParserLawsTest {
             attempt { TypedId.factory<Unit>().from(it) }
         },
         Parser("DomainName", DomainName.arb().map { it.value }, { it.value }) { attempt { DomainName.from(it) } },
-        Parser("IpAddress", IpAddress.arb().map { it.toString() }, { it.toString() }) { attempt { IpAddress.from(it) } },
+        Parser(
+            "IpAddress",
+            IpAddress.arb().map {
+                it.toString()
+            },
+            { it.toString() },
+        ) { attempt { IpAddress.from(it) } },
         Parser("HttpUrl", HttpUrl.arb().map { it.value }, { it.value }) { attempt { HttpUrl.from(it) } },
         Parser("Decimal", Decimal.arb().map { it.toString() }, { it.toString() }) { text ->
             Decimal.parseOrNull(text)?.let { Either.Right(it) } ?: Either.Left(Unit)
@@ -87,7 +99,9 @@ class ParserLawsTest {
     @Test
     fun `generated valid text is always accepted`() = runTest {
         for (parser in parsers) {
-            forAll(parser.valid) { text -> assertTrue(parser.parse(text).isRight(), "${parser.name} rejected \"$text\"") }
+            forAll(parser.valid) { text ->
+                assertTrue(parser.parse(text).isRight(), "${parser.name} rejected \"$text\"")
+            }
         }
     }
 }

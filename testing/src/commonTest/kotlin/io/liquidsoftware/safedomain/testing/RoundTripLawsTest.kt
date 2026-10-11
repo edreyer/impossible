@@ -10,12 +10,12 @@ import io.liquidsoftware.safedomain.locale.LanguageTag
 import io.liquidsoftware.safedomain.money.Currency
 import io.liquidsoftware.safedomain.money.Money
 import io.liquidsoftware.safedomain.numeric.Decimal
+import io.liquidsoftware.safedomain.numeric.NegativeInt
+import io.liquidsoftware.safedomain.numeric.NegativeLong
 import io.liquidsoftware.safedomain.numeric.Percentage
 import io.liquidsoftware.safedomain.numeric.PositiveDecimal
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.numeric.PositiveLong
-import io.liquidsoftware.safedomain.numeric.NegativeInt
-import io.liquidsoftware.safedomain.numeric.NegativeLong
 import io.liquidsoftware.safedomain.text.NonBlankString
 import io.liquidsoftware.safedomain.text.Secret
 import io.liquidsoftware.safedomain.text.Slug
@@ -64,7 +64,9 @@ class RoundTripLawsTest {
 
     @Test
     fun `identifiers and time zones survive rendering and reparsing`() = runTest {
-        forAll(TypedId.arb<Unit>()) { assertRoundTrip(it, attempt { TypedId.factory<Unit>().from(it.value.toString()) }) }
+        forAll(TypedId.arb<Unit>()) {
+            assertRoundTrip(it, attempt { TypedId.factory<Unit>().from(it.value.toString()) })
+        }
         forAll(TimeZoneId.arb()) { assertRoundTrip(it, attempt { TimeZoneId.from(it.value) }) }
     }
 
@@ -99,8 +101,14 @@ class RoundTripLawsTest {
 
     @Test
     fun `composite inputs round trip`() = runTest {
-        forAll(GeoPoint.arb()) { assertRoundTrip(it, attempt { GeoPoint.from(GeoPoint.Input(it.latitude, it.longitude)) }) }
-        forAll(DateRange.arb()) { assertRoundTrip(it, attempt { DateRange.from(DateRange.Input(it.start, it.endInclusive)) }) }
-        forAll(TimeWindow.arb()) { assertRoundTrip(it, attempt { TimeWindow.from(TimeWindow.Input(it.start, it.endExclusive)) }) }
+        forAll(GeoPoint.arb()) {
+            assertRoundTrip(it, attempt { GeoPoint.from(GeoPoint.Input(it.latitude, it.longitude)) })
+        }
+        forAll(DateRange.arb()) {
+            assertRoundTrip(it, attempt { DateRange.from(DateRange.Input(it.start, it.endInclusive)) })
+        }
+        forAll(TimeWindow.arb()) {
+            assertRoundTrip(it, attempt { TimeWindow.from(TimeWindow.Input(it.start, it.endExclusive)) })
+        }
     }
 }

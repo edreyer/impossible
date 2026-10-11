@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
+import io.kotest.property.arbitrary.double
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.liquidsoftware.safedomain.collections.BoundedList
@@ -11,7 +12,6 @@ import io.liquidsoftware.safedomain.collections.NonEmptyError
 import io.liquidsoftware.safedomain.collections.UniqueList
 import io.liquidsoftware.safedomain.collections.factory
 import io.liquidsoftware.safedomain.geo.GeoPoint
-import io.kotest.property.arbitrary.double
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
