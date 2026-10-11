@@ -758,6 +758,52 @@ demonstrates indexed element validation, nonempty lists and sets, uniqueness,
 size bounds, and accumulation across all four fields. Relationships that depend
 on valid elements run after their prerequisites succeed.
 
+## Field paths, messages, and problem details
+
+Inside `validate`, the `...At` helpers record where each failure happened. The path
+is the name of the property the field is assigned to, so it costs nothing to keep
+in step with the code; pass `name =` when the wire name differs:
+
+```kotlin
+data class Shipment(val contact: Email, val address: Address, val quantities: List<PositiveInt>, val price: Money) {
+    companion object : ValueFactory<Input, NonEmptyList<FieldError<Error>>, Shipment> {
+        context(raise: Raise<NonEmptyList<FieldError<Error>>>)
+        override fun from(value: Input): Shipment = validate {
+            val contact by Email.required().fieldAt(value.contact, onMissing = { Error.ContactMissing }) { Error.Contact(it) }
+            val address by Address.nestedFieldAt(value.address) { Error.Address(it) }   // address.street, ...
+            val quantities by PositiveInt.eachFieldAt(value.quantities) { Error.Quantity(it) } // quantities[2]
+            val price by Money.parser.flatFieldAt(value.price, name = "unit_price") { Error.Price(it) }
+            Shipment(contact, address, quantities, price)
+        }
+    }
+}
+```
+
+| Helper | Use it for | Path of a failure |
+| --- | --- | --- |
+| `fieldAt(value) { ... }` | one value from a factory (also with `onMissing` for `required()`) | `contact` |
+| `eachFieldAt(values) { ... }` | every element of a list | `quantities[2]` |
+| `flatFieldAt(value) { ... }` | a factory that accumulates errors without paths (`GeoPoint`, `Money.parser`) | `unit_price`, once per error |
+| `nestedFieldAt(value) { ... }` | a composite whose factory reports `FieldError`s | `address.street` |
+| `fieldAt { ... }` | a dependent step or a check across fields | the property's name |
+
+A composite built this way raises `NonEmptyList<FieldError<Error>>`. `FieldError`
+pairs your precise error with a `FieldPath`, which renders as `lines[2].price` or, for
+APIs, as the JSON Pointer `/lines/2/price`. The original `field` helpers are unchanged
+for composites that don't need paths.
+
+`ErrorMessages.describe(error)` gives every error this library defines a stable code,
+such as `email.invalid_format`, a default English sentence, and the arguments a
+translation needs. Descriptions never quote rejected text, which may be personal data
+or a secret. Describe your own errors by delegating to it. To localize, look up the code
+in your own catalog.
+
+`toProblemDetails(describe)` turns a batch of field errors into an RFC 9457 problem
+(`422` by default) whose `errors` list each field's pointer, code, and message. It is
+plain data; render it as `application/problem+json` with your JSON library.
+[PathValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/PathValidationTest.kt)
+shows the whole flow.
+
 ## Property-based testing
 
 The `safe-domain-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
@@ -793,6 +839,7 @@ The module's own tests are laws the library promises on every platform:
 | Rendering and reparsing gives an equal value with the same hash | `RoundTripLawsTest` |
 | Every parser returns a value or a typed error on any text, never an exception, and reparses its own output | `ParserLawsTest` |
 | Equality and hashing agree with each normalization (email domains, DNS case, IP text forms, decimal scale), and rejected personal data never reaches error text | `ValueSemanticsLawsTest` |
+| Error descriptions have well-formed codes and never quote rejected text; field paths survive JSON Pointer encoding | `MessageLawsTest` |
 | Sign-refined arithmetic is exact or reports overflow; rounding brackets the exact value | `NumericLawsTest` |
 | Money addition is commutative and associative, currencies never mix, and allocation and splitting never lose a minor unit | `MoneyLawsTest` |
 | Date ranges and half-open time windows overlap consistently; past and future checks split dates around today | `TimeLawsTest` |

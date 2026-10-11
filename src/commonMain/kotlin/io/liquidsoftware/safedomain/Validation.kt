@@ -6,6 +6,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.RaiseAccumulate
 import arrow.core.raise.accumulate
 import arrow.core.raise.withError
+import kotlin.reflect.KProperty
 
 /**
  * A field declared inside [validate]. Read it with `by`; reading a failed field
@@ -79,3 +80,109 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachField(
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Error>)
 fun <Error, A> field(block: RaiseAccumulate<Error>.() -> A): Validated<A> = scope.accumulating(block)
+
+/**
+ * A field declared with one of the path-aware helpers ([fieldAt], [eachFieldAt],
+ * [flatFieldAt], [nestedFieldAt]). Declare it with `by`: the property's name becomes the
+ * field's path unless the helper was given an explicit `name`, such as a JSON key.
+ */
+class PathField<out A> internal constructor(
+    private val name: String?,
+    private val validate: (FieldPath) -> Validated<A>,
+) {
+    operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Validated<A> =
+        validate(FieldPath.of(name ?: property.name))
+}
+
+/**
+ * Validates one field and records its failure at the field's path. The path is the name
+ * of the property it is assigned to, or [name] when given:
+ *
+ * ```kotlin
+ * val email by Email.fieldAt(input.email) { OrderError.Email(it) }   // path "email"
+ * ```
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.fieldAt(
+    value: Input,
+    name: String? = null,
+    onError: (Error) -> Mapped,
+): PathField<Value> = PathField(name) { path ->
+    scope.accumulating { from(value) { FieldError(path, onError(it)) } }
+}
+
+/** Validates one [required] field at its path, mapping absence with [onMissing] and an invalid value with [onError]. */
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.fieldAt(
+    value: Input,
+    name: String? = null,
+    onMissing: () -> Mapped,
+    onError: (Error) -> Mapped,
+): PathField<Value> = fieldAt(value, name) { failure ->
+    when (failure) {
+        RequiredError.Missing -> onMissing()
+        is RequiredError.Invalid -> onError(failure.cause)
+    }
+}
+
+/** Validates every element, recording each failure at `field[index]`. */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
+    values: Iterable<Input>,
+    name: String? = null,
+    onError: (Error) -> Mapped,
+): PathField<List<Value>> = PathField(name) { path ->
+    scope.accumulating {
+        withNel {
+            mapOrAccumulate(values.withIndex()) { (index, raw) -> from(raw) { FieldError(path.index(index), onError(it)) } }
+        }
+    }
+}
+
+/**
+ * Validates one field from an accumulating factory without paths of its own, such as
+ * `GeoPoint` or `Money.parser`, recording each of its errors at the field's path.
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatFieldAt(
+    value: Input,
+    name: String? = null,
+    onError: (Error) -> Mapped,
+): PathField<Value> = PathField(name) { path ->
+    scope.accumulating {
+        withNel { withError({ errors: NonEmptyList<Error> -> errors.map { FieldError(path, onError(it)) } }) { from(value) } }
+    }
+}
+
+/**
+ * Validates a nested composite whose factory reports [FieldError]s, prefixing each inner
+ * path with this field's path: a `price` failure inside the `shipping` field is
+ * reported at `shipping.price`.
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Error>>, Value>.nestedFieldAt(
+    value: Input,
+    name: String? = null,
+    onError: (Error) -> Mapped,
+): PathField<Value> = PathField(name) { path ->
+    scope.accumulating {
+        withNel {
+            withError({ errors: NonEmptyList<FieldError<Error>> -> errors.map { it.under(path).map(onError) } }) { from(value) }
+        }
+    }
+}
+
+/**
+ * A field computed by [block], with its failure recorded at the field's path. Use it for
+ * steps that depend on earlier fields or check several at once; report a failure that
+ * belongs to no single field with `raise(FieldError(FieldPath.ROOT, error))` in [field].
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+context(scope: RaiseAccumulate<FieldError<Mapped>>)
+fun <Mapped, A> fieldAt(name: String? = null, block: Raise<Mapped>.() -> A): PathField<A> = PathField(name) { path ->
+    scope.accumulating { withError({ error: Mapped -> FieldError(path, error) }) { block() } }
+}

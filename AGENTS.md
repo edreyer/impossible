@@ -63,6 +63,13 @@ their domain names, policies, authorization decisions, and workflows.
   field values only in the final construction or inside a dependent
   `field { }` block. Keep Arrow's experimental accumulate opt-in confined to
   `Validation.kt`.
+- Composites that boundaries report field by field use the path-aware helpers
+  (`fieldAt`, `eachFieldAt`, `flatFieldAt`, `nestedFieldAt`) and raise
+  `NonEmptyList<FieldError<Error>>`. Paths come from property names; pass `name`
+  only when the wire name differs.
+- Every error type the library defines has a `describe` overload in
+  `ErrorMessages` with a stable snake_case `type.error` code. Codes are public API:
+  never rename one. Descriptions never quote rejected free text.
 - Translate failures at meaningful domain boundaries. Higher layers should
   handle their own closed outcomes and retain lower-level failures as details,
   rather than enumerate a growing library-wide error hierarchy. Reuse an error
