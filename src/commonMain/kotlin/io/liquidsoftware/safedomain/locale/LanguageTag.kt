@@ -14,15 +14,15 @@ import kotlin.jvm.JvmInline
  * equality. This checks syntax only, not that subtags are registered.
  */
 @JvmInline
-value class LanguageTag private constructor(val value: String) {
-    sealed interface Error {
-        data class InvalidFormat(val value: String) : Error
+public value class LanguageTag private constructor(public val value: String) {
+    public sealed interface Error {
+        public data class InvalidFormat(val value: String) : Error
     }
 
     /** The primary language subtag, such as `en`. */
-    val language: String get() = value.substringBefore('-')
+    public val language: String get() = value.substringBefore('-')
 
-    companion object : ValueFactory<String, Error, LanguageTag> {
+    public companion object : ValueFactory<String, Error, LanguageTag> {
         // The trailing `$` matters on JS, where Regex.matches accepts only the first match
         // and does not backtrack to a longer one: without it, `de-1996` matches `de-199`
         // with `199` as a region and is rejected, while the JVM accepts the variant.

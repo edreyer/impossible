@@ -12,10 +12,10 @@ import arrow.core.raise.withError
  * A companion object can implement this contract to support both direct construction
  * and mapping its failures into a consuming domain's error model.
  */
-interface ValueFactory<in Input, out Error, out Value> {
+public interface ValueFactory<in Input, out Error, out Value> {
     /** Constructs a value, raising an [Error] when the input is invalid. */
     context(raise: Raise<Error>)
-    fun from(value: Input): Value
+    public fun from(value: Input): Value
 
     /**
      * Constructs a value and maps a logical failure with [onError] into the caller's context.
@@ -24,7 +24,7 @@ interface ValueFactory<in Input, out Error, out Value> {
      * The mapper runs only on logical failure; unexpected exceptions propagate unchanged.
      */
     context(raise: Raise<MappedError>)
-    fun <MappedError> from(value: Input, onError: (Error) -> MappedError): Value =
+    public fun <MappedError> from(value: Input, onError: (Error) -> MappedError): Value =
         raise.withError(onError) { from(value) }
 }
 
@@ -34,7 +34,7 @@ interface ValueFactory<in Input, out Error, out Value> {
  * This is the explicit way to model a genuinely optional field; the result type is
  * nullable, so callers keep Kotlin's null checks.
  */
-fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.optional(): ValueFactory<Input?, Error, Value?> {
+public fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.optional(): ValueFactory<Input?, Error, Value?> {
     val factory = this
     return object : ValueFactory<Input?, Error, Value?> {
         context(raise: Raise<Error>)
@@ -43,12 +43,12 @@ fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.optional
 }
 
 /** Why a [required] value could not be constructed. */
-sealed interface RequiredError<out Error> {
+public sealed interface RequiredError<out Error> {
     /** The input was null. */
-    data object Missing : RequiredError<Nothing>
+    public data object Missing : RequiredError<Nothing>
 
     /** The input was present but invalid. */
-    data class Invalid<out Error>(val cause: Error) : RequiredError<Error>
+    public data class Invalid<out Error>(val cause: Error) : RequiredError<Error>
 }
 
 /**
@@ -56,7 +56,7 @@ sealed interface RequiredError<out Error> {
  * [RequiredError.Missing], so nullable boundary data (a DTO field, a form value)
  * becomes a non-null domain value without `!!` or a silent default.
  */
-fun <Input : Any, Error, Value> ValueFactory<Input, Error, Value>.required(): ValueFactory<Input?, RequiredError<Error>, Value> {
+public fun <Input : Any, Error, Value> ValueFactory<Input, Error, Value>.required(): ValueFactory<Input?, RequiredError<Error>, Value> {
     val factory = this
     return object : ValueFactory<Input?, RequiredError<Error>, Value> {
         context(raise: Raise<RequiredError<Error>>)
@@ -72,5 +72,5 @@ fun <Input : Any, Error, Value> ValueFactory<Input, Error, Value>.required(): Va
  * constant, or data validated earlier. Invalid input is a programmer error and throws
  * [IllegalArgumentException]. Never use this for untrusted input.
  */
-fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromTrusted(value: Input): Value =
+public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromTrusted(value: Input): Value =
     either { from(value) }.getOrElse { throw IllegalArgumentException("Invalid trusted input: $it") }

@@ -22,7 +22,7 @@ private val monetaryCurrencies: List<Currency> by lazy { currencies.filter { it.
  * Every currency code the library accepts, chosen uniformly. With [monetaryOnly], only
  * currencies that have a minor unit and so can be [Money]; XAU and XXX are left out.
  */
-fun Currency.Companion.arb(monetaryOnly: Boolean = false): Arb<Currency> =
+public fun Currency.Companion.arb(monetaryOnly: Boolean = false): Arb<Currency> =
     Arb.element(if (monetaryOnly) monetaryCurrencies else currencies)
 
 /**
@@ -30,13 +30,13 @@ fun Currency.Companion.arb(monetaryOnly: Boolean = false): Arb<Currency> =
  * Sums of a few such amounts never overflow, so business-rule tests are not dominated by
  * [Money.ArithmeticError.Overflow]. Pass a wider range to test overflow handling.
  */
-const val DEFAULT_MAX_MINOR: Long = 100_000_000_000L
+public const val DEFAULT_MAX_MINOR: Long = 100_000_000_000L
 
 /**
  * Amounts whose minor-unit count is in [minor], in a currency from [currency]. Zero and
  * both edges of [minor] occur as edge cases. Use `Arb.constant(usd)` for one currency.
  */
-fun Money.Companion.arb(
+public fun Money.Companion.arb(
     currency: Arb<Currency> = Currency.arb(monetaryOnly = true),
     minor: LongRange = -DEFAULT_MAX_MINOR..DEFAULT_MAX_MINOR,
 ): Arb<Money> {
@@ -49,19 +49,19 @@ fun Money.Companion.arb(
 }
 
 /** Amounts of at least one minor unit and at most [maxMinor]. */
-fun PositiveMoney.Companion.arb(
+public fun PositiveMoney.Companion.arb(
     currency: Arb<Currency> = Currency.arb(monetaryOnly = true),
     maxMinor: Long = DEFAULT_MAX_MINOR,
 ): Arb<PositiveMoney> = Money.arb(currency, 1..maxMinor).map { PositiveMoney.fromTrusted(it) }
 
 /** Amounts from zero to [maxMinor] minor units. */
-fun NonNegativeMoney.Companion.arb(
+public fun NonNegativeMoney.Companion.arb(
     currency: Arb<Currency> = Currency.arb(monetaryOnly = true),
     maxMinor: Long = DEFAULT_MAX_MINOR,
 ): Arb<NonNegativeMoney> = Money.arb(currency, 0..maxMinor).map { NonNegativeMoney.fromTrusted(it) }
 
 /** Amounts from -[maxMinor] to one minor unit below zero. */
-fun NegativeMoney.Companion.arb(
+public fun NegativeMoney.Companion.arb(
     currency: Arb<Currency> = Currency.arb(monetaryOnly = true),
     maxMinor: Long = DEFAULT_MAX_MINOR,
 ): Arb<NegativeMoney> = Money.arb(currency, -maxMinor..-1).map { NegativeMoney.fromTrusted(it) }

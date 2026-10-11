@@ -6,15 +6,15 @@ import kotlinx.datetime.LocalDate
  * When something applies: from a date onward, or within a closed [DateRange]. A closed
  * set of states instead of a range with a nullable end, so "no end date" is explicit.
  */
-sealed interface EffectivePeriod {
-    val start: LocalDate
+public sealed interface EffectivePeriod {
+    public val start: LocalDate
 
-    operator fun contains(date: LocalDate): Boolean
+    public operator fun contains(date: LocalDate): Boolean
 
-    fun overlaps(other: EffectivePeriod): Boolean
+    public fun overlaps(other: EffectivePeriod): Boolean
 
     /** Applies on [start] and every later date. */
-    data class OpenEnded(override val start: LocalDate) : EffectivePeriod {
+    public data class OpenEnded(override val start: LocalDate) : EffectivePeriod {
         override fun contains(date: LocalDate): Boolean = date >= start
 
         override fun overlaps(other: EffectivePeriod): Boolean = when (other) {
@@ -24,7 +24,7 @@ sealed interface EffectivePeriod {
     }
 
     /** Applies within [range], both endpoints included. */
-    data class Bounded(val range: DateRange) : EffectivePeriod {
+    public data class Bounded(val range: DateRange) : EffectivePeriod {
         override val start: LocalDate get() = range.start
 
         override fun contains(date: LocalDate): Boolean = date in range

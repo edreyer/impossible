@@ -16,42 +16,42 @@ import com.ionspin.kotlin.bignum.integer.BigInteger
  * when [RoundingMode.UNNECESSARY] would have to round, or when aligning scales would
  * need more than [MAX_EXPANSION_DIGITS] extra digits.
  */
-class Decimal private constructor(
+public class Decimal private constructor(
     internal val unscaled: BigInteger,
-    val scale: Int,
+    public val scale: Int,
 ) : Comparable<Decimal> {
     /** -1, 0 or 1 for negative, zero or positive values. */
-    val sign: Int get() = unscaled.signum()
+    public val sign: Int get() = unscaled.signum()
 
     /** The number of digits in the unscaled value; 1 for zero. */
-    val precision: Int get() = unscaledDigits.length
+    public val precision: Int get() = unscaledDigits.length
 
     private val unscaledDigits: String by lazy { unscaled.abs().toString() }
 
     /** The exponent of the leading digit in scientific notation. */
     private val adjustedExponent: Long get() = precision.toLong() - 1 - scale
 
-    operator fun plus(other: Decimal): Decimal = when {
+    public operator fun plus(other: Decimal): Decimal = when {
         scale == other.scale -> Decimal(unscaled + other.unscaled, scale)
         scale < other.scale -> Decimal(upscale(other.scale) + other.unscaled, other.scale)
         else -> Decimal(unscaled + other.upscale(scale), scale)
     }
 
-    operator fun minus(other: Decimal): Decimal = this + (-other)
+    public operator fun minus(other: Decimal): Decimal = this + (-other)
 
-    operator fun times(other: Decimal): Decimal =
+    public operator fun times(other: Decimal): Decimal =
         Decimal(unscaled * other.unscaled, checkScale(scale.toLong() + other.scale, isZero = sign == 0 || other.sign == 0))
 
-    operator fun unaryMinus(): Decimal = Decimal(unscaled.negate(), scale)
+    public operator fun unaryMinus(): Decimal = Decimal(unscaled.negate(), scale)
 
     /** This value divided by 10^[places], exactly; only the scale changes. */
-    fun movePointLeft(places: Int): Decimal =
+    public fun movePointLeft(places: Int): Decimal =
         Decimal(unscaled, checkScale(scale.toLong() + places, isZero = sign == 0))
 
-    fun abs(): Decimal = if (sign < 0) -this else this
+    public fun abs(): Decimal = if (sign < 0) -this else this
 
     /** Divides and rounds the quotient to [scale] digits after the point. */
-    fun divide(divisor: Decimal, scale: Int, roundingMode: RoundingMode): Decimal {
+    public fun divide(divisor: Decimal, scale: Int, roundingMode: RoundingMode): Decimal {
         if (divisor.sign == 0) throw ArithmeticException("Division by zero")
         if (sign == 0) return Decimal(BigInteger.ZERO, scale)
         // quotient = unscaled * 10^shift / divisor.unscaled, rounded to an integer.
@@ -69,7 +69,7 @@ class Decimal private constructor(
     }
 
     /** Returns this value with [scale] digits after the point, rounding only as [roundingMode] allows. */
-    fun setScale(scale: Int, roundingMode: RoundingMode): Decimal = when {
+    public fun setScale(scale: Int, roundingMode: RoundingMode): Decimal = when {
         scale == this.scale -> this
         scale > this.scale -> Decimal(upscale(scale), scale)
         sign == 0 -> Decimal(BigInteger.ZERO, scale)
@@ -117,7 +117,7 @@ class Decimal private constructor(
     }
 
     /** The value without an exponent, like `java.math.BigDecimal.toPlainString()`. */
-    fun toPlainString(): String {
+    public fun toPlainString(): String {
         if (scale < 0) {
             if (sign == 0) return "0"
             return unscaled.toString() + "0".repeat(-scale)
@@ -146,18 +146,18 @@ class Decimal private constructor(
     private fun upscale(newScale: Int): BigInteger =
         if (sign == 0) unscaled else unscaled * powerOfTen(newScale.toLong() - scale)
 
-    companion object {
+    public companion object {
         /** The most digits an operation may add when aligning or extending scales. */
-        const val MAX_EXPANSION_DIGITS: Int = 10_000
+        public const val MAX_EXPANSION_DIGITS: Int = 10_000
 
-        val ZERO: Decimal = Decimal(BigInteger.ZERO, 0)
-        val ONE: Decimal = Decimal(BigInteger.ONE, 0)
+        public val ZERO: Decimal = Decimal(BigInteger.ZERO, 0)
+        public val ONE: Decimal = Decimal(BigInteger.ONE, 0)
 
         /** [value] with scale 0. */
-        fun of(value: Long): Decimal = Decimal(BigInteger.fromLong(value), 0)
+        public fun of(value: Long): Decimal = Decimal(BigInteger.fromLong(value), 0)
 
         /** `unscaled × 10^-scale`, so `of(1234, 2)` is 12.34. */
-        fun of(unscaled: Long, scale: Int): Decimal = Decimal(BigInteger.fromLong(unscaled), scale)
+        public fun of(unscaled: Long, scale: Int): Decimal = Decimal(BigInteger.fromLong(unscaled), scale)
 
         /**
          * Parses `java.math.BigDecimal` syntax: an optional sign, digits with an optional
@@ -165,7 +165,7 @@ class Decimal private constructor(
          * the resulting scale must fit in an [Int]. Whitespace, `NaN` and `Infinity` are rejected.
          */
         @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.
-        fun parseOrNull(text: String): Decimal? {
+        public fun parseOrNull(text: String): Decimal? {
             var index = 0
             val negative = text.startsWith('-')
             if (negative || text.startsWith('+')) index++
@@ -196,7 +196,7 @@ class Decimal private constructor(
         }
 
         /** Like [parseOrNull], but throws [NumberFormatException] for invalid text. */
-        fun parse(text: String): Decimal =
+        public fun parse(text: String): Decimal =
             parseOrNull(text) ?: throw NumberFormatException("Invalid decimal: \"$text\"")
 
         /** Builds a value from a base-10 unscaled integer such as "-1234". */
@@ -278,4 +278,4 @@ class Decimal private constructor(
 }
 
 /** How [Decimal.divide] and [Decimal.setScale] discard digits, with `java.math.RoundingMode` semantics. */
-enum class RoundingMode { UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY }
+public enum class RoundingMode { UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY }

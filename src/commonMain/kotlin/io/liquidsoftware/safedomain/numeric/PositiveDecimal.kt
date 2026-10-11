@@ -8,9 +8,9 @@ import io.liquidsoftware.safedomain.ValueFactory
  * An exact decimal strictly greater than zero. Preserves input scale without
  * rounding; equality, hashing, and ordering use numeric value (1.0 equals 1.00).
  */
-class PositiveDecimal private constructor(val value: Decimal) : Comparable<PositiveDecimal> {
-    sealed interface Error {
-        data class NonPositive(val value: Decimal) : Error
+public class PositiveDecimal private constructor(public val value: Decimal) : Comparable<PositiveDecimal> {
+    public sealed interface Error {
+        public data class NonPositive(val value: Decimal) : Error
     }
 
     override fun compareTo(other: PositiveDecimal): Int = value.compareTo(other.value)
@@ -23,13 +23,13 @@ class PositiveDecimal private constructor(val value: Decimal) : Comparable<Posit
     override fun toString(): String = "PositiveDecimal(value=$value)"
 
     /** The sum of two positive decimals is always positive. */
-    operator fun plus(other: PositiveDecimal): PositiveDecimal = PositiveDecimal(value + other.value)
+    public operator fun plus(other: PositiveDecimal): PositiveDecimal = PositiveDecimal(value + other.value)
 
-    operator fun unaryMinus(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(-value)
+    public operator fun unaryMinus(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(-value)
 
-    fun toNonNegativeDecimal(): NonNegativeDecimal = NonNegativeDecimal.fromTrustedDecimal(value)
+    public fun toNonNegativeDecimal(): NonNegativeDecimal = NonNegativeDecimal.fromTrustedDecimal(value)
 
-    companion object : ValueFactory<Decimal, Error, PositiveDecimal> {
+    public companion object : ValueFactory<Decimal, Error, PositiveDecimal> {
         context(raise: Raise<Error>)
         override fun from(value: Decimal): PositiveDecimal {
             raise.ensure(value.sign > 0) { Error.NonPositive(value) }

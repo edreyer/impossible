@@ -15,15 +15,15 @@ import kotlin.time.Clock
  * plain [LocalDate] and the check holds as of construction only. Today is read once per
  * validation; supply a fixed clock for deterministic tests.
  */
-object DateChecks {
-    sealed interface Error {
-        data class NotPast(val value: LocalDate, val today: LocalDate) : Error
-        data class NotFuture(val value: LocalDate, val today: LocalDate) : Error
+public object DateChecks {
+    public sealed interface Error {
+        public data class NotPast(val value: LocalDate, val today: LocalDate) : Error
+        public data class NotFuture(val value: LocalDate, val today: LocalDate) : Error
     }
 
     /** Accepts dates strictly before today. */
     context(clock: Clock, timeZone: TimeZone)
-    fun past(): ValueFactory<LocalDate, Error.NotPast, LocalDate> =
+    public fun past(): ValueFactory<LocalDate, Error.NotPast, LocalDate> =
         object : ValueFactory<LocalDate, Error.NotPast, LocalDate> {
             context(raise: Raise<Error.NotPast>)
             override fun from(value: LocalDate): LocalDate {
@@ -35,7 +35,7 @@ object DateChecks {
 
     /** Accepts dates strictly after today. */
     context(clock: Clock, timeZone: TimeZone)
-    fun future(): ValueFactory<LocalDate, Error.NotFuture, LocalDate> =
+    public fun future(): ValueFactory<LocalDate, Error.NotFuture, LocalDate> =
         object : ValueFactory<LocalDate, Error.NotFuture, LocalDate> {
             context(raise: Raise<Error.NotFuture>)
             override fun from(value: LocalDate): LocalDate {

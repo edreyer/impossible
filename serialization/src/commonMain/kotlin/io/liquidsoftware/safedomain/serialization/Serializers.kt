@@ -58,7 +58,7 @@ private fun <E> one(describe: (E) -> ErrorMessage): (E) -> List<ErrorMessage> =
 // Text
 
 /** [NonBlankString] as its exact text. */
-object NonBlankStringSerializer : KSerializer<NonBlankString> by NonBlankString.asSerializer(
+public object NonBlankStringSerializer : KSerializer<NonBlankString> by NonBlankString.asSerializer(
     "$PACKAGE.text.NonBlankString",
     String.serializer(),
     NonBlankString::value,
@@ -66,7 +66,7 @@ object NonBlankStringSerializer : KSerializer<NonBlankString> by NonBlankString.
 )
 
 /** [Slug] as its text. */
-object SlugSerializer : KSerializer<Slug> by Slug.asSerializer(
+public object SlugSerializer : KSerializer<Slug> by Slug.asSerializer(
     "$PACKAGE.text.Slug",
     String.serializer(),
     Slug::value,
@@ -78,7 +78,7 @@ object SlugSerializer : KSerializer<Slug> by Slug.asSerializer(
  * it in a response, a log, or a cache. Map it to what the output needs (a hash, a
  * masked hint) before encoding.
  */
-object SecretSerializer : KSerializer<Secret> {
+public object SecretSerializer : KSerializer<Secret> {
     private val reader = Secret.asSerializer(
         "$PACKAGE.text.Secret",
         String.serializer(),
@@ -94,7 +94,7 @@ object SecretSerializer : KSerializer<Secret> {
 // Contact and locale
 
 /** [Email] as the address it was created from. */
-object EmailSerializer : KSerializer<Email> by Email.asSerializer(
+public object EmailSerializer : KSerializer<Email> by Email.asSerializer(
     "$PACKAGE.contact.Email",
     String.serializer(),
     Email::value,
@@ -102,7 +102,7 @@ object EmailSerializer : KSerializer<Email> by Email.asSerializer(
 )
 
 /** [Phone] as E.164 text. */
-object PhoneSerializer : KSerializer<Phone> by Phone.asSerializer(
+public object PhoneSerializer : KSerializer<Phone> by Phone.asSerializer(
     "$PACKAGE.contact.Phone",
     String.serializer(),
     Phone::value,
@@ -110,7 +110,7 @@ object PhoneSerializer : KSerializer<Phone> by Phone.asSerializer(
 )
 
 /** [CountryCode] as its ISO 3166-1 alpha-2 code. */
-object CountryCodeSerializer : KSerializer<CountryCode> by CountryCode.asSerializer(
+public object CountryCodeSerializer : KSerializer<CountryCode> by CountryCode.asSerializer(
     "$PACKAGE.locale.CountryCode",
     String.serializer(),
     CountryCode::value,
@@ -118,7 +118,7 @@ object CountryCodeSerializer : KSerializer<CountryCode> by CountryCode.asSeriali
 )
 
 /** [LanguageTag] as its BCP 47 text. */
-object LanguageTagSerializer : KSerializer<LanguageTag> by LanguageTag.asSerializer(
+public object LanguageTagSerializer : KSerializer<LanguageTag> by LanguageTag.asSerializer(
     "$PACKAGE.locale.LanguageTag",
     String.serializer(),
     LanguageTag::value,
@@ -131,7 +131,7 @@ object LanguageTagSerializer : KSerializer<LanguageTag> by LanguageTag.asSeriali
  * [TypedId] as canonical UUID text. The tag exists only at compile time, so one
  * serializer serves every tag; use it as `@Serializable(with = TypedIdSerializer::class)`.
  */
-class TypedIdSerializer<Tag> : KSerializer<TypedId<Tag>> by TypedId.factory<Tag>().asSerializer(
+public class TypedIdSerializer<Tag> : KSerializer<TypedId<Tag>> by TypedId.factory<Tag>().asSerializer(
     "$PACKAGE.identity.TypedId",
     String.serializer(),
     { it.value.toString() },
@@ -144,9 +144,9 @@ class TypedIdSerializer<Tag> : KSerializer<TypedId<Tag>> by TypedId.factory<Tag>
  * [Decimal] as a JSON string such as `"12.30"`. Text keeps every digit and the scale on
  * every platform, where a JSON number would pass through a double on JS.
  */
-object DecimalSerializer : KSerializer<Decimal> {
+public object DecimalSerializer : KSerializer<Decimal> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("$PACKAGE.numeric.Decimal", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: Decimal) = encoder.encodeString(value.toString())
+    override fun serialize(encoder: Encoder, value: Decimal): Unit = encoder.encodeString(value.toString())
     override fun deserialize(decoder: Decoder): Decimal {
         val text = decoder.decodeString()
         return Decimal.parseOrNull(text) ?: throw InvalidValueException(
@@ -158,7 +158,7 @@ object DecimalSerializer : KSerializer<Decimal> {
 }
 
 /** [PositiveInt] as a number. */
-object PositiveIntSerializer : KSerializer<PositiveInt> by PositiveInt.asSerializer(
+public object PositiveIntSerializer : KSerializer<PositiveInt> by PositiveInt.asSerializer(
     "$PACKAGE.numeric.PositiveInt",
     Int.serializer(),
     PositiveInt::value,
@@ -166,7 +166,7 @@ object PositiveIntSerializer : KSerializer<PositiveInt> by PositiveInt.asSeriali
 )
 
 /** [NegativeInt] as a number. */
-object NegativeIntSerializer : KSerializer<NegativeInt> by NegativeInt.asSerializer(
+public object NegativeIntSerializer : KSerializer<NegativeInt> by NegativeInt.asSerializer(
     "$PACKAGE.numeric.NegativeInt",
     Int.serializer(),
     NegativeInt::value,
@@ -174,7 +174,7 @@ object NegativeIntSerializer : KSerializer<NegativeInt> by NegativeInt.asSeriali
 )
 
 /** [PositiveLong] as a number. */
-object PositiveLongSerializer : KSerializer<PositiveLong> by PositiveLong.asSerializer(
+public object PositiveLongSerializer : KSerializer<PositiveLong> by PositiveLong.asSerializer(
     "$PACKAGE.numeric.PositiveLong",
     Long.serializer(),
     PositiveLong::value,
@@ -182,7 +182,7 @@ object PositiveLongSerializer : KSerializer<PositiveLong> by PositiveLong.asSeri
 )
 
 /** [NegativeLong] as a number. */
-object NegativeLongSerializer : KSerializer<NegativeLong> by NegativeLong.asSerializer(
+public object NegativeLongSerializer : KSerializer<NegativeLong> by NegativeLong.asSerializer(
     "$PACKAGE.numeric.NegativeLong",
     Long.serializer(),
     NegativeLong::value,
@@ -190,7 +190,7 @@ object NegativeLongSerializer : KSerializer<NegativeLong> by NegativeLong.asSeri
 )
 
 /** [PositiveDecimal] as decimal text, like [DecimalSerializer]. */
-object PositiveDecimalSerializer : KSerializer<PositiveDecimal> by PositiveDecimal.asSerializer(
+public object PositiveDecimalSerializer : KSerializer<PositiveDecimal> by PositiveDecimal.asSerializer(
     "$PACKAGE.numeric.PositiveDecimal",
     DecimalSerializer,
     PositiveDecimal::value,
@@ -198,7 +198,7 @@ object PositiveDecimalSerializer : KSerializer<PositiveDecimal> by PositiveDecim
 )
 
 /** [NonNegativeDecimal] as decimal text, like [DecimalSerializer]. */
-object NonNegativeDecimalSerializer : KSerializer<NonNegativeDecimal> by NonNegativeDecimal.asSerializer(
+public object NonNegativeDecimalSerializer : KSerializer<NonNegativeDecimal> by NonNegativeDecimal.asSerializer(
     "$PACKAGE.numeric.NonNegativeDecimal",
     DecimalSerializer,
     NonNegativeDecimal::value,
@@ -206,7 +206,7 @@ object NonNegativeDecimalSerializer : KSerializer<NonNegativeDecimal> by NonNega
 )
 
 /** [NegativeDecimal] as decimal text, like [DecimalSerializer]. */
-object NegativeDecimalSerializer : KSerializer<NegativeDecimal> by NegativeDecimal.asSerializer(
+public object NegativeDecimalSerializer : KSerializer<NegativeDecimal> by NegativeDecimal.asSerializer(
     "$PACKAGE.numeric.NegativeDecimal",
     DecimalSerializer,
     NegativeDecimal::value,
@@ -214,7 +214,7 @@ object NegativeDecimalSerializer : KSerializer<NegativeDecimal> by NegativeDecim
 )
 
 /** [Percentage] as decimal text, like [DecimalSerializer]. */
-object PercentageSerializer : KSerializer<Percentage> by Percentage.asSerializer(
+public object PercentageSerializer : KSerializer<Percentage> by Percentage.asSerializer(
     "$PACKAGE.numeric.Percentage",
     DecimalSerializer,
     Percentage::value,
@@ -225,7 +225,7 @@ object PercentageSerializer : KSerializer<Percentage> by Percentage.asSerializer
  * [BoundedInt] as a number, checked against [bounds]. The bounds are configuration, not
  * data, so name a serializer per use: `object RatingSerializer : KSerializer<BoundedInt> by BoundedIntSerializer(1..5)`.
  */
-class BoundedIntSerializer(bounds: IntRange) : KSerializer<BoundedInt> by BoundedInt.factory(bounds).asSerializer(
+public class BoundedIntSerializer(bounds: IntRange) : KSerializer<BoundedInt> by BoundedInt.factory(bounds).asSerializer(
     "$PACKAGE.numeric.BoundedInt",
     Int.serializer(),
     BoundedInt::value,
@@ -235,7 +235,7 @@ class BoundedIntSerializer(bounds: IntRange) : KSerializer<BoundedInt> by Bounde
 // Money
 
 /** [Currency] as its ISO 4217 code. */
-object CurrencySerializer : KSerializer<Currency> by Currency.asSerializer(
+public object CurrencySerializer : KSerializer<Currency> by Currency.asSerializer(
     "$PACKAGE.money.Currency",
     String.serializer(),
     Currency::code,
@@ -250,7 +250,7 @@ private class MoneyText(val amount: String, val currency: String)
  * [Money] as `{"amount": "12.30", "currency": "EUR"}`. The amount is decimal text so no
  * platform rounds it; both fields are checked and every problem is reported.
  */
-object MoneySerializer : KSerializer<Money> by Money.parser.asSerializer(
+public object MoneySerializer : KSerializer<Money> by Money.parser.asSerializer(
     "$PACKAGE.money.Money",
     MoneyText.serializer().mapped(
         "$PACKAGE.money.Money.Input",
@@ -262,7 +262,7 @@ object MoneySerializer : KSerializer<Money> by Money.parser.asSerializer(
 )
 
 /** [PositiveMoney] in the same form as [MoneySerializer]. */
-object PositiveMoneySerializer : KSerializer<PositiveMoney> by PositiveMoney.asSerializer(
+public object PositiveMoneySerializer : KSerializer<PositiveMoney> by PositiveMoney.asSerializer(
     "$PACKAGE.money.PositiveMoney",
     MoneySerializer,
     PositiveMoney::money,
@@ -270,7 +270,7 @@ object PositiveMoneySerializer : KSerializer<PositiveMoney> by PositiveMoney.asS
 )
 
 /** [NonNegativeMoney] in the same form as [MoneySerializer]. */
-object NonNegativeMoneySerializer : KSerializer<NonNegativeMoney> by NonNegativeMoney.asSerializer(
+public object NonNegativeMoneySerializer : KSerializer<NonNegativeMoney> by NonNegativeMoney.asSerializer(
     "$PACKAGE.money.NonNegativeMoney",
     MoneySerializer,
     NonNegativeMoney::money,
@@ -278,7 +278,7 @@ object NonNegativeMoneySerializer : KSerializer<NonNegativeMoney> by NonNegative
 )
 
 /** [NegativeMoney] in the same form as [MoneySerializer]. */
-object NegativeMoneySerializer : KSerializer<NegativeMoney> by NegativeMoney.asSerializer(
+public object NegativeMoneySerializer : KSerializer<NegativeMoney> by NegativeMoney.asSerializer(
     "$PACKAGE.money.NegativeMoney",
     MoneySerializer,
     NegativeMoney::money,
@@ -292,7 +292,7 @@ object NegativeMoneySerializer : KSerializer<NegativeMoney> by NegativeMoney.asS
 private class DateRangeInput(val start: LocalDate, val endInclusive: LocalDate)
 
 /** [DateRange] as `{"start": "2026-01-01", "endInclusive": "2026-01-31"}`. */
-object DateRangeSerializer : KSerializer<DateRange> by DateRange.asSerializer(
+public object DateRangeSerializer : KSerializer<DateRange> by DateRange.asSerializer(
     "$PACKAGE.time.DateRange",
     DateRangeInput.serializer().mapped(
         "$PACKAGE.time.DateRange.Fields",
@@ -308,7 +308,7 @@ object DateRangeSerializer : KSerializer<DateRange> by DateRange.asSerializer(
 private class TimeWindowInput(val start: Instant, val endExclusive: Instant)
 
 /** [TimeWindow] as `{"start": "...Z", "endExclusive": "...Z"}` with ISO 8601 instants. */
-object TimeWindowSerializer : KSerializer<TimeWindow> by TimeWindow.asSerializer(
+public object TimeWindowSerializer : KSerializer<TimeWindow> by TimeWindow.asSerializer(
     "$PACKAGE.time.TimeWindow",
     TimeWindowInput.serializer().mapped(
         "$PACKAGE.time.TimeWindow.Fields",
@@ -320,7 +320,7 @@ object TimeWindowSerializer : KSerializer<TimeWindow> by TimeWindow.asSerializer
 )
 
 /** [PositiveDuration] as ISO 8601 duration text such as `"PT1H30M"`. */
-object PositiveDurationSerializer : KSerializer<PositiveDuration> by PositiveDuration.asSerializer(
+public object PositiveDurationSerializer : KSerializer<PositiveDuration> by PositiveDuration.asSerializer(
     "$PACKAGE.time.PositiveDuration",
     Duration.serializer(),
     PositiveDuration::value,
@@ -328,7 +328,7 @@ object PositiveDurationSerializer : KSerializer<PositiveDuration> by PositiveDur
 )
 
 /** [TimeZoneId] as its IANA id. */
-object TimeZoneIdSerializer : KSerializer<TimeZoneId> by TimeZoneId.asSerializer(
+public object TimeZoneIdSerializer : KSerializer<TimeZoneId> by TimeZoneId.asSerializer(
     "$PACKAGE.time.TimeZoneId",
     String.serializer(),
     TimeZoneId::value,
@@ -338,7 +338,7 @@ object TimeZoneIdSerializer : KSerializer<TimeZoneId> by TimeZoneId.asSerializer
 // Web and geo
 
 /** [DomainName] as the name it was created from. */
-object DomainNameSerializer : KSerializer<DomainName> by DomainName.asSerializer(
+public object DomainNameSerializer : KSerializer<DomainName> by DomainName.asSerializer(
     "$PACKAGE.web.DomainName",
     String.serializer(),
     DomainName::value,
@@ -346,7 +346,7 @@ object DomainNameSerializer : KSerializer<DomainName> by DomainName.asSerializer
 )
 
 /** [HttpUrl] as its text. */
-object HttpUrlSerializer : KSerializer<HttpUrl> by HttpUrl.asSerializer(
+public object HttpUrlSerializer : KSerializer<HttpUrl> by HttpUrl.asSerializer(
     "$PACKAGE.web.HttpUrl",
     String.serializer(),
     HttpUrl::value,
@@ -354,7 +354,7 @@ object HttpUrlSerializer : KSerializer<HttpUrl> by HttpUrl.asSerializer(
 )
 
 /** Either kind of [IpAddress] as its canonical text. */
-object IpAddressSerializer : KSerializer<IpAddress> by IpAddress.asSerializer(
+public object IpAddressSerializer : KSerializer<IpAddress> by IpAddress.asSerializer(
     "$PACKAGE.web.IpAddress",
     String.serializer(),
     IpAddress::toString,
@@ -362,7 +362,7 @@ object IpAddressSerializer : KSerializer<IpAddress> by IpAddress.asSerializer(
 )
 
 /** [IpAddress.V4] as dotted quad text. */
-object Ipv4AddressSerializer : KSerializer<IpAddress.V4> by IpAddress.V4.asSerializer(
+public object Ipv4AddressSerializer : KSerializer<IpAddress.V4> by IpAddress.V4.asSerializer(
     "$PACKAGE.web.IpAddress.V4",
     String.serializer(),
     IpAddress.V4::toString,
@@ -370,7 +370,7 @@ object Ipv4AddressSerializer : KSerializer<IpAddress.V4> by IpAddress.V4.asSeria
 )
 
 /** [IpAddress.V6] as canonical RFC 5952 text. */
-object Ipv6AddressSerializer : KSerializer<IpAddress.V6> by IpAddress.V6.asSerializer(
+public object Ipv6AddressSerializer : KSerializer<IpAddress.V6> by IpAddress.V6.asSerializer(
     "$PACKAGE.web.IpAddress.V6",
     String.serializer(),
     IpAddress.V6::toString,
@@ -382,7 +382,7 @@ object Ipv6AddressSerializer : KSerializer<IpAddress.V6> by IpAddress.V6.asSeria
 private class GeoPointInput(val latitude: Double, val longitude: Double)
 
 /** [GeoPoint] as `{"latitude": 52.37, "longitude": 4.89}`; both coordinates are checked. */
-object GeoPointSerializer : KSerializer<GeoPoint> by GeoPoint.asSerializer(
+public object GeoPointSerializer : KSerializer<GeoPoint> by GeoPoint.asSerializer(
     "$PACKAGE.geo.GeoPoint",
     GeoPointInput.serializer().mapped(
         "$PACKAGE.geo.GeoPoint.Fields",
@@ -396,7 +396,7 @@ object GeoPointSerializer : KSerializer<GeoPoint> by GeoPoint.asSerializer(
 // Collections
 
 /** [UniqueList] as a JSON array whose elements must be distinct. */
-class UniqueListSerializer<A>(element: KSerializer<A>) : KSerializer<UniqueList<A>> by UniqueList.factory<A>().asSerializer(
+public class UniqueListSerializer<A>(element: KSerializer<A>) : KSerializer<UniqueList<A>> by UniqueList.factory<A>().asSerializer(
     "$PACKAGE.collections.UniqueList",
     ListSerializer(element),
     UniqueList<A>::value,
@@ -407,7 +407,7 @@ class UniqueListSerializer<A>(element: KSerializer<A>) : KSerializer<UniqueList<
  * [BoundedList] as a JSON array whose size must be within [bounds]. Like
  * [BoundedIntSerializer], name a serializer per use.
  */
-class BoundedListSerializer<A>(element: KSerializer<A>, bounds: IntRange) : KSerializer<BoundedList<A>> by BoundedList.factory<A>(
+public class BoundedListSerializer<A>(element: KSerializer<A>, bounds: IntRange) : KSerializer<BoundedList<A>> by BoundedList.factory<A>(
     bounds,
 ).asSerializer(
     "$PACKAGE.collections.BoundedList",

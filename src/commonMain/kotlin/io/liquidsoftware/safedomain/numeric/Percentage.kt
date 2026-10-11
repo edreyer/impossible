@@ -10,13 +10,13 @@ import io.liquidsoftware.safedomain.ValueFactory
  * equality, hashing, and ordering use numeric value. Growth rates outside this
  * range require a different consuming-domain type.
  */
-class Percentage private constructor(val value: Decimal) : Comparable<Percentage> {
-    sealed interface Error {
-        data class OutOfRange(val value: Decimal) : Error
+public class Percentage private constructor(public val value: Decimal) : Comparable<Percentage> {
+    public sealed interface Error {
+        public data class OutOfRange(val value: Decimal) : Error
     }
 
     /** The same value as a ratio, exactly: 12.5% is 0.125. */
-    val ratio: Decimal get() = value.movePointLeft(2)
+    public val ratio: Decimal get() = value.movePointLeft(2)
 
     override fun compareTo(other: Percentage): Int = value.compareTo(other.value)
 
@@ -27,7 +27,7 @@ class Percentage private constructor(val value: Decimal) : Comparable<Percentage
 
     override fun toString(): String = "Percentage(value=$value)"
 
-    companion object : ValueFactory<Decimal, Error, Percentage> {
+    public companion object : ValueFactory<Decimal, Error, Percentage> {
         private val maximum = Decimal.of(100)
 
         context(raise: Raise<Error>)

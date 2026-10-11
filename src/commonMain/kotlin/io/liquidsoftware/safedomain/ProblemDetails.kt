@@ -13,7 +13,7 @@ import arrow.core.NonEmptyList
  * @property detail an explanation specific to this occurrence
  * @property instance a URI identifying this occurrence, if any
  */
-data class ProblemDetails(
+public data class ProblemDetails(
     val type: String,
     val title: String,
     val status: Int,
@@ -25,14 +25,14 @@ data class ProblemDetails(
      * One failure: [pointer] is an RFC 6901 JSON Pointer to the field (empty for the
      * whole request), [code] the stable error code, and [detail] its description.
      */
-    data class InvalidField(val pointer: String, val code: String, val detail: String)
+    public data class InvalidField(val pointer: String, val code: String, val detail: String)
 }
 
 /**
  * Describes every failure with [describe] and collects them into a single problem: by
  * default `422 Unprocessable Content`, whose `errors` point at each invalid field.
  */
-fun <Error> NonEmptyList<FieldError<Error>>.toProblemDetails(
+public fun <Error> NonEmptyList<FieldError<Error>>.toProblemDetails(
     describe: (Error) -> ErrorMessage,
     title: String = "The request is not valid.",
     status: Int = 422,

@@ -12,16 +12,16 @@ import arrow.core.wrapAsNonEmptySetOrThrow
 import io.liquidsoftware.safedomain.ValueFactory
 
 /** The input had no elements. */
-sealed interface NonEmptyError {
-    data object Empty : NonEmptyError
+public sealed interface NonEmptyError {
+    public data object Empty : NonEmptyError
 }
 
 /** Why input could not become a non-empty set without silently dropping elements. */
-sealed interface DistinctError {
-    data object Empty : DistinctError
+public sealed interface DistinctError {
+    public data object Empty : DistinctError
 
     /** Zero-based positions; each repeat refers to the first equal element. */
-    data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : DistinctError
+    public data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : DistinctError
 }
 
 /**
@@ -29,7 +29,7 @@ sealed interface DistinctError {
  * preserving order, duplicates, and element values. Elements are not copied.
  */
 @OptIn(PotentiallyUnsafeNonEmptyOperation::class)
-fun <A> NonEmptyList.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyError, NonEmptyList<A>> =
+public fun <A> NonEmptyList.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyError, NonEmptyList<A>> =
     object : ValueFactory<Iterable<A>, NonEmptyError, NonEmptyList<A>> {
         context(raise: Raise<NonEmptyError>)
         override fun from(value: Iterable<A>): NonEmptyList<A> {
@@ -45,7 +45,7 @@ fun <A> NonEmptyList.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyErro
  * order. Use [distinctFactory] when a repeat is an input error.
  */
 @OptIn(PotentiallyUnsafeNonEmptyOperation::class)
-fun <A> NonEmptySet.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyError, NonEmptySet<A>> =
+public fun <A> NonEmptySet.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyError, NonEmptySet<A>> =
     object : ValueFactory<Iterable<A>, NonEmptyError, NonEmptySet<A>> {
         context(raise: Raise<NonEmptyError>)
         override fun from(value: Iterable<A>): NonEmptySet<A> {
@@ -62,7 +62,7 @@ fun <A> NonEmptySet.Companion.factory(): ValueFactory<Iterable<A>, NonEmptyError
  * Elements must retain stable equality and hashing.
  */
 @OptIn(PotentiallyUnsafeNonEmptyOperation::class)
-fun <A> NonEmptySet.Companion.distinctFactory(): ValueFactory<Iterable<A>, NonEmptyList<DistinctError>, NonEmptySet<A>> =
+public fun <A> NonEmptySet.Companion.distinctFactory(): ValueFactory<Iterable<A>, NonEmptyList<DistinctError>, NonEmptySet<A>> =
     object : ValueFactory<Iterable<A>, NonEmptyList<DistinctError>, NonEmptySet<A>> {
         context(raise: Raise<NonEmptyList<DistinctError>>)
         override fun from(value: Iterable<A>): NonEmptySet<A> {

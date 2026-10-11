@@ -13,12 +13,12 @@ import io.liquidsoftware.safedomain.validate
  * 180 are kept as given even though they name the same meridian. Equality uses numeric
  * value, so 0.0 equals -0.0.
  */
-class GeoPoint private constructor(val latitude: Double, val longitude: Double) {
-    data class Input(val latitude: Double, val longitude: Double)
+public class GeoPoint private constructor(public val latitude: Double, public val longitude: Double) {
+    public data class Input(val latitude: Double, val longitude: Double)
 
-    sealed interface Error {
-        data class LatitudeOutOfRange(val value: Double) : Error
-        data class LongitudeOutOfRange(val value: Double) : Error
+    public sealed interface Error {
+        public data class LatitudeOutOfRange(val value: Double) : Error
+        public data class LongitudeOutOfRange(val value: Double) : Error
     }
 
     override fun equals(other: Any?): Boolean =
@@ -30,7 +30,7 @@ class GeoPoint private constructor(val latitude: Double, val longitude: Double) 
     override fun toString(): String = "GeoPoint(latitude=$latitude, longitude=$longitude)"
 
     /** Checks both coordinates independently and reports every failure. */
-    companion object : ValueFactory<Input, NonEmptyList<Error>, GeoPoint> {
+    public companion object : ValueFactory<Input, NonEmptyList<Error>, GeoPoint> {
         context(raise: Raise<NonEmptyList<Error>>)
         override fun from(value: Input): GeoPoint = validate {
             val latitude by field {

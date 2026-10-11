@@ -9,9 +9,9 @@ import io.liquidsoftware.safedomain.ValueFactory
  * 1..5 rating or a 1..100 page size. Equality and hashing include the bounds.
  * Wrap it in a consuming-domain type when the bounds carry a name (`Rating`).
  */
-class BoundedInt private constructor(val value: Int, val bounds: IntRange) : Comparable<BoundedInt> {
-    sealed interface Error {
-        data class OutOfRange(val value: Int, val bounds: IntRange) : Error
+public class BoundedInt private constructor(public val value: Int, public val bounds: IntRange) : Comparable<BoundedInt> {
+    public sealed interface Error {
+        public data class OutOfRange(val value: Int, val bounds: IntRange) : Error
     }
 
     /** Numeric ordering of [value]; bounds are not compared. */
@@ -24,12 +24,12 @@ class BoundedInt private constructor(val value: Int, val bounds: IntRange) : Com
 
     override fun toString(): String = "BoundedInt(value=$value, bounds=$bounds)"
 
-    companion object {
+    public companion object {
         /**
          * Returns a factory accepting [bounds]. Bounds are programmer configuration, so an
          * empty range throws [IllegalArgumentException].
          */
-        fun factory(bounds: IntRange): ValueFactory<Int, Error, BoundedInt> {
+        public fun factory(bounds: IntRange): ValueFactory<Int, Error, BoundedInt> {
             require(!bounds.isEmpty()) { "Bounds must not be empty: $bounds" }
             return object : ValueFactory<Int, Error, BoundedInt> {
                 context(raise: Raise<Error>)

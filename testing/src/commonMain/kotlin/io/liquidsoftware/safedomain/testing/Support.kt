@@ -54,7 +54,7 @@ internal inline fun <Error> accepts(construct: Raise<Error>.() -> Unit): Boolean
  * (including non-ASCII spaces), Cyrillic, Japanese kana, and characters outside the
  * Basic Multilingual Plane (surrogate pairs).
  */
-fun Arb.Companion.untrustedText(length: IntRange = 0..60): Arb<String> = arbitrary { rs ->
+public fun Arb.Companion.untrustedText(length: IntRange = 0..60): Arb<String> = arbitrary { rs ->
     val size = rs.random.nextInt(length.first, length.last + 1)
     buildString {
         repeat(size) {
@@ -75,7 +75,7 @@ fun Arb.Companion.untrustedText(length: IntRange = 0..60): Arb<String> = arbitra
  * replaced, or the case of one character flipped. Near misses probe validation
  * boundaries far better than random text, which almost never comes close to valid.
  */
-fun Arb.Companion.nearMiss(valid: Arb<String>): Arb<String> = arbitrary { rs ->
+public fun Arb.Companion.nearMiss(valid: Arb<String>): Arb<String> = arbitrary { rs ->
     val text = valid.bind()
     val noise = "-._@:/+%#?= \t0aZéа"
     val index = if (text.isEmpty()) 0 else rs.random.nextInt(text.length)

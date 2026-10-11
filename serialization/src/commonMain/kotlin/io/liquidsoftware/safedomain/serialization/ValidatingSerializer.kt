@@ -22,7 +22,7 @@ import kotlinx.serialization.encoding.Encoder
  * Use it to serialize your own refined types:
  * `object SkuSerializer : KSerializer<Sku> by Sku.asSerializer("com.example.Sku", String.serializer(), Sku::value, ::describe)`.
  */
-fun <Input, Error, Value> ValueFactory<Input, Error, Value>.asSerializer(
+public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.asSerializer(
     serialName: String,
     input: KSerializer<Input>,
     render: (Value) -> Input,

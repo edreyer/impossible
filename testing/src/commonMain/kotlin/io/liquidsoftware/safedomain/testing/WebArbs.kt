@@ -10,7 +10,7 @@ import io.liquidsoftware.safedomain.web.HttpUrl
 import io.liquidsoftware.safedomain.web.IpAddress
 
 /** Names of one to four mixed-case labels; the last label is never all digits. */
-fun DomainName.Companion.arb(): Arb<DomainName> {
+public fun DomainName.Companion.arb(): Arb<DomainName> {
     val lastLabels = dnsLabel(maxLength = 20).filter { label -> !label.all { it in '0'..'9' } }
     return arbitrary { rs ->
         val labels = (1 until rs.random.nextInt(1, 5)).map { dnsLabel(maxLength = 20).bind() } + lastLabels.bind()
@@ -19,7 +19,7 @@ fun DomainName.Companion.arb(): Arb<DomainName> {
 }
 
 /** Any IPv4 address, with 0.0.0.0 and 255.255.255.255 as edge cases. */
-fun IpAddress.V4.Companion.arb(): Arb<IpAddress.V4> =
+public fun IpAddress.V4.Companion.arb(): Arb<IpAddress.V4> =
     arbitrary(listOf("0.0.0.0", "255.255.255.255").map { IpAddress.V4.fromTrusted(it) }) { rs ->
         IpAddress.V4.fromTrusted((1..4).joinToString(".") { rs.random.nextInt(256).toString() })
     }
@@ -28,14 +28,14 @@ fun IpAddress.V4.Companion.arb(): Arb<IpAddress.V4> =
  * Any IPv6 address. Each group is zero with high probability, so runs of zero groups,
  * the case RFC 5952 compression handles, are common. `::` and `::1` are edge cases.
  */
-fun IpAddress.V6.Companion.arb(): Arb<IpAddress.V6> =
+public fun IpAddress.V6.Companion.arb(): Arb<IpAddress.V6> =
     arbitrary(listOf("::", "::1").map { IpAddress.V6.fromTrusted(it) }) { rs ->
         val groups = (1..8).map { if (rs.random.nextInt(5) < 2) 0 else rs.random.nextInt(0x10000) }
         IpAddress.V6.fromTrusted(groups.joinToString(":") { it.toString(16) })
     }
 
 /** IPv4 and IPv6 addresses in equal measure. */
-fun IpAddress.Companion.arb(): Arb<IpAddress> = Arb.choice(IpAddress.V4.arb(), IpAddress.V6.arb())
+public fun IpAddress.Companion.arb(): Arb<IpAddress> = Arb.choice(IpAddress.V4.arb(), IpAddress.V6.arb())
 
 private const val URL_UNRESERVED = ALPHANUMERIC + "-_.~"
 
@@ -44,7 +44,7 @@ private const val URL_UNRESERVED = ALPHANUMERIC + "-_.~"
  * IPv4, or bracketed IPv6 host, an optional port, and optional path, query, and fragment
  * that include percent escapes.
  */
-fun HttpUrl.Companion.arb(): Arb<HttpUrl> {
+public fun HttpUrl.Companion.arb(): Arb<HttpUrl> {
     val urlHostLabels = dnsLabel(maxLength = 15, startWithLetter = true)
     val escape = arbitrary { rs ->
         "%" + "0123456789abcdefABCDEF".random(rs.random) + "0123456789ABCDEF".random(rs.random)

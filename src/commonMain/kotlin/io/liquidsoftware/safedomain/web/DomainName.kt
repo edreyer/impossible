@@ -12,13 +12,13 @@ import io.liquidsoftware.safedomain.ValueFactory
  * rejected; already encoded `xn--` labels are accepted. [value] preserves the input;
  * equality and hashing ignore ASCII case, as DNS does. No DNS lookup is performed.
  */
-class DomainName private constructor(val value: String) {
-    sealed interface Error {
-        data class InvalidFormat(val value: String) : Error
+public class DomainName private constructor(public val value: String) {
+    public sealed interface Error {
+        public data class InvalidFormat(val value: String) : Error
     }
 
     /** The labels from left to right, as written: `api.example.com` is `[api, example, com]`. */
-    val labels: List<String> get() = value.split('.')
+    public val labels: List<String> get() = value.split('.')
 
     private val comparisonKey: String get() = value.lowercase()
 
@@ -28,7 +28,7 @@ class DomainName private constructor(val value: String) {
 
     override fun toString(): String = "DomainName(value=$value)"
 
-    companion object : ValueFactory<String, Error, DomainName> {
+    public companion object : ValueFactory<String, Error, DomainName> {
         private const val MAX_LENGTH = 253
         private val label = Regex("[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?")
 

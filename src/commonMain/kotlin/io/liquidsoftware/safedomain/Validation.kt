@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
  * raises every error collected so far, so read fields only once all are declared,
  * or inside a dependent [field] block.
  */
-typealias Validated<A> = RaiseAccumulate.Value<A>
+public typealias Validated<A> = RaiseAccumulate.Value<A>
 
 /**
  * Accumulating construction for composite types: every field declared in [block]
@@ -24,12 +24,12 @@ typealias Validated<A> = RaiseAccumulate.Value<A>
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(raise: Raise<NonEmptyList<Error>>)
-inline fun <Error, A> validate(block: RaiseAccumulate<Error>.() -> A): A = raise.accumulate(block)
+public inline fun <Error, A> validate(block: RaiseAccumulate<Error>.() -> A): A = raise.accumulate(block)
 
 /** Validates one field, mapping its failure (including a whole error batch) with [onError]. */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Mapped>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field(
     value: Input,
     onError: (Error) -> Mapped,
 ): Validated<Value> = scope.accumulating { from(value, onError) }
@@ -40,7 +40,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field(
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Mapped>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.field(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.field(
     value: Input,
     onMissing: () -> Mapped,
     onError: (Error) -> Mapped,
@@ -54,7 +54,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Valu
 /** Validates one field from an accumulating factory, mapping each nested error into the parent list. */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Mapped>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatField(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatField(
     value: Input,
     onError: (Error) -> Mapped,
 ): Validated<Value> = scope.accumulating {
@@ -64,7 +64,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value
 /** Validates every element, reporting each failure with its zero-based index. */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Mapped>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachField(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachField(
     values: Iterable<Input>,
     onError: (index: Int, Error) -> Mapped,
 ): Validated<List<Value>> = scope.accumulating {
@@ -79,18 +79,18 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachField(
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<Error>)
-fun <Error, A> field(block: RaiseAccumulate<Error>.() -> A): Validated<A> = scope.accumulating(block)
+public fun <Error, A> field(block: RaiseAccumulate<Error>.() -> A): Validated<A> = scope.accumulating(block)
 
 /**
  * A field declared with one of the path-aware helpers ([fieldAt], [eachFieldAt],
  * [flatFieldAt], [nestedFieldAt]). Declare it with `by`: the property's name becomes the
  * field's path unless the helper was given an explicit `name`, such as a JSON key.
  */
-class PathField<out A> internal constructor(
+public class PathField<out A> internal constructor(
     private val name: String?,
     private val validate: (FieldPath) -> Validated<A>,
 ) {
-    operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Validated<A> =
+    public operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Validated<A> =
         validate(FieldPath.of(name ?: property.name))
 }
 
@@ -104,7 +104,7 @@ class PathField<out A> internal constructor(
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.fieldAt(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.fieldAt(
     value: Input,
     name: String? = null,
     onError: (Error) -> Mapped,
@@ -114,7 +114,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.fieldAt(
 
 /** Validates one [required] field at its path, mapping absence with [onMissing] and an invalid value with [onError]. */
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.fieldAt(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.fieldAt(
     value: Input,
     name: String? = null,
     onMissing: () -> Mapped,
@@ -129,7 +129,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Valu
 /** Validates every element, recording each failure at `field[index]`. */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
     values: Iterable<Input>,
     name: String? = null,
     onError: (Error) -> Mapped,
@@ -149,7 +149,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatFieldAt(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatFieldAt(
     value: Input,
     name: String? = null,
     onError: (Error) -> Mapped,
@@ -168,7 +168,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Error>>, Value>.nestedFieldAt(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Error>>, Value>.nestedFieldAt(
     value: Input,
     name: String? = null,
     onError: (Error) -> Mapped,
@@ -189,6 +189,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Er
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(scope: RaiseAccumulate<FieldError<Mapped>>)
-fun <Mapped, A> fieldAt(name: String? = null, block: Raise<Mapped>.() -> A): PathField<A> = PathField(name) { path ->
-    scope.accumulating { withError({ error: Mapped -> FieldError(path, error) }) { block() } }
-}
+public fun <Mapped, A> fieldAt(name: String? = null, block: Raise<Mapped>.() -> A): PathField<A> =
+    PathField(name) { path ->
+        scope.accumulating { withError({ error: Mapped -> FieldError(path, error) }) { block() } }
+    }

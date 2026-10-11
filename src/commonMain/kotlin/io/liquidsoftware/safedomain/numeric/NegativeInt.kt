@@ -7,19 +7,19 @@ import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range [Int.MIN_VALUE]..-1. */
 @JvmInline
-value class NegativeInt private constructor(val value: Int) : Comparable<NegativeInt> {
-    sealed interface Error {
-        data class NonNegative(val value: Int) : Error
+public value class NegativeInt private constructor(public val value: Int) : Comparable<NegativeInt> {
+    public sealed interface Error {
+        public data class NonNegative(val value: Int) : Error
     }
 
     /** The result is below [Int.MIN_VALUE], or is the negation of [Int.MIN_VALUE]. */
-    data object Overflow
+    public data object Overflow
 
     override fun compareTo(other: NegativeInt): Int = value.compareTo(other.value)
 
     /** The sum of two negative integers is negative unless it overflows. */
     context(raise: Raise<Overflow>)
-    operator fun plus(other: NegativeInt): NegativeInt {
+    public operator fun plus(other: NegativeInt): NegativeInt {
         val sum = value + other.value
         raise.ensure(sum < 0) { Overflow }
         return NegativeInt(sum)
@@ -27,17 +27,17 @@ value class NegativeInt private constructor(val value: Int) : Comparable<Negativ
 
     /** The positive magnitude; only [Int.MIN_VALUE] has none. */
     context(raise: Raise<Overflow>)
-    operator fun unaryMinus(): PositiveInt {
+    public operator fun unaryMinus(): PositiveInt {
         raise.ensure(value != Int.MIN_VALUE) { Overflow }
         return PositiveInt.fromTrustedInt(-value)
     }
 
-    fun toNegativeLong(): NegativeLong = NegativeLong.fromTrustedLong(value.toLong())
+    public fun toNegativeLong(): NegativeLong = NegativeLong.fromTrustedLong(value.toLong())
 
-    fun toNegativeDecimal(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(Decimal.of(value.toLong()))
+    public fun toNegativeDecimal(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(Decimal.of(value.toLong()))
 
-    companion object : ValueFactory<Int, Error, NegativeInt> {
-        val MINUS_ONE: NegativeInt = NegativeInt(-1)
+    public companion object : ValueFactory<Int, Error, NegativeInt> {
+        public val MINUS_ONE: NegativeInt = NegativeInt(-1)
 
         /** Returns the wrapped [value], or raises [Error.NonNegative] if it is zero or positive. */
         context(raise: Raise<Error>)

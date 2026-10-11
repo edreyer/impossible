@@ -14,15 +14,15 @@ import kotlin.jvm.JvmInline
  * This guarantees nonblank text, not visible content or suitability for a particular domain.
  */
 @JvmInline
-value class NonBlankString private constructor(val value: String) {
-    sealed interface Error {
-        data object Blank : Error
+public value class NonBlankString private constructor(public val value: String) {
+    public sealed interface Error {
+        public data object Blank : Error
 
         /** Lengths are counted in Unicode code points. */
-        data class TooLong(val maximum: Int, val actual: Int) : Error
+        public data class TooLong(val maximum: Int, val actual: Int) : Error
     }
 
-    companion object : ValueFactory<String, Error, NonBlankString> {
+    public companion object : ValueFactory<String, Error, NonBlankString> {
         /** Returns the unchanged [value], wrapped, or raises [Error.Blank] if it is blank. */
         context(raise: Raise<Error>)
         override fun from(value: String): NonBlankString {
@@ -36,7 +36,7 @@ value class NonBlankString private constructor(val value: String) {
          * and trailing whitespace is removed before both checks, and the stored value is the
          * trimmed text; without it, input is preserved exactly.
          */
-        fun bounded(maxLength: PositiveInt, trim: Boolean = false): ValueFactory<String, Error, NonBlankString> =
+        public fun bounded(maxLength: PositiveInt, trim: Boolean = false): ValueFactory<String, Error, NonBlankString> =
             object : ValueFactory<String, Error, NonBlankString> {
                 context(raise: Raise<Error>)
                 override fun from(value: String): NonBlankString {

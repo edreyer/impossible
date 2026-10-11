@@ -12,12 +12,12 @@ import kotlin.jvm.JvmInline
  * Validation is identical on every platform.
  */
 @JvmInline
-value class CountryCode private constructor(val value: String) {
-    sealed interface Error {
-        data class UnsupportedCode(val value: String) : Error
+public value class CountryCode private constructor(public val value: String) {
+    public sealed interface Error {
+        public data class UnsupportedCode(val value: String) : Error
     }
 
-    companion object : ValueFactory<String, Error, CountryCode> {
+    public companion object : ValueFactory<String, Error, CountryCode> {
         context(raise: Raise<Error>)
         override fun from(value: String): CountryCode {
             raise.ensure(value in isoCountryCodes) { Error.UnsupportedCode(value) }

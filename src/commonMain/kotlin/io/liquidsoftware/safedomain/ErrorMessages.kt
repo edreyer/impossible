@@ -46,7 +46,7 @@ import io.liquidsoftware.safedomain.web.IpAddress
  * attacker chose, and the caller already has it. They may mention values that passed
  * validation or are not free text, such as a currency code, a length, or a date.
  */
-data class ErrorMessage(val code: String, val text: String, val arguments: Map<String, String> = emptyMap())
+public data class ErrorMessage(val code: String, val text: String, val arguments: Map<String, String> = emptyMap())
 
 /**
  * Default English descriptions of every error this library defines, one overload per
@@ -62,8 +62,8 @@ data class ErrorMessage(val code: String, val text: String, val arguments: Map<S
  * To localize, look the [ErrorMessage.code] up in your own catalog and format its
  * [ErrorMessage.arguments]; fall back to [ErrorMessage.text].
  */
-object ErrorMessages {
-    fun <Error> describe(error: RequiredError<Error>, describeCause: (Error) -> ErrorMessage): ErrorMessage =
+public object ErrorMessages {
+    public fun <Error> describe(error: RequiredError<Error>, describeCause: (Error) -> ErrorMessage): ErrorMessage =
         when (error) {
             RequiredError.Missing -> ErrorMessage("required.missing", "A value is required.")
             is RequiredError.Invalid -> describeCause(error.cause)
@@ -71,7 +71,7 @@ object ErrorMessages {
 
     // text
 
-    fun describe(error: NonBlankString.Error): ErrorMessage = when (error) {
+    public fun describe(error: NonBlankString.Error): ErrorMessage = when (error) {
         NonBlankString.Error.Blank -> ErrorMessage("non_blank_string.blank", "Enter some text.")
         is NonBlankString.Error.TooLong -> ErrorMessage(
             "non_blank_string.too_long",
@@ -80,24 +80,24 @@ object ErrorMessages {
         )
     }
 
-    fun describe(error: Slug.Error): ErrorMessage = when (error) {
+    public fun describe(error: Slug.Error): ErrorMessage = when (error) {
         is Slug.Error.InvalidFormat -> ErrorMessage(
             "slug.invalid_format",
             "Use lowercase letters and digits, joined by single hyphens.",
         )
     }
 
-    fun describe(error: Secret.Error): ErrorMessage = when (error) {
+    public fun describe(error: Secret.Error): ErrorMessage = when (error) {
         Secret.Error.Blank -> ErrorMessage("secret.blank", "Enter a value.")
     }
 
     // contact
 
-    fun describe(error: Email.Error): ErrorMessage = when (error) {
+    public fun describe(error: Email.Error): ErrorMessage = when (error) {
         is Email.Error.InvalidFormat -> ErrorMessage("email.invalid_format", "Enter an email address such as name@example.com.")
     }
 
-    fun describe(error: Phone.Error): ErrorMessage = when (error) {
+    public fun describe(error: Phone.Error): ErrorMessage = when (error) {
         is Phone.Error.InvalidFormat -> ErrorMessage(
             "phone.invalid_format",
             "Enter an international phone number: + and the country code, then up to 15 digits, without spaces.",
@@ -106,14 +106,14 @@ object ErrorMessages {
 
     // locale
 
-    fun describe(error: CountryCode.Error): ErrorMessage = when (error) {
+    public fun describe(error: CountryCode.Error): ErrorMessage = when (error) {
         is CountryCode.Error.UnsupportedCode -> ErrorMessage(
             "country_code.unsupported",
             "Enter a two-letter ISO country code in capitals, such as DE or US.",
         )
     }
 
-    fun describe(error: LanguageTag.Error): ErrorMessage = when (error) {
+    public fun describe(error: LanguageTag.Error): ErrorMessage = when (error) {
         is LanguageTag.Error.InvalidFormat -> ErrorMessage(
             "language_tag.invalid_format",
             "Enter a language tag such as en, en-US or zh-Hant-TW.",
@@ -122,42 +122,42 @@ object ErrorMessages {
 
     // identity
 
-    fun describe(error: TypedId.Error): ErrorMessage = when (error) {
+    public fun describe(error: TypedId.Error): ErrorMessage = when (error) {
         is TypedId.Error.InvalidFormat -> ErrorMessage("typed_id.invalid_format", "Enter an identifier in UUID form.")
     }
 
     // numeric
 
-    fun describe(error: PositiveInt.Error): ErrorMessage = when (error) {
+    public fun describe(error: PositiveInt.Error): ErrorMessage = when (error) {
         is PositiveInt.Error.NonPositive -> greaterThanZero("positive_int.non_positive")
     }
 
-    fun describe(error: PositiveLong.Error): ErrorMessage = when (error) {
+    public fun describe(error: PositiveLong.Error): ErrorMessage = when (error) {
         is PositiveLong.Error.NonPositive -> greaterThanZero("positive_long.non_positive")
     }
 
-    fun describe(error: PositiveDecimal.Error): ErrorMessage = when (error) {
+    public fun describe(error: PositiveDecimal.Error): ErrorMessage = when (error) {
         is PositiveDecimal.Error.NonPositive -> greaterThanZero("positive_decimal.non_positive")
     }
 
-    fun describe(error: NegativeInt.Error): ErrorMessage = when (error) {
+    public fun describe(error: NegativeInt.Error): ErrorMessage = when (error) {
         is NegativeInt.Error.NonNegative -> lessThanZero("negative_int.non_negative")
     }
 
-    fun describe(error: NegativeLong.Error): ErrorMessage = when (error) {
+    public fun describe(error: NegativeLong.Error): ErrorMessage = when (error) {
         is NegativeLong.Error.NonNegative -> lessThanZero("negative_long.non_negative")
     }
 
-    fun describe(error: NegativeDecimal.Error): ErrorMessage = when (error) {
+    public fun describe(error: NegativeDecimal.Error): ErrorMessage = when (error) {
         is NegativeDecimal.Error.NonNegative -> lessThanZero("negative_decimal.non_negative")
     }
 
-    fun describe(error: NonNegativeDecimal.Error): ErrorMessage = when (error) {
+    public fun describe(error: NonNegativeDecimal.Error): ErrorMessage = when (error) {
         is NonNegativeDecimal.Error.Negative ->
             ErrorMessage("non_negative_decimal.negative", "Enter zero or a number greater than zero.")
     }
 
-    fun describe(error: BoundedInt.Error): ErrorMessage = when (error) {
+    public fun describe(error: BoundedInt.Error): ErrorMessage = when (error) {
         is BoundedInt.Error.OutOfRange -> ErrorMessage(
             "bounded_int.out_of_range",
             "Enter a whole number from ${error.bounds.first} to ${error.bounds.last}.",
@@ -165,20 +165,20 @@ object ErrorMessages {
         )
     }
 
-    fun describe(error: Percentage.Error): ErrorMessage = when (error) {
+    public fun describe(error: Percentage.Error): ErrorMessage = when (error) {
         is Percentage.Error.OutOfRange -> ErrorMessage("percentage.out_of_range", "Enter a percentage from 0 to 100.")
     }
 
     // money
 
-    fun describe(error: Currency.Error): ErrorMessage = when (error) {
+    public fun describe(error: Currency.Error): ErrorMessage = when (error) {
         is Currency.Error.UnsupportedCode -> ErrorMessage(
             "currency.unsupported",
             "Enter a three-letter ISO currency code in capitals, such as EUR or USD.",
         )
     }
 
-    fun describe(error: Money.Error): ErrorMessage = when (error) {
+    public fun describe(error: Money.Error): ErrorMessage = when (error) {
         is Money.Error.InvalidAmount -> ErrorMessage("money.invalid_amount", "Enter an amount such as 12.34.")
         is Money.Error.InvalidCurrency -> describe(error.cause)
         is Money.Error.NoMinorUnits -> ErrorMessage(
@@ -198,7 +198,7 @@ object ErrorMessages {
         is Money.Error.OutOfRange -> ErrorMessage("money.out_of_range", "Enter a smaller amount.")
     }
 
-    fun describe(error: Money.ArithmeticError): ErrorMessage = when (error) {
+    public fun describe(error: Money.ArithmeticError): ErrorMessage = when (error) {
         is Money.ArithmeticError.CurrencyMismatch -> ErrorMessage(
             "money.currency_mismatch",
             "Amounts in ${error.expected.code} and ${error.actual.code} cannot be combined.",
@@ -210,21 +210,21 @@ object ErrorMessages {
             ErrorMessage("money.rounding_required", "The result cannot be represented without rounding.")
     }
 
-    fun describe(error: PositiveMoney.Error): ErrorMessage = when (error) {
+    public fun describe(error: PositiveMoney.Error): ErrorMessage = when (error) {
         is PositiveMoney.Error.NonPositive -> ErrorMessage("positive_money.non_positive", "Enter an amount greater than zero.")
     }
 
-    fun describe(error: NonNegativeMoney.Error): ErrorMessage = when (error) {
+    public fun describe(error: NonNegativeMoney.Error): ErrorMessage = when (error) {
         is NonNegativeMoney.Error.Negative -> ErrorMessage("non_negative_money.negative", "Enter zero or a positive amount.")
     }
 
-    fun describe(error: NegativeMoney.Error): ErrorMessage = when (error) {
+    public fun describe(error: NegativeMoney.Error): ErrorMessage = when (error) {
         is NegativeMoney.Error.NonNegative -> ErrorMessage("negative_money.non_negative", "Enter an amount less than zero.")
     }
 
     // time
 
-    fun describe(error: DateRange.Error): ErrorMessage = when (error) {
+    public fun describe(error: DateRange.Error): ErrorMessage = when (error) {
         is DateRange.Error.EndBeforeStart -> ErrorMessage(
             "date_range.end_before_start",
             "The end date must not be before the start date.",
@@ -232,14 +232,14 @@ object ErrorMessages {
         )
     }
 
-    fun describe(error: DateChecks.Error): ErrorMessage = when (error) {
+    public fun describe(error: DateChecks.Error): ErrorMessage = when (error) {
         is DateChecks.Error.NotPast ->
             ErrorMessage("date.not_past", "Enter a date before today.", mapOf("today" to "${error.today}"))
         is DateChecks.Error.NotFuture ->
             ErrorMessage("date.not_future", "Enter a date after today.", mapOf("today" to "${error.today}"))
     }
 
-    fun describe(error: TimeWindow.Error): ErrorMessage = when (error) {
+    public fun describe(error: TimeWindow.Error): ErrorMessage = when (error) {
         is TimeWindow.Error.NotAfterStart -> ErrorMessage(
             "time_window.not_after_start",
             "The end time must be after the start time.",
@@ -247,13 +247,13 @@ object ErrorMessages {
         )
     }
 
-    fun describe(error: PositiveDuration.Error): ErrorMessage = when (error) {
+    public fun describe(error: PositiveDuration.Error): ErrorMessage = when (error) {
         is PositiveDuration.Error.NonPositive ->
             ErrorMessage("positive_duration.non_positive", "Enter a duration longer than zero.")
         PositiveDuration.Error.Infinite -> ErrorMessage("positive_duration.infinite", "Enter a finite duration.")
     }
 
-    fun describe(error: TimeZoneId.Error): ErrorMessage = when (error) {
+    public fun describe(error: TimeZoneId.Error): ErrorMessage = when (error) {
         is TimeZoneId.Error.UnknownZone -> ErrorMessage(
             "time_zone.unknown",
             "Enter a time zone such as Europe/Berlin or UTC, spelled exactly as in the IANA database.",
@@ -262,16 +262,16 @@ object ErrorMessages {
 
     // web
 
-    fun describe(error: DomainName.Error): ErrorMessage = when (error) {
+    public fun describe(error: DomainName.Error): ErrorMessage = when (error) {
         is DomainName.Error.InvalidFormat -> ErrorMessage("domain_name.invalid_format", "Enter a domain name such as example.com.")
     }
 
-    fun describe(error: IpAddress.Error): ErrorMessage = when (error) {
+    public fun describe(error: IpAddress.Error): ErrorMessage = when (error) {
         is IpAddress.Error.InvalidFormat ->
             ErrorMessage("ip_address.invalid_format", "Enter an IPv4 address such as 192.0.2.1 or an IPv6 address.")
     }
 
-    fun describe(error: HttpUrl.Error): ErrorMessage = when (error) {
+    public fun describe(error: HttpUrl.Error): ErrorMessage = when (error) {
         is HttpUrl.Error.InvalidSyntax -> ErrorMessage("http_url.invalid_syntax", "Enter a web address such as https://example.com.")
         is HttpUrl.Error.NotAbsolute -> ErrorMessage("http_url.not_absolute", "Enter a full web address, starting with https://.")
         is HttpUrl.Error.UnsupportedScheme -> ErrorMessage(
@@ -288,7 +288,7 @@ object ErrorMessages {
 
     // geo
 
-    fun describe(error: GeoPoint.Error): ErrorMessage = when (error) {
+    public fun describe(error: GeoPoint.Error): ErrorMessage = when (error) {
         is GeoPoint.Error.LatitudeOutOfRange ->
             ErrorMessage("geo_point.latitude_out_of_range", "Enter a latitude from -90 to 90 degrees.")
         is GeoPoint.Error.LongitudeOutOfRange ->
@@ -297,7 +297,7 @@ object ErrorMessages {
 
     // collections
 
-    fun describe(error: BoundedList.Error): ErrorMessage = when (error) {
+    public fun describe(error: BoundedList.Error): ErrorMessage = when (error) {
         is BoundedList.Error.TooSmall -> ErrorMessage(
             "bounded_list.too_small",
             "Add at least ${error.minimum} ${items(error.minimum)}; there ${are(error.actual)}.",
@@ -310,15 +310,15 @@ object ErrorMessages {
         )
     }
 
-    fun describe(error: UniqueList.Error): ErrorMessage = when (error) {
+    public fun describe(error: UniqueList.Error): ErrorMessage = when (error) {
         is UniqueList.Error.Duplicate -> duplicate("unique_list.duplicate", error.firstIndex, error.duplicateIndex)
     }
 
-    fun describe(error: NonEmptyError): ErrorMessage = when (error) {
+    public fun describe(error: NonEmptyError): ErrorMessage = when (error) {
         NonEmptyError.Empty -> ErrorMessage("collection.empty", "Add at least one item.")
     }
 
-    fun describe(error: DistinctError): ErrorMessage = when (error) {
+    public fun describe(error: DistinctError): ErrorMessage = when (error) {
         DistinctError.Empty -> ErrorMessage("collection.empty", "Add at least one item.")
         is DistinctError.Duplicate -> duplicate("collection.duplicate", error.firstIndex, error.duplicateIndex)
     }

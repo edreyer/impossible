@@ -11,19 +11,19 @@ import kotlin.time.Instant
  * [start] strictly before [endExclusive], so a window is never empty. Half-open windows
  * tile without overlap: a booking ending at 10:00 does not overlap one starting at 10:00.
  */
-class TimeWindow private constructor(val start: Instant, val endExclusive: Instant) {
-    data class Input(val start: Instant, val endExclusive: Instant)
+public class TimeWindow private constructor(public val start: Instant, public val endExclusive: Instant) {
+    public data class Input(val start: Instant, val endExclusive: Instant)
 
-    sealed interface Error {
-        data class NotAfterStart(val start: Instant, val endExclusive: Instant) : Error
+    public sealed interface Error {
+        public data class NotAfterStart(val start: Instant, val endExclusive: Instant) : Error
     }
 
     /** Always positive. */
-    val duration: Duration get() = endExclusive - start
+    public val duration: Duration get() = endExclusive - start
 
-    operator fun contains(instant: Instant): Boolean = instant >= start && instant < endExclusive
+    public operator fun contains(instant: Instant): Boolean = instant >= start && instant < endExclusive
 
-    fun overlaps(other: TimeWindow): Boolean = start < other.endExclusive && other.start < endExclusive
+    public fun overlaps(other: TimeWindow): Boolean = start < other.endExclusive && other.start < endExclusive
 
     override fun equals(other: Any?): Boolean =
         other is TimeWindow && start == other.start && endExclusive == other.endExclusive
@@ -32,7 +32,7 @@ class TimeWindow private constructor(val start: Instant, val endExclusive: Insta
 
     override fun toString(): String = "TimeWindow(start=$start, endExclusive=$endExclusive)"
 
-    companion object : ValueFactory<Input, Error, TimeWindow> {
+    public companion object : ValueFactory<Input, Error, TimeWindow> {
         context(raise: Raise<Error>)
         override fun from(value: Input): TimeWindow {
             raise.ensure(value.start < value.endExclusive) { Error.NotAfterStart(value.start, value.endExclusive) }
@@ -40,7 +40,7 @@ class TimeWindow private constructor(val start: Instant, val endExclusive: Insta
         }
 
         /** A window of [duration] starting at [start]. */
-        fun starting(start: Instant, duration: PositiveDuration): TimeWindow =
+        public fun starting(start: Instant, duration: PositiveDuration): TimeWindow =
             TimeWindow(start, start + duration.value)
     }
 }

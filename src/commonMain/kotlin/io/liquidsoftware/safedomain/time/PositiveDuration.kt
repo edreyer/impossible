@@ -11,15 +11,15 @@ import kotlin.time.Duration
  * or a retry interval. [Duration.INFINITE] is rejected as [Error.Infinite].
  */
 @JvmInline
-value class PositiveDuration private constructor(val value: Duration) : Comparable<PositiveDuration> {
-    sealed interface Error {
-        data class NonPositive(val value: Duration) : Error
-        data object Infinite : Error
+public value class PositiveDuration private constructor(public val value: Duration) : Comparable<PositiveDuration> {
+    public sealed interface Error {
+        public data class NonPositive(val value: Duration) : Error
+        public data object Infinite : Error
     }
 
     override fun compareTo(other: PositiveDuration): Int = value.compareTo(other.value)
 
-    companion object : ValueFactory<Duration, Error, PositiveDuration> {
+    public companion object : ValueFactory<Duration, Error, PositiveDuration> {
         context(raise: Raise<Error>)
         override fun from(value: Duration): PositiveDuration {
             raise.ensure(value.isPositive()) { Error.NonPositive(value) }

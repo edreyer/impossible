@@ -10,28 +10,28 @@ import io.liquidsoftware.safedomain.ValueFactory
  * [value] is an unmodifiable snapshot; elements are retained as supplied.
  * Equality and hashing include the ordered elements and bounds within this type.
  */
-class BoundedList<A> private constructor(val value: List<A>, val bounds: IntRange) : Iterable<A> {
-    sealed interface Error {
-        data class TooSmall(val minimum: Int, val actual: Int) : Error
-        data class TooLarge(val maximum: Int, val actual: Int) : Error
+public class BoundedList<A> private constructor(public val value: List<A>, public val bounds: IntRange) : Iterable<A> {
+    public sealed interface Error {
+        public data class TooSmall(val minimum: Int, val actual: Int) : Error
+        public data class TooLarge(val maximum: Int, val actual: Int) : Error
     }
 
-    val size: Int get() = value.size
+    public val size: Int get() = value.size
 
     override fun iterator(): Iterator<A> = value.iterator()
 
-    operator fun contains(element: A): Boolean = element in value
+    public operator fun contains(element: A): Boolean = element in value
 
     /** Mapping retains size and therefore the bounds, even when values become equal. */
-    fun <B> map(transform: (A) -> B): BoundedList<B> =
+    public fun <B> map(transform: (A) -> B): BoundedList<B> =
         BoundedList(value.map(transform).immutableListSnapshot(), bounds)
 
     /** Filtering can fall below the minimum; failures retain the resulting size. */
     context(raise: Raise<Error>)
-    fun filter(predicate: (A) -> Boolean): BoundedList<A> = factory<A>(bounds).from(value.filter(predicate))
+    public fun filter(predicate: (A) -> Boolean): BoundedList<A> = factory<A>(bounds).from(value.filter(predicate))
 
     context(raise: Raise<Error>)
-    fun append(element: A): BoundedList<A> = factory<A>(bounds).from(value + element)
+    public fun append(element: A): BoundedList<A> = factory<A>(bounds).from(value + element)
 
     override fun equals(other: Any?): Boolean =
         other is BoundedList<*> && value == other.value && bounds == other.bounds
@@ -40,13 +40,13 @@ class BoundedList<A> private constructor(val value: List<A>, val bounds: IntRang
 
     override fun toString(): String = "BoundedList(value=$value, bounds=$bounds)"
 
-    companion object {
+    public companion object {
         /**
          * Returns a factory accepting sizes within [bounds], such as `1..50`. Bounds are
          * programmer configuration, so an empty range or a negative minimum throws
          * [IllegalArgumentException].
          */
-        fun <A> factory(bounds: IntRange): ValueFactory<Iterable<A>, Error, BoundedList<A>> {
+        public fun <A> factory(bounds: IntRange): ValueFactory<Iterable<A>, Error, BoundedList<A>> {
             require(!bounds.isEmpty() && bounds.first >= 0) {
                 "Size bounds must be a non-empty range of non-negative sizes: $bounds"
             }

@@ -12,12 +12,12 @@ import kotlin.jvm.JvmInline
  * limited here; combine with a consuming-domain check where a limit applies.
  */
 @JvmInline
-value class Slug private constructor(val value: String) {
-    sealed interface Error {
-        data class InvalidFormat(val value: String) : Error
+public value class Slug private constructor(public val value: String) {
+    public sealed interface Error {
+        public data class InvalidFormat(val value: String) : Error
     }
 
-    companion object : ValueFactory<String, Error, Slug> {
+    public companion object : ValueFactory<String, Error, Slug> {
         private val syntax = Regex("[a-z0-9]+(?:-[a-z0-9]+)*")
 
         context(raise: Raise<Error>)

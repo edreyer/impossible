@@ -14,35 +14,35 @@ import kotlin.jvm.JvmInline
  * free item or an empty cart is valid.
  */
 @JvmInline
-value class NonNegativeMoney private constructor(val money: Money) {
-    sealed interface Error {
-        data class Negative(val money: Money) : Error
+public value class NonNegativeMoney private constructor(public val money: Money) {
+    public sealed interface Error {
+        public data class Negative(val money: Money) : Error
     }
 
     /** The sum of two non-negative amounts is non-negative; fails only on currency mismatch or overflow. */
     context(raise: Raise<Money.ArithmeticError>)
-    fun add(other: NonNegativeMoney): NonNegativeMoney = NonNegativeMoney(money.add(other.money))
+    public fun add(other: NonNegativeMoney): NonNegativeMoney = NonNegativeMoney(money.add(other.money))
 
     context(raise: Raise<Money.ArithmeticError>)
-    fun multiply(quantity: PositiveInt): NonNegativeMoney = NonNegativeMoney(money.multiply(quantity))
+    public fun multiply(quantity: PositiveInt): NonNegativeMoney = NonNegativeMoney(money.multiply(quantity))
 
     /** A share of this amount, such as a discount or tax; rounding never makes it negative. */
     context(raise: Raise<Money.ArithmeticError>)
-    fun multiply(percentage: Percentage, roundingMode: RoundingMode): NonNegativeMoney =
+    public fun multiply(percentage: Percentage, roundingMode: RoundingMode): NonNegativeMoney =
         NonNegativeMoney(money.multiply(percentage, roundingMode))
 
     /** [Money.allocate]; every part of a non-negative amount is non-negative. */
-    fun allocate(ratios: NonEmptyList<PositiveInt>): NonEmptyList<NonNegativeMoney> =
+    public fun allocate(ratios: NonEmptyList<PositiveInt>): NonEmptyList<NonNegativeMoney> =
         money.allocate(ratios).map(::NonNegativeMoney)
 
     /** [Money.split]; every part of a non-negative amount is non-negative. */
-    fun split(parts: PositiveInt): NonEmptyList<NonNegativeMoney> = money.split(parts).map(::NonNegativeMoney)
+    public fun split(parts: PositiveInt): NonEmptyList<NonNegativeMoney> = money.split(parts).map(::NonNegativeMoney)
 
     /** Ordering within one currency, as [Money.compare]. */
     context(raise: Raise<Money.ArithmeticError>)
-    fun compare(other: NonNegativeMoney): Int = money.compare(other.money)
+    public fun compare(other: NonNegativeMoney): Int = money.compare(other.money)
 
-    companion object : ValueFactory<Money, Error, NonNegativeMoney> {
+    public companion object : ValueFactory<Money, Error, NonNegativeMoney> {
         context(raise: Raise<Error>)
         override fun from(value: Money): NonNegativeMoney {
             raise.ensure(value.sign >= 0) { Error.Negative(value) }
@@ -51,7 +51,7 @@ value class NonNegativeMoney private constructor(val money: Money) {
 
         /** Zero in [currency], such as an empty cart's total. */
         context(raise: Raise<Money.Error>)
-        fun zero(currency: Currency): NonNegativeMoney = NonNegativeMoney(Money.zero(currency))
+        public fun zero(currency: Currency): NonNegativeMoney = NonNegativeMoney(Money.zero(currency))
 
         internal fun fromTrustedMoney(value: Money): NonNegativeMoney = NonNegativeMoney(value)
     }

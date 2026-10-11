@@ -14,9 +14,9 @@ import kotlinx.datetime.TimeZone
  * recently added zones. Fixed offsets such as `+02:00` are rejected; use `UtcOffset`.
  * Equality and hashing use [value].
  */
-class TimeZoneId private constructor(val value: String, val timeZone: TimeZone) {
-    sealed interface Error {
-        data class UnknownZone(val value: String) : Error
+public class TimeZoneId private constructor(public val value: String, public val timeZone: TimeZone) {
+    public sealed interface Error {
+        public data class UnknownZone(val value: String) : Error
     }
 
     override fun equals(other: Any?): Boolean = other is TimeZoneId && value == other.value
@@ -25,7 +25,7 @@ class TimeZoneId private constructor(val value: String, val timeZone: TimeZone) 
 
     override fun toString(): String = "TimeZoneId(value=$value)"
 
-    companion object : ValueFactory<String, Error, TimeZoneId> {
+    public companion object : ValueFactory<String, Error, TimeZoneId> {
         private val regionId = Regex("[A-Za-z][A-Za-z0-9_+-]*(?:/[A-Za-z0-9_+-]+)+")
 
         // Resolving alone does not enforce spelling: on Apple targets the zone files live

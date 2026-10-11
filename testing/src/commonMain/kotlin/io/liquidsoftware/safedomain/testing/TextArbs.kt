@@ -14,15 +14,15 @@ import io.liquidsoftware.safedomain.text.Slug
  * Non-blank text of up to [maxLength] code points, mixing scripts, surrogate pairs, and
  * leading or trailing whitespace, which the type preserves.
  */
-fun NonBlankString.Companion.arb(maxLength: Int = 60): Arb<NonBlankString> {
+public fun NonBlankString.Companion.arb(maxLength: Int = 60): Arb<NonBlankString> {
     val factory = NonBlankString.bounded(PositiveInt.fromTrusted(maxLength))
     return Arb.untrustedText(1..maxLength).filter { it.isNotBlank() }.map { factory.fromTrusted(it) }
 }
 
 /** Slugs of one to five hyphen-joined groups of lowercase letters and digits. */
-fun Slug.Companion.arb(): Arb<Slug> =
+public fun Slug.Companion.arb(): Arb<Slug> =
     Arb.list(textOf(LOWER + DIGITS, 1..10), 1..5).map { Slug.fromTrusted(it.joinToString("-")) }
 
 /** Non-blank secrets of up to [maxLength] characters. */
-fun Secret.Companion.arb(maxLength: Int = 60): Arb<Secret> =
+public fun Secret.Companion.arb(maxLength: Int = 60): Arb<Secret> =
     Arb.untrustedText(1..maxLength).filter { it.isNotBlank() }.map { Secret.fromTrusted(it) }

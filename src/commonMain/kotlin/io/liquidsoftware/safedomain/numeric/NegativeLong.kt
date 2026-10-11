@@ -7,19 +7,19 @@ import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range [Long.MIN_VALUE]..-1. */
 @JvmInline
-value class NegativeLong private constructor(val value: Long) : Comparable<NegativeLong> {
-    sealed interface Error {
-        data class NonNegative(val value: Long) : Error
+public value class NegativeLong private constructor(public val value: Long) : Comparable<NegativeLong> {
+    public sealed interface Error {
+        public data class NonNegative(val value: Long) : Error
     }
 
     /** The result is below [Long.MIN_VALUE], or is the negation of [Long.MIN_VALUE]. */
-    data object Overflow
+    public data object Overflow
 
     override fun compareTo(other: NegativeLong): Int = value.compareTo(other.value)
 
     /** The sum of two negative integers is negative unless it overflows. */
     context(raise: Raise<Overflow>)
-    operator fun plus(other: NegativeLong): NegativeLong {
+    public operator fun plus(other: NegativeLong): NegativeLong {
         val sum = value + other.value
         raise.ensure(sum < 0) { Overflow }
         return NegativeLong(sum)
@@ -27,15 +27,15 @@ value class NegativeLong private constructor(val value: Long) : Comparable<Negat
 
     /** The positive magnitude; only [Long.MIN_VALUE] has none. */
     context(raise: Raise<Overflow>)
-    operator fun unaryMinus(): PositiveLong {
+    public operator fun unaryMinus(): PositiveLong {
         raise.ensure(value != Long.MIN_VALUE) { Overflow }
         return PositiveLong.fromTrustedLong(-value)
     }
 
-    fun toNegativeDecimal(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(Decimal.of(value))
+    public fun toNegativeDecimal(): NegativeDecimal = NegativeDecimal.fromTrustedDecimal(Decimal.of(value))
 
-    companion object : ValueFactory<Long, Error, NegativeLong> {
-        val MINUS_ONE: NegativeLong = NegativeLong(-1L)
+    public companion object : ValueFactory<Long, Error, NegativeLong> {
+        public val MINUS_ONE: NegativeLong = NegativeLong(-1L)
 
         /** Returns the wrapped [value], or raises [Error.NonNegative] if it is zero or positive. */
         context(raise: Raise<Error>)

@@ -21,46 +21,46 @@ import io.liquidsoftware.safedomain.validate
  * minor unit take an explicit [RoundingMode]. Keep sub-minor values such as unit
  * prices and rates as [Decimal] and round into money once.
  */
-class Money private constructor(val minor: Long, val currency: Currency, private val scale: Int) {
+public class Money private constructor(public val minor: Long, public val currency: Currency, private val scale: Int) {
     /** An already parsed amount and a currency code to validate. */
-    data class Input(val amount: Decimal, val currency: String)
+    public data class Input(val amount: Decimal, val currency: String)
 
     /** Amount and currency as text, for [parser]. */
-    data class Text(val amount: String, val currency: String)
+    public data class Text(val amount: String, val currency: String)
 
-    sealed interface Error {
-        data class InvalidAmount(val value: String) : Error
-        data class InvalidCurrency(val cause: Currency.Error) : Error
+    public sealed interface Error {
+        public data class InvalidAmount(val value: String) : Error
+        public data class InvalidCurrency(val cause: Currency.Error) : Error
 
         /** The currency has no minor unit (such as XAU or XXX). */
-        data class NoMinorUnits(val currency: Currency) : Error
+        public data class NoMinorUnits(val currency: Currency) : Error
 
         /** The amount has more decimal places than the currency's minor unit. */
-        data class NotInMinorUnits(val amount: Decimal, val minorUnits: Int) : Error
+        public data class NotInMinorUnits(val amount: Decimal, val minorUnits: Int) : Error
 
         /** The amount in minor units does not fit in a [Long]. */
-        data class OutOfRange(val amount: Decimal) : Error
+        public data class OutOfRange(val amount: Decimal) : Error
     }
 
-    sealed interface ArithmeticError {
-        data class CurrencyMismatch(val expected: Currency, val actual: Currency) : ArithmeticError
-        data object DivisionByZero : ArithmeticError
+    public sealed interface ArithmeticError {
+        public data class CurrencyMismatch(val expected: Currency, val actual: Currency) : ArithmeticError
+        public data object DivisionByZero : ArithmeticError
 
         /** The result in minor units does not fit in a [Long]. */
-        data object Overflow : ArithmeticError
+        public data object Overflow : ArithmeticError
 
         /** The result needed rounding but [RoundingMode.UNNECESSARY] was requested. */
-        data object RoundingRequired : ArithmeticError
+        public data object RoundingRequired : ArithmeticError
     }
 
     /** The amount in major units, at the currency's scale: USD 12.34, JPY 1234. */
-    val amount: Decimal get() = Decimal.of(minor, scale)
+    public val amount: Decimal get() = Decimal.of(minor, scale)
 
     /** -1, 0 or 1 for negative, zero or positive amounts. */
-    val sign: Int get() = minor.compareTo(0L)
+    public val sign: Int get() = minor.compareTo(0L)
 
     context(raise: Raise<ArithmeticError>)
-    fun add(other: Money): Money {
+    public fun add(other: Money): Money {
         requireSameCurrency(other)
         val sum = minor + other.minor
         // Overflow occurred when both operands share a sign the result lacks.
@@ -69,14 +69,14 @@ class Money private constructor(val minor: Long, val currency: Currency, private
     }
 
     context(raise: Raise<ArithmeticError>)
-    fun subtract(other: Money): Money {
+    public fun subtract(other: Money): Money {
         requireSameCurrency(other)
         return add(other.negate())
     }
 
     /** The same amount with the opposite sign. */
     context(raise: Raise<ArithmeticError>)
-    fun negate(): Money {
+    public fun negate(): Money {
         raise.ensure(minor != Long.MIN_VALUE) { ArithmeticError.Overflow }
         return Money(-minor, currency, scale)
     }
@@ -86,21 +86,21 @@ class Money private constructor(val minor: Long, val currency: Currency, private
 
     /** Unit price times quantity, exactly. */
     context(raise: Raise<ArithmeticError>)
-    fun multiply(quantity: PositiveInt): Money =
+    public fun multiply(quantity: PositiveInt): Money =
         fromDecimal(amount * Decimal.of(quantity.value.toLong()), RoundingMode.UNNECESSARY)
 
     /** This amount times [factor], rounded to minor units with [roundingMode]. */
     context(raise: Raise<ArithmeticError>)
-    fun multiply(factor: Decimal, roundingMode: RoundingMode): Money =
+    public fun multiply(factor: Decimal, roundingMode: RoundingMode): Money =
         fromDecimal(amount * factor, roundingMode)
 
     /** The given share of this amount, rounded to minor units: 10% of USD 50.00 is USD 5.00. */
     context(raise: Raise<ArithmeticError>)
-    fun multiply(percentage: Percentage, roundingMode: RoundingMode): Money =
+    public fun multiply(percentage: Percentage, roundingMode: RoundingMode): Money =
         fromDecimal(amount * percentage.ratio, roundingMode)
 
     context(raise: Raise<ArithmeticError>)
-    fun divide(divisor: Decimal, roundingMode: RoundingMode): Money {
+    public fun divide(divisor: Decimal, roundingMode: RoundingMode): Money {
         raise.ensure(divisor.sign != 0) { ArithmeticError.DivisionByZero }
         return calculate { amount.divide(divisor, scale, roundingMode) }
     }
@@ -111,7 +111,7 @@ class Money private constructor(val minor: Long, val currency: Currency, private
      * remaining minor units go one each to the first parts, in order: `USD 10.00`
      * allocated `1:1:1` is `3.34, 3.33, 3.33`. Never fails.
      */
-    fun allocate(ratios: NonEmptyList<PositiveInt>): NonEmptyList<Money> {
+    public fun allocate(ratios: NonEmptyList<PositiveInt>): NonEmptyList<Money> {
         val ratioSum = Decimal.of(ratios.sumOf { it.value.toLong() })
         val total = Decimal.of(minor)
         val shares = ratios.map { ratio ->
@@ -133,12 +133,12 @@ class Money private constructor(val minor: Long, val currency: Currency, private
     }
 
     /** Splits this amount into [parts] equal parts, as [allocate] does. */
-    fun split(parts: PositiveInt): NonEmptyList<Money> =
+    public fun split(parts: PositiveInt): NonEmptyList<Money> =
         allocate(NonEmptyList(PositiveInt.ONE, List(parts.value - 1) { PositiveInt.ONE }))
 
     /** Numeric ordering, defined only within the same currency; there is no ordering across currencies. */
     context(raise: Raise<ArithmeticError>)
-    fun compare(other: Money): Int {
+    public fun compare(other: Money): Int {
         requireSameCurrency(other)
         return minor.compareTo(other.minor)
     }
@@ -170,7 +170,7 @@ class Money private constructor(val minor: Long, val currency: Currency, private
 
     override fun toString(): String = "Money(amount=${amount.toPlainString()}, currency=${currency.code})"
 
-    companion object : ValueFactory<Input, Error, Money> {
+    public companion object : ValueFactory<Input, Error, Money> {
         /** Validates the currency, then requires the amount to be exact in its minor units. */
         context(raise: Raise<Error>)
         override fun from(value: Input): Money =
@@ -180,7 +180,7 @@ class Money private constructor(val minor: Long, val currency: Currency, private
          * Parses decimal text and validates the currency independently, accumulating both
          * failures, then requires the amount to be exact in the currency's minor units.
          */
-        val parser: ValueFactory<Text, NonEmptyList<Error>, Money> =
+        public val parser: ValueFactory<Text, NonEmptyList<Error>, Money> =
             object : ValueFactory<Text, NonEmptyList<Error>, Money> {
                 context(raise: Raise<NonEmptyList<Error>>)
                 override fun from(value: Text): Money = validate {
@@ -193,7 +193,7 @@ class Money private constructor(val minor: Long, val currency: Currency, private
 
         /** An amount in major units, such as `12.34` USD; `12.345` USD is rejected, not rounded. */
         context(raise: Raise<Error>)
-        fun of(amount: Decimal, currency: Currency): Money {
+        public fun of(amount: Decimal, currency: Currency): Money {
             val scale = minorUnitsOf(currency)
             val exact = try {
                 amount.setScale(scale, RoundingMode.UNNECESSARY)
@@ -206,15 +206,15 @@ class Money private constructor(val minor: Long, val currency: Currency, private
 
         /** An amount in minor units, such as 1234 cents. */
         context(raise: Raise<Error>)
-        fun ofMinor(minor: Long, currency: Currency): Money = Money(minor, currency, minorUnitsOf(currency))
+        public fun ofMinor(minor: Long, currency: Currency): Money = Money(minor, currency, minorUnitsOf(currency))
 
         /** Zero in [currency]. */
         context(raise: Raise<Error>)
-        fun zero(currency: Currency): Money = ofMinor(0, currency)
+        public fun zero(currency: Currency): Money = ofMinor(0, currency)
 
         /** The sum of [values], which must all share one currency. */
         context(raise: Raise<ArithmeticError>)
-        fun sum(values: NonEmptyList<Money>): Money =
+        public fun sum(values: NonEmptyList<Money>): Money =
             values.tail.fold(values.head) { total, next -> total.add(next) }
 
         context(raise: Raise<Error>)

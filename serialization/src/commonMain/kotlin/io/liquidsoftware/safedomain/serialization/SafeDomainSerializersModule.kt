@@ -43,7 +43,7 @@ import kotlinx.serialization.modules.SerializersModule
  * serialization plugin (Kotlin 2.4.21) crashes on `@Contextual` for a generic value
  * class, so mark those fields `@Serializable(with = TypedIdSerializer::class)`.
  */
-val safeDomainSerializersModule: SerializersModule = SerializersModule {
+public val safeDomainSerializersModule: SerializersModule = SerializersModule {
     contextual(NonBlankString::class, NonBlankStringSerializer)
     contextual(Slug::class, SlugSerializer)
     contextual(Secret::class, SecretSerializer)

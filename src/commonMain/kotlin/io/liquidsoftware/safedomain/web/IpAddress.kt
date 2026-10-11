@@ -15,10 +15,10 @@ import io.liquidsoftware.safedomain.ValueFactory
  * IPv6 accepts `::` compression and a trailing dotted IPv4 part; zone ids (`%eth0`) and
  * brackets are rejected. An IPv4-mapped IPv6 address (`::ffff:192.0.2.1`) stays IPv6.
  */
-sealed class IpAddress {
-    sealed interface Error {
+public sealed class IpAddress {
+    public sealed interface Error {
         /** [toString] redacts [value], because an IP address can identify a person. */
-        data class InvalidFormat(val value: String) : Error {
+        public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"
         }
     }
@@ -26,24 +26,24 @@ sealed class IpAddress {
     protected abstract val bytes: ByteArray
 
     /** A copy of the address bytes in network order: 4 for IPv4, 16 for IPv6. */
-    fun toByteArray(): ByteArray = bytes.copyOf()
+    public fun toByteArray(): ByteArray = bytes.copyOf()
 
     override fun equals(other: Any?): Boolean =
         other is IpAddress && this::class == other::class && bytes.contentEquals(other.bytes)
 
     override fun hashCode(): Int = bytes.contentHashCode()
 
-    class V4 private constructor(override val bytes: ByteArray) : IpAddress() {
+    public class V4 private constructor(override val bytes: ByteArray) : IpAddress() {
         override fun toString(): String = bytes.joinToString(".") { (it.toInt() and 0xFF).toString() }
 
-        companion object : ValueFactory<String, Error, V4> {
+        public companion object : ValueFactory<String, Error, V4> {
             context(raise: Raise<Error>)
             override fun from(value: String): V4 =
                 V4(raise.ensureNotNull(parseIpv4(value)) { Error.InvalidFormat(value) })
         }
     }
 
-    class V6 private constructor(override val bytes: ByteArray) : IpAddress() {
+    public class V6 private constructor(override val bytes: ByteArray) : IpAddress() {
         override fun toString(): String {
             val groups = IntArray(8) {
                 ((bytes[2 * it].toInt() and 0xFF) shl 8) or (bytes[2 * it + 1].toInt() and 0xFF)
@@ -70,7 +70,7 @@ sealed class IpAddress {
             return "$head::$tail"
         }
 
-        companion object : ValueFactory<String, Error, V6> {
+        public companion object : ValueFactory<String, Error, V6> {
             context(raise: Raise<Error>)
             override fun from(value: String): V6 =
                 V6(raise.ensureNotNull(parseIpv6(value)) { Error.InvalidFormat(value) })
@@ -78,7 +78,7 @@ sealed class IpAddress {
     }
 
     /** Parses either form: text containing ':' is IPv6, anything else IPv4. */
-    companion object : ValueFactory<String, Error, IpAddress> {
+    public companion object : ValueFactory<String, Error, IpAddress> {
         context(raise: Raise<Error>)
         override fun from(value: String): IpAddress = if (':' in value) V6.from(value) else V4.from(value)
 

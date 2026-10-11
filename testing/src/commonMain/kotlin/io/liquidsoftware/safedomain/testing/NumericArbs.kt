@@ -18,31 +18,31 @@ import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.numeric.PositiveLong
 
 /** Positive integers in [range], including its edges. */
-fun PositiveInt.Companion.arb(range: IntRange = 1..Int.MAX_VALUE): Arb<PositiveInt> {
+public fun PositiveInt.Companion.arb(range: IntRange = 1..Int.MAX_VALUE): Arb<PositiveInt> {
     require(range.first >= 1 && !range.isEmpty()) { "Range must be a non-empty subrange of 1..Int.MAX_VALUE: $range" }
     return Arb.int(range).map { PositiveInt.fromTrusted(it) }
 }
 
 /** Negative integers in [range], including its edges. */
-fun NegativeInt.Companion.arb(range: IntRange = Int.MIN_VALUE..-1): Arb<NegativeInt> {
+public fun NegativeInt.Companion.arb(range: IntRange = Int.MIN_VALUE..-1): Arb<NegativeInt> {
     require(range.last <= -1 && !range.isEmpty()) { "Range must be a non-empty subrange of Int.MIN_VALUE..-1: $range" }
     return Arb.int(range).map { NegativeInt.fromTrusted(it) }
 }
 
 /** Positive longs in [range], including its edges. */
-fun PositiveLong.Companion.arb(range: LongRange = 1..Long.MAX_VALUE): Arb<PositiveLong> {
+public fun PositiveLong.Companion.arb(range: LongRange = 1..Long.MAX_VALUE): Arb<PositiveLong> {
     require(range.first >= 1 && !range.isEmpty()) { "Range must be a non-empty subrange of 1..Long.MAX_VALUE: $range" }
     return Arb.long(range).map { PositiveLong.fromTrusted(it) }
 }
 
 /** Negative longs in [range], including its edges. */
-fun NegativeLong.Companion.arb(range: LongRange = Long.MIN_VALUE..-1): Arb<NegativeLong> {
+public fun NegativeLong.Companion.arb(range: LongRange = Long.MIN_VALUE..-1): Arb<NegativeLong> {
     require(range.last <= -1 && !range.isEmpty()) { "Range must be a non-empty subrange of Long.MIN_VALUE..-1: $range" }
     return Arb.long(range).map { NegativeLong.fromTrusted(it) }
 }
 
 /** Values of the factory's [bounds], including both edges. */
-fun BoundedInt.Companion.arb(bounds: IntRange): Arb<BoundedInt> {
+public fun BoundedInt.Companion.arb(bounds: IntRange): Arb<BoundedInt> {
     val factory = BoundedInt.factory(bounds)
     return Arb.int(bounds).map { factory.fromTrusted(it) }
 }
@@ -52,7 +52,7 @@ fun BoundedInt.Companion.arb(bounds: IntRange): Arb<BoundedInt> {
  * such as `-0.000120`, `7E+3` and `123456789.01` all occur. Trailing zeros are kept:
  * `1.0` and `1.00` are distinct decimals, as in `java.math.BigDecimal`.
  */
-fun Decimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<Decimal> {
+public fun Decimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<Decimal> {
     require(maxDigits >= 1 && !scales.isEmpty()) { "Need at least one digit and a non-empty scale range" }
     return arbitrary(listOf(Decimal.ZERO, Decimal.ONE, Decimal.of(-1))) { rs ->
         val digitCount = rs.random.nextInt(1, maxDigits + 1)
@@ -64,19 +64,19 @@ fun Decimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<D
 }
 
 /** Decimals strictly greater than zero; see [Decimal.Companion.arb]. */
-fun PositiveDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<PositiveDecimal> =
+public fun PositiveDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<PositiveDecimal> =
     nonZeroMagnitudes(maxDigits, scales).map { PositiveDecimal.fromTrusted(it) }
 
 /** Decimals strictly less than zero; see [Decimal.Companion.arb]. */
-fun NegativeDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<NegativeDecimal> =
+public fun NegativeDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<NegativeDecimal> =
     nonZeroMagnitudes(maxDigits, scales).map { NegativeDecimal.fromTrusted(-it) }
 
 /** Decimals greater than or equal to zero, including zeros of several scales. */
-fun NonNegativeDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<NonNegativeDecimal> =
+public fun NonNegativeDecimal.Companion.arb(maxDigits: Int = 30, scales: IntRange = -5..12): Arb<NonNegativeDecimal> =
     Decimal.arb(maxDigits, scales).map { NonNegativeDecimal.fromTrusted(it.abs()) }
 
 /** Percentages in 0..100 with up to [maxScale] decimal places, including 0 and 100. */
-fun Percentage.Companion.arb(maxScale: Int = 4): Arb<Percentage> {
+public fun Percentage.Companion.arb(maxScale: Int = 4): Arb<Percentage> {
     require(maxScale in 0..15) { "maxScale must be in 0..15: $maxScale" }
     val edges = listOf(Decimal.ZERO, Decimal.of(100), Decimal.of(10_000, 2)).map { Percentage.fromTrusted(it) }
     return arbitrary(edges) { rs ->
