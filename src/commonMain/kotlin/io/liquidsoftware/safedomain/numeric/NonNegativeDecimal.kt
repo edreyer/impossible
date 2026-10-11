@@ -8,9 +8,9 @@ import io.liquidsoftware.safedomain.ValueFactory
  * An exact decimal greater than or equal to zero. Preserves input scale without
  * rounding; equality, hashing, and ordering use numeric value (1.0 equals 1.00).
  */
-class NonNegativeDecimal private constructor(val value: Decimal) : Comparable<NonNegativeDecimal> {
-    sealed interface Error {
-        data class Negative(val value: Decimal) : Error
+public class NonNegativeDecimal private constructor(public val value: Decimal) : Comparable<NonNegativeDecimal> {
+    public sealed interface Error {
+        public data class Negative(val value: Decimal) : Error
     }
 
     override fun compareTo(other: NonNegativeDecimal): Int = value.compareTo(other.value)
@@ -23,10 +23,10 @@ class NonNegativeDecimal private constructor(val value: Decimal) : Comparable<No
     override fun toString(): String = "NonNegativeDecimal(value=$value)"
 
     /** The sum of two non-negative decimals is always non-negative. */
-    operator fun plus(other: NonNegativeDecimal): NonNegativeDecimal = NonNegativeDecimal(value + other.value)
+    public operator fun plus(other: NonNegativeDecimal): NonNegativeDecimal = NonNegativeDecimal(value + other.value)
 
-    companion object : ValueFactory<Decimal, Error, NonNegativeDecimal> {
-        val ZERO: NonNegativeDecimal = NonNegativeDecimal(Decimal.ZERO)
+    public companion object : ValueFactory<Decimal, Error, NonNegativeDecimal> {
+        public val ZERO: NonNegativeDecimal = NonNegativeDecimal(Decimal.ZERO)
 
         context(raise: Raise<Error>)
         override fun from(value: Decimal): NonNegativeDecimal {

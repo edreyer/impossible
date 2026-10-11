@@ -1009,6 +1009,12 @@ iOS simulator tests on macOS. The same checks run locally:
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
 
+All three modules compile in Kotlin's
+[explicit API mode](https://kotlinlang.org/docs/api-guidelines-simplicity.html#use-explicit-api-mode):
+every declaration visible outside the module states its visibility (`public`,
+`internal` or `private`) and every public function or property states its type,
+so nothing becomes public API by default. A missing modifier fails compilation.
+
 Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types,
 so validation behaves the same on every platform. Dependencies:
 

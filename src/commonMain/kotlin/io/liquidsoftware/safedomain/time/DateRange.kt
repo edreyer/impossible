@@ -9,22 +9,22 @@ import kotlinx.datetime.daysUntil
 import kotlinx.datetime.plus
 
 /** A closed range with [start] <= [endInclusive]. Both endpoints are included. */
-class DateRange private constructor(val start: LocalDate, val endInclusive: LocalDate) {
-    data class Input(val start: LocalDate, val endInclusive: LocalDate)
+public class DateRange private constructor(public val start: LocalDate, public val endInclusive: LocalDate) {
+    public data class Input(val start: LocalDate, val endInclusive: LocalDate)
 
-    sealed interface Error {
-        data class EndBeforeStart(val start: LocalDate, val endInclusive: LocalDate) : Error
+    public sealed interface Error {
+        public data class EndBeforeStart(val start: LocalDate, val endInclusive: LocalDate) : Error
     }
 
-    operator fun contains(date: LocalDate): Boolean = date >= start && date <= endInclusive
+    public operator fun contains(date: LocalDate): Boolean = date >= start && date <= endInclusive
 
-    fun overlaps(other: DateRange): Boolean = start <= other.endInclusive && other.start <= endInclusive
+    public fun overlaps(other: DateRange): Boolean = start <= other.endInclusive && other.start <= endInclusive
 
     /** The number of dates in the range, counting both endpoints; at least 1. */
-    val days: Long get() = start.daysUntil(endInclusive).toLong() + 1
+    public val days: Long get() = start.daysUntil(endInclusive).toLong() + 1
 
     /** Every date from [start] to [endInclusive], in order. */
-    fun dates(): Sequence<LocalDate> =
+    public fun dates(): Sequence<LocalDate> =
         generateSequence(start) { date -> if (date < endInclusive) date.plus(1, DateTimeUnit.DAY) else null }
 
     override fun equals(other: Any?): Boolean =
@@ -34,7 +34,7 @@ class DateRange private constructor(val start: LocalDate, val endInclusive: Loca
 
     override fun toString(): String = "DateRange(start=$start, endInclusive=$endInclusive)"
 
-    companion object : ValueFactory<Input, Error, DateRange> {
+    public companion object : ValueFactory<Input, Error, DateRange> {
         context(raise: Raise<Error>)
         override fun from(value: Input): DateRange {
             raise.ensure(value.start <= value.endInclusive) {

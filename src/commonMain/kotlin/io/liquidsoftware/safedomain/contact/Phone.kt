@@ -12,15 +12,15 @@ import kotlin.jvm.JvmInline
  * reachability, or ownership. Equality uses the full preserved text.
  */
 @JvmInline
-value class Phone private constructor(val value: String) {
-    sealed interface Error {
+public value class Phone private constructor(public val value: String) {
+    public sealed interface Error {
         /** [toString] redacts [value], so a rejected number does not reach logs. */
-        data class InvalidFormat(val value: String) : Error {
+        public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"
         }
     }
 
-    companion object : ValueFactory<String, Error, Phone> {
+    public companion object : ValueFactory<String, Error, Phone> {
         private val internationalSyntax = Regex("\\+[1-9][0-9]{0,14}")
 
         context(raise: Raise<Error>)

@@ -91,6 +91,9 @@ their domain names, policies, authorization decisions, and workflows.
 
 ## Value type design
 
+- Every module compiles in explicit API mode: mark each declaration `public`,
+  `internal` or `private` deliberately, and keep helpers `internal` or `private`
+  unless they belong in the public API.
 - Keep constructors private when construction requires validation. Every public
   factory and future serialization adapter must preserve the same invariant.
 - Prefer value classes for simple wrappers where they fit. Avoid construction,

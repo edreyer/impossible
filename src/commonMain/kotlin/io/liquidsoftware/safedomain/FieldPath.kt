@@ -9,32 +9,32 @@ package io.liquidsoftware.safedomain
  * the property it is assigned to, and nested composites prefix their paths with the
  * field that holds them.
  */
-class FieldPath private constructor(val segments: List<Segment>) {
+public class FieldPath private constructor(public val segments: List<Segment>) {
     /** One step into a value: a named field or a zero-based list position. */
-    sealed interface Segment {
-        data class Name(val name: String) : Segment
-        data class Index(val index: Int) : Segment
+    public sealed interface Segment {
+        public data class Name(val name: String) : Segment
+        public data class Index(val index: Int) : Segment
     }
 
-    val isRoot: Boolean get() = segments.isEmpty()
+    public val isRoot: Boolean get() = segments.isEmpty()
 
     /** This path followed by the field [name]. */
-    fun child(name: String): FieldPath = FieldPath(segments + Segment.Name(name))
+    public fun child(name: String): FieldPath = FieldPath(segments + Segment.Name(name))
 
     /** This path followed by the list position [index]. */
-    fun index(index: Int): FieldPath {
+    public fun index(index: Int): FieldPath {
         require(index >= 0) { "Index must not be negative: $index" }
         return FieldPath(segments + Segment.Index(index))
     }
 
     /** This path followed by every segment of [inner]. */
-    operator fun plus(inner: FieldPath): FieldPath = if (inner.isRoot) this else FieldPath(segments + inner.segments)
+    public operator fun plus(inner: FieldPath): FieldPath = if (inner.isRoot) this else FieldPath(segments + inner.segments)
 
     /**
      * The path as an RFC 6901 JSON Pointer, such as `/lines/2/price`, as RFC 9457
      * problem details use. `~` and `/` in names are escaped; the root is the empty string.
      */
-    fun toJsonPointer(): String = segments.joinToString("") { segment ->
+    public fun toJsonPointer(): String = segments.joinToString("") { segment ->
         when (segment) {
             is Segment.Name -> "/" + segment.name.replace("~", "~0").replace("/", "~1")
             is Segment.Index -> "/" + segment.index
@@ -58,12 +58,12 @@ class FieldPath private constructor(val segments: List<Segment>) {
         }
     }
 
-    companion object {
+    public companion object {
         /** The whole input. */
-        val ROOT: FieldPath = FieldPath(emptyList())
+        public val ROOT: FieldPath = FieldPath(emptyList())
 
         /** The top-level field [name]. */
-        fun of(name: String): FieldPath = ROOT.child(name)
+        public fun of(name: String): FieldPath = ROOT.child(name)
     }
 }
 
@@ -72,12 +72,12 @@ class FieldPath private constructor(val segments: List<Segment>) {
  * helpers raise a `NonEmptyList<FieldError<Error>>`, so a boundary can report each
  * failure against the field that caused it.
  */
-data class FieldError<out Error>(val path: FieldPath, val error: Error) {
+public data class FieldError<out Error>(val path: FieldPath, val error: Error) {
     /** The same failure with its error mapped by [transform]. */
-    fun <Mapped> map(transform: (Error) -> Mapped): FieldError<Mapped> = FieldError(path, transform(error))
+    public fun <Mapped> map(transform: (Error) -> Mapped): FieldError<Mapped> = FieldError(path, transform(error))
 
     /** The same failure, nested under [parent]. */
-    fun under(parent: FieldPath): FieldError<Error> = FieldError(parent + path, error)
+    public fun under(parent: FieldPath): FieldError<Error> = FieldError(parent + path, error)
 
     /** `path: error`, or just the error at the root; the error's own redaction applies. */
     override fun toString(): String = if (path.isRoot) error.toString() else "$path: $error"

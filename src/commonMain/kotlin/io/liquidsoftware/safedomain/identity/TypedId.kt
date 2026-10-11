@@ -15,14 +15,14 @@ import kotlin.uuid.Uuid
  * and [Uuid.toString] renders canonical lowercase. Nil UUIDs and all versions are accepted.
  */
 @JvmInline
-value class TypedId<Tag> private constructor(val value: Uuid) {
-    sealed interface Error {
-        data class InvalidFormat(val value: String) : Error
+public value class TypedId<Tag> private constructor(public val value: Uuid) {
+    public sealed interface Error {
+        public data class InvalidFormat(val value: String) : Error
     }
 
     override fun toString(): String = "TypedId(value=$value)"
 
-    companion object {
+    public companion object {
         private val parser = object : ValueFactory<String, Error, TypedId<Nothing>> {
             context(raise: Raise<Error>)
             override fun from(value: String): TypedId<Nothing> {
@@ -33,13 +33,13 @@ value class TypedId<Tag> private constructor(val value: Uuid) {
 
         /** Returns a reusable factory that parses UUID text. */
         @Suppress("UNCHECKED_CAST")
-        fun <Tag> factory(): ValueFactory<String, Error, TypedId<Tag>> =
+        public fun <Tag> factory(): ValueFactory<String, Error, TypedId<Tag>> =
             parser as ValueFactory<String, Error, TypedId<Tag>>
 
         /** Tags an already parsed UUID. */
-        fun <Tag> of(value: Uuid): TypedId<Tag> = TypedId(value)
+        public fun <Tag> of(value: Uuid): TypedId<Tag> = TypedId(value)
 
         /** A new random (version 4) id. */
-        fun <Tag> random(): TypedId<Tag> = TypedId(Uuid.random())
+        public fun <Tag> random(): TypedId<Tag> = TypedId(Uuid.random())
     }
 }

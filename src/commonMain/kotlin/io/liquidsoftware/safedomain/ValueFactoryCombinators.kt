@@ -17,7 +17,7 @@ import arrow.core.raise.ensure
  * that wraps the validated value: `NonBlankString.map { Name(it) }`. [transform] runs
  * only after validation succeeds and must not fail; use [andThen] for a step that can.
  */
-fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.map(
+public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.map(
     transform: (Value) -> Mapped,
 ): ValueFactory<Input, Error, Mapped> {
     val factory = this
@@ -32,7 +32,7 @@ fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.map(
  * type's own sealed error. [transform] runs only on failure, once per raised error, so
  * an accumulating factory's whole batch arrives as one value.
  */
-fun <Input, Error, Value, MappedError> ValueFactory<Input, Error, Value>.mapError(
+public fun <Input, Error, Value, MappedError> ValueFactory<Input, Error, Value>.mapError(
     transform: (Error) -> MappedError,
 ): ValueFactory<Input, MappedError, Value> {
     val factory = this
@@ -46,7 +46,7 @@ fun <Input, Error, Value, MappedError> ValueFactory<Input, Error, Value>.mapErro
  * Refines each constructed value further through [next], which shares this factory's
  * error model. [next] runs only on a value this factory accepted.
  */
-fun <Input, Error, Value, Refined> ValueFactory<Input, Error, Value>.andThen(
+public fun <Input, Error, Value, Refined> ValueFactory<Input, Error, Value>.andThen(
     next: ValueFactory<Value, Error, Refined>,
 ): ValueFactory<Input, Error, Refined> {
     val factory = this
@@ -60,7 +60,7 @@ fun <Input, Error, Value, Refined> ValueFactory<Input, Error, Value>.andThen(
  * Refines each constructed value further through [next], mapping its failures into this
  * factory's error model with [onError]. [next] runs only on a value this factory accepted.
  */
-fun <Input, Error, Value, NextError, Refined> ValueFactory<Input, Error, Value>.andThen(
+public fun <Input, Error, Value, NextError, Refined> ValueFactory<Input, Error, Value>.andThen(
     next: ValueFactory<Value, NextError, Refined>,
     onError: (NextError) -> Error,
 ): ValueFactory<Input, Error, Refined> {
@@ -76,7 +76,7 @@ fun <Input, Error, Value, NextError, Refined> ValueFactory<Input, Error, Value>.
  * that [error] builds from it. Neither function runs when this factory already failed.
  * Keep personal data out of the error, as the library's own errors do.
  */
-fun <Input, Error, Value> ValueFactory<Input, Error, Value>.ensure(
+public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.ensure(
     predicate: (Value) -> Boolean,
     error: (Value) -> Error,
 ): ValueFactory<Input, Error, Value> {

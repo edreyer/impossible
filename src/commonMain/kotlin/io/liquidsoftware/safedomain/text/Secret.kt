@@ -11,14 +11,14 @@ import io.liquidsoftware.safedomain.ValueFactory
  * Equality compares content in time that does not depend on where the first difference
  * is; [hashCode] uses only the length, so hashing reveals nothing more than that.
  */
-class Secret private constructor(private val value: String) {
-    sealed interface Error {
+public class Secret private constructor(private val value: String) {
+    public sealed interface Error {
         /** The input was empty or only whitespace. Carries no input, by design. */
-        data object Blank : Error
+        public data object Blank : Error
     }
 
     /** The secret content. Call it only where the value is used, never to log or display it. */
-    fun reveal(): String = value
+    public fun reveal(): String = value
 
     override fun equals(other: Any?): Boolean {
         if (other !is Secret) return false
@@ -34,7 +34,7 @@ class Secret private constructor(private val value: String) {
 
     override fun toString(): String = "Secret(<redacted>)"
 
-    companion object : ValueFactory<String, Error, Secret> {
+    public companion object : ValueFactory<String, Error, Secret> {
         context(raise: Raise<Error>)
         override fun from(value: String): Secret {
             raise.ensure(value.isNotBlank()) { Error.Blank }

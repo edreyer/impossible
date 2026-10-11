@@ -11,28 +11,28 @@ import io.liquidsoftware.safedomain.ValueFactory
  * [value] is an unmodifiable snapshot. Elements must retain stable equality and hashing.
  * Equality and hashing use the ordered elements within this type, not ordinary list equality.
  */
-class UniqueList<A> private constructor(val value: List<A>) : Iterable<A> {
-    sealed interface Error {
+public class UniqueList<A> private constructor(public val value: List<A>) : Iterable<A> {
+    public sealed interface Error {
         /** Zero-based positions; each repeat refers to the first equal element. */
-        data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : Error
+        public data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : Error
     }
 
-    val size: Int get() = value.size
+    public val size: Int get() = value.size
 
     override fun iterator(): Iterator<A> = value.iterator()
 
-    operator fun contains(element: A): Boolean = element in value
+    public operator fun contains(element: A): Boolean = element in value
 
     /** Mapping may introduce collisions, so all resulting duplicates are validated. */
     context(raise: Raise<NonEmptyList<Error>>)
-    fun <B> map(transform: (A) -> B): UniqueList<B> = factory<B>().from(value.map(transform))
+    public fun <B> map(transform: (A) -> B): UniqueList<B> = factory<B>().from(value.map(transform))
 
     /** A subset preserves uniqueness, including an empty subset. */
-    fun filter(predicate: (A) -> Boolean): UniqueList<A> =
+    public fun filter(predicate: (A) -> Boolean): UniqueList<A> =
         UniqueList(value.filter(predicate).immutableListSnapshot())
 
     context(raise: Raise<NonEmptyList<Error>>)
-    fun append(element: A): UniqueList<A> = factory<A>().from(value + element)
+    public fun append(element: A): UniqueList<A> = factory<A>().from(value + element)
 
     override fun equals(other: Any?): Boolean = other is UniqueList<*> && value == other.value
 
@@ -40,9 +40,9 @@ class UniqueList<A> private constructor(val value: List<A>) : Iterable<A> {
 
     override fun toString(): String = "UniqueList($value)"
 
-    companion object {
+    public companion object {
         /** Reports every duplicate in encounter order; never silently removes elements. */
-        fun <A> factory(): ValueFactory<Iterable<A>, NonEmptyList<Error>, UniqueList<A>> =
+        public fun <A> factory(): ValueFactory<Iterable<A>, NonEmptyList<Error>, UniqueList<A>> =
             object : ValueFactory<Iterable<A>, NonEmptyList<Error>, UniqueList<A>> {
                 context(raise: Raise<NonEmptyList<Error>>)
                 override fun from(value: Iterable<A>): UniqueList<A> {

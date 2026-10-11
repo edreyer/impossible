@@ -18,22 +18,22 @@ import io.liquidsoftware.safedomain.ValueFactory
  * not equal to an explicit one. No DNS or network access is performed. This does not
  * establish reachability, trust, or suitability for a particular outbound request policy.
  */
-class HttpUrl private constructor(
-    val value: String,
-    val scheme: String,
-    val userInfo: String?,
-    val host: String,
-    val port: Int?,
-    val path: String,
-    val query: String?,
-    val fragment: String?,
+public class HttpUrl private constructor(
+    public val value: String,
+    public val scheme: String,
+    public val userInfo: String?,
+    public val host: String,
+    public val port: Int?,
+    public val path: String,
+    public val query: String?,
+    public val fragment: String?,
 ) {
-    sealed interface Error {
-        data class InvalidSyntax(val value: String) : Error
-        data class NotAbsolute(val value: String) : Error
-        data class UnsupportedScheme(val scheme: String) : Error
-        data class MissingHost(val value: String) : Error
-        data class InvalidPort(val port: Int) : Error
+    public sealed interface Error {
+        public data class InvalidSyntax(val value: String) : Error
+        public data class NotAbsolute(val value: String) : Error
+        public data class UnsupportedScheme(val scheme: String) : Error
+        public data class MissingHost(val value: String) : Error
+        public data class InvalidPort(val port: Int) : Error
     }
 
     private val comparisonKey: String by lazy {
@@ -54,7 +54,7 @@ class HttpUrl private constructor(
 
     override fun toString(): String = value
 
-    companion object : ValueFactory<String, Error, HttpUrl> {
+    public companion object : ValueFactory<String, Error, HttpUrl> {
         private const val MAX_PORT = 65535
 
         @Suppress("CyclomaticComplexMethod") // A hand-written parser; one branch per grammar case.

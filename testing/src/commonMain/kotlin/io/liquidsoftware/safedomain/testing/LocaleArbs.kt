@@ -11,13 +11,13 @@ import io.liquidsoftware.safedomain.locale.LanguageTag
 private val countryCodes: List<String> by lazy { uppercaseCodes(2) { accepts { CountryCode.from(it) } } }
 
 /** Every country code the library accepts, chosen uniformly. */
-fun CountryCode.Companion.arb(): Arb<CountryCode> = Arb.element(countryCodes).map { CountryCode.fromTrusted(it) }
+public fun CountryCode.Companion.arb(): Arb<CountryCode> = Arb.element(countryCodes).map { CountryCode.fromTrusted(it) }
 
 /**
  * Tags in the supported BCP 47 subset: a language, then an optional script, region
  * (letters or a UN M.49 number), and up to two variants.
  */
-fun LanguageTag.Companion.arb(): Arb<LanguageTag> = arbitrary { rs ->
+public fun LanguageTag.Companion.arb(): Arb<LanguageTag> = arbitrary { rs ->
     val random = rs.random
     buildString {
         append(textOf(LOWER, 2..3).bind())

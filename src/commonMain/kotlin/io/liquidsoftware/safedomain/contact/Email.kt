@@ -13,19 +13,19 @@ import io.liquidsoftware.safedomain.ValueFactory
  * domain, which DNS treats case-insensitively, and keep the local part case-sensitive,
  * as RFC 5321 permits. [toString] shows the address as written.
  */
-class Email private constructor(val value: String) {
-    sealed interface Error {
+public class Email private constructor(public val value: String) {
+    public sealed interface Error {
         /** [toString] redacts [value], so a rejected address does not reach logs. */
-        data class InvalidFormat(val value: String) : Error {
+        public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"
         }
     }
 
     /** The text before the last '@', as written. */
-    val localPart: String get() = value.substringBeforeLast('@')
+    public val localPart: String get() = value.substringBeforeLast('@')
 
     /** The text after the last '@', as written. */
-    val domain: String get() = value.substringAfterLast('@')
+    public val domain: String get() = value.substringAfterLast('@')
 
     private val comparisonKey: String get() = localPart + "@" + domain.lowercase()
 
@@ -35,7 +35,7 @@ class Email private constructor(val value: String) {
 
     override fun toString(): String = "Email(value=$value)"
 
-    companion object : ValueFactory<String, Error, Email> {
+    public companion object : ValueFactory<String, Error, Email> {
         private const val MAX_LENGTH = 254
         private const val MAX_LOCAL_PART_LENGTH = 64
         private val localAtom = Regex("[A-Za-z0-9!#\u0024%&'*+/=?^_`{|}~-]+")

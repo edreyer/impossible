@@ -9,8 +9,8 @@ import kotlinx.serialization.SerializationException
  * with stable codes. The exception message lists only the codes, never the rejected
  * input, which may be personal data or a secret.
  */
-class InvalidValueException(
-    val serialName: String,
-    val error: Any?,
-    val messages: List<ErrorMessage>,
+public class InvalidValueException(
+    public val serialName: String,
+    public val error: Any?,
+    public val messages: List<ErrorMessage>,
 ) : SerializationException("Invalid $serialName: ${messages.joinToString { it.code }}")

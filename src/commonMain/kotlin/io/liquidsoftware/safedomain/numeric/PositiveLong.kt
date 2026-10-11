@@ -7,31 +7,31 @@ import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range 1..[Long.MAX_VALUE]. */
 @JvmInline
-value class PositiveLong private constructor(val value: Long) : Comparable<PositiveLong> {
-    sealed interface Error {
-        data class NonPositive(val value: Long) : Error
+public value class PositiveLong private constructor(public val value: Long) : Comparable<PositiveLong> {
+    public sealed interface Error {
+        public data class NonPositive(val value: Long) : Error
     }
 
     /** The sum exceeded [Long.MAX_VALUE]. */
-    data object Overflow
+    public data object Overflow
 
     override fun compareTo(other: PositiveLong): Int = value.compareTo(other.value)
 
     /** The sum of two positive integers is positive unless it overflows. */
     context(raise: Raise<Overflow>)
-    operator fun plus(other: PositiveLong): PositiveLong {
+    public operator fun plus(other: PositiveLong): PositiveLong {
         val sum = value + other.value
         raise.ensure(sum > 0) { Overflow }
         return PositiveLong(sum)
     }
 
     /** The negation of a positive integer always fits. */
-    operator fun unaryMinus(): NegativeLong = NegativeLong.fromTrustedLong(-value)
+    public operator fun unaryMinus(): NegativeLong = NegativeLong.fromTrustedLong(-value)
 
-    fun toPositiveDecimal(): PositiveDecimal = PositiveDecimal.fromTrustedDecimal(Decimal.of(value))
+    public fun toPositiveDecimal(): PositiveDecimal = PositiveDecimal.fromTrustedDecimal(Decimal.of(value))
 
-    companion object : ValueFactory<Long, Error, PositiveLong> {
-        val ONE: PositiveLong = PositiveLong(1)
+    public companion object : ValueFactory<Long, Error, PositiveLong> {
+        public val ONE: PositiveLong = PositiveLong(1)
 
         /** Returns the wrapped [value], or raises [Error.NonPositive] if it is zero or negative. */
         context(raise: Raise<Error>)
