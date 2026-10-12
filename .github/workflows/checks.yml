@@ -27,6 +27,9 @@ jobs:
           key: konan-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
       - name: Lint
         run: ./gradlew detekt
+      - name: Binary compatibility
+        # Compares the public API with the committed dumps in each module's api/ folder.
+        run: ./gradlew checkKotlinAbi
       - name: Test
         # Apple targets are skipped on Linux; the apple job runs them.
         run: ./gradlew allTests
