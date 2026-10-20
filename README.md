@@ -1012,6 +1012,12 @@ iOS simulator tests on macOS. The same checks run locally:
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
 
+The settings shared by all three modules (targets, toolchain, JVM bytecode level,
+explicit API mode, ABI validation, group and version) live in one convention plugin,
+[build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts](build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts).
+Each module applies `id("impossible.kotlin-library")` and declares only its own
+dependencies.
+
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
 
