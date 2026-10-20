@@ -343,7 +343,7 @@ expose a `NonEmptyList<Error>` factory, as `Money.parser` does. Use the mapped
 `from(raw, onError = ...)` overload directly for composites that should stop at
 their first failure. `validate` has no field-count limit.
 
-`validate` wraps Arrow's `accumulate` API, which Arrow 2.2.3 marks
+`validate` wraps Arrow's `accumulate` API, which Arrow marks
 `@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
 [Validation.kt](src/commonMain/kotlin/io/liquidsoftware/safedomain/Validation.kt);
 callers need none. `Validated<A>` is an alias for Arrow's
@@ -988,10 +988,11 @@ must enforce the same validation.
 
 ## Build
 
-The library is Kotlin Multiplatform, built with Kotlin **2.4.21**, a **Java 26**
-toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. The JVM artifacts
-target **Java 17**: they contain Java 17 bytecode and use only the JDK 17 API, so
-they run on JDK 17 and later. Targets:
+The library is Kotlin Multiplatform, built with Kotlin **2.4**, a **Java 17**
+toolchain for the JVM target, and the Gradle wrapper. Java 17 is the floor: the JVM
+artifacts contain Java 17 bytecode and use only the JDK 17 API, the JVM tests run on
+JDK 17, and the artifacts run on JDK 17 and later. Gradle downloads JDK 17 when it is
+not installed. Targets:
 
 | Target | Tests |
 | --- | --- |
@@ -1011,6 +1012,12 @@ iOS simulator tests on macOS. The same checks run locally:
 | Lint and formatting ([detekt](https://detekt.dev) with ktlint's rules) | `./gradlew detekt`; `./gradlew detekt -PdetektAutoCorrect` fixes formatting |
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
+
+The settings shared by all three modules (targets, toolchain, JVM bytecode level,
+explicit API mode, ABI validation, group and version) live in one convention plugin,
+[build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts](build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts).
+Each module applies `id("impossible.kotlin-library")` and declares only its own
+dependencies.
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
@@ -1033,27 +1040,29 @@ Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types
 so validation behaves the same on every platform. Every dependency and plugin version
 is declared once in [gradle/libs.versions.toml](gradle/libs.versions.toml) (the npm
 package below is the exception, declared in the build script), and
-[Dependabot](.github/dependabot.yml) proposes updates weekly. Dependencies:
+[Dependabot](.github/dependabot.yml) proposes all updates together in one weekly pull
+request. Versions are listed only there, not here, so this README cannot fall behind.
+Dependencies:
 
-- [Arrow Core 2.2.3](https://github.com/arrow-kt/arrow/releases/tag/2.2.3), an API
+- [Arrow Core](https://github.com/arrow-kt/arrow), an API
   dependency because `Raise` appears in the public signatures.
-- [kotlinx-datetime 0.8.0](https://github.com/Kotlin/kotlinx-datetime), an API
+- [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime), an API
   dependency for `LocalDate`. `Clock`, `Instant` and `Duration` come from the
   standard library's `kotlin.time`.
-- [bignum 0.3.10](https://github.com/ionspin/kotlin-multiplatform-bignum), an
+- [bignum](https://github.com/ionspin/kotlin-multiplatform-bignum), an
   implementation dependency behind `Decimal`.
 - [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), a JS-only
   npm dependency that gives `TimeZoneId` the IANA database there. It is the newest
   release compatible with the `@js-joda/core` version kotlinx-datetime uses.
-- [kotest-property 6.2.5](https://kotest.io/docs/proptest/property-based-testing.html),
+- [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html),
   an API dependency of `impossible-testing` only; the library itself does not use it.
-  That module's tests also use kotlinx-coroutines-test 1.10.2 to run suspending checks.
-- [kotlinx.serialization 1.11.0](https://github.com/Kotlin/kotlinx.serialization), an
+  That module's tests also use kotlinx-coroutines-test to run suspending checks.
+- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), an
   API dependency of `impossible-serialization` only (core; its tests use the JSON
   format). That module applies the Kotlin serialization compiler plugin.
-- Build tooling only, not shipped: [detekt 2.0.0-alpha.6](https://detekt.dev) with its
+- Build tooling only, not shipped: [detekt](https://detekt.dev) with its
   ktlint rules (a detekt 2 pre-release, built on the Kotlin 2.4 compiler), and
-  [Kover 0.9.9](https://github.com/Kotlin/kotlinx-kover) for coverage.
+  [Kover](https://github.com/Kotlin/kotlinx-kover) for coverage.
 
 JVM code can convert to the JDK types with the adapters in `src/jvmMain`:
 `Decimal.toJavaBigDecimal()` and `BigDecimal.toDecimal()`,
