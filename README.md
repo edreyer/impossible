@@ -58,7 +58,7 @@ package holds the construction contract shared by every type.
 | `PositiveMoney`, `NonNegativeMoney`, `NegativeMoney` | `Money` `> 0`, `>= 0`, `< 0` | `NonPositive`, `Negative`, `NonNegative` |
 | `CountryCode` | Assigned ISO 3166-1 alpha-2 code from the bundled list | `CountryCode.Error.UnsupportedCode(value)` |
 | `LanguageTag` | Canonical-case BCP 47 language, script, region and variants | `LanguageTag.Error.InvalidFormat(value)` |
-| `Email` | ASCII dot-atom mailbox and DNS-label domain | `Email.Error.InvalidFormat(value)` |
+| `Email` | ASCII dot-atom mailbox whose domain is a valid `DomainName` | `Email.Error.InvalidFormat(value)` |
 | `Phone` | International E.164-shaped text | `Phone.Error.InvalidFormat(value)` |
 | `NonEmptyList.factory<A>()` | Arrow `NonEmptyList<A>` from any iterable | `NonEmptyError.Empty` |
 | `NonEmptySet.factory<A>()` | Arrow `NonEmptySet<A>`; repeats collapse | `NonEmptyError.Empty` |
@@ -677,8 +677,9 @@ belong to the consuming domain.
 ## Email and phone syntax
 
 `Email` accepts ASCII dot-atom local parts (including plus tags and apostrophes)
-and DNS-label domains, including single-label domains and already encoded ASCII
-IDN labels. Limits are 64 characters for the local part, 63 per domain label, and
+and any domain [`DomainName`](#network-names-and-addresses) accepts, including single-label domains and already
+encoded ASCII IDN labels; like `DomainName`, it rejects an all-digit last label, so
+`user@123` and `user@127.0.0.1` are invalid. Limits are 64 characters for the local part, 63 per domain label, and
 254 for the address. Quoted local parts, IP address literals, and Unicode text
 are outside this first-pass contract. This is a documented subset of mailbox
 syntax, not complete [SMTP address support](https://www.rfc-editor.org/rfc/rfc5321.html).
@@ -692,7 +693,8 @@ Both types preserve input exactly. `Phone` uses exact string equality. `Email`
 equality and hashing ignore ASCII case in the domain, which DNS treats
 case-insensitively, and keep the local part case-sensitive as RFC 5321 permits:
 `User@Example.com` equals `User@example.com` but not `user@example.com`.
-`localPart` and `domain` expose the two parts as written. Their `InvalidFormat`
+`localPart` and `domain` expose the two parts as written, and `domainName` gives the
+domain as a `DomainName`. Their `InvalidFormat`
 errors keep the rejected input for callers but redact it from `toString`, so it does
 not reach logs. They establish syntax, not contact reachability or ownership. Any normalization,
 DNS lookup, delivery check, or verification workflow is an explicit application
