@@ -11,7 +11,7 @@ kotest = "6.2.5"
 kotlinx-serialization = "1.11.0"
 kotlinx-coroutines = "1.10.2"
 detekt = "2.0.0-alpha.6"
-kover = "0.9.9"
+kover = "0.9.11"
 
 [libraries]
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
