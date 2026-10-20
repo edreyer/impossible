@@ -139,13 +139,16 @@ public final class io/liquidsoftware/safedomain/ProblemDetails {
 }
 
 public final class io/liquidsoftware/safedomain/ProblemDetails$InvalidField {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;
-	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;
+	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails$InvalidField;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Ljava/util/Map;
 	public final fun getCode ()Ljava/lang/String;
 	public final fun getDetail ()Ljava/lang/String;
 	public final fun getPointer ()Ljava/lang/String;
@@ -154,8 +157,8 @@ public final class io/liquidsoftware/safedomain/ProblemDetails$InvalidField {
 }
 
 public final class io/liquidsoftware/safedomain/ProblemDetailsKt {
-	public static final fun toProblemDetails-8L6vy7A (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/ProblemDetails;
-	public static synthetic fun toProblemDetails-8L6vy7A$default (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails;
+	public static final fun toProblemDetails-XggiU5o (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/ProblemDetails;
+	public static synthetic fun toProblemDetails-XggiU5o$default (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails;
 }
 
 public abstract interface class io/liquidsoftware/safedomain/RequiredError {

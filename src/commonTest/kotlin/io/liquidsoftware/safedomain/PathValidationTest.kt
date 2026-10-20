@@ -220,4 +220,18 @@ class PathValidationTest {
             failures.toProblemDetails(describe),
         )
     }
+
+    @Test
+    fun `problem details carry message arguments and take a caller supplied detail`() {
+        val failures = nonEmptyListOf(FieldError(FieldPath.of("items"), 50))
+        val describe = { maximum: Int ->
+            ErrorMessage("order.too_many_items", "Order at most $maximum items.", mapOf("maximum" to "$maximum"))
+        }
+        val field = ProblemDetails.InvalidField("/items", "order.too_many_items", "Order at most 50 items.", mapOf("maximum" to "50"))
+
+        assertEquals(listOf(field), failures.toProblemDetails(describe).errors)
+        assertEquals("The request has 1 problem.", failures.toProblemDetails(describe).detail)
+        assertEquals("Die Anfrage ist ungültig.", failures.toProblemDetails(describe, detail = "Die Anfrage ist ungültig.").detail)
+        assertEquals(null, failures.toProblemDetails(describe, detail = null).detail)
+    }
 }
