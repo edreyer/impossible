@@ -9,6 +9,49 @@ public final class io/liquidsoftware/safedomain/testing/ContactArbsKt {
 	public static final fun arb (Lio/liquidsoftware/safedomain/contact/Phone$Companion;)Lio/kotest/property/Arb;
 }
 
+public final class io/liquidsoftware/safedomain/testing/ErrorArbsKt {
+	public static final fun arithmeticErrorArb (Lio/liquidsoftware/safedomain/money/Money$Companion;)Lio/kotest/property/Arb;
+	public static final fun distinctError (Lio/kotest/property/Arb$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/collections/BoundedList$Companion;Lkotlin/ranges/IntRange;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/collections/UniqueList$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/contact/Email$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/contact/Phone$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/geo/GeoPoint$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/identity/TypedId$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/locale/CountryCode$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/locale/LanguageTag$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/money/Currency$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/money/Money$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/money/NegativeMoney$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/money/NonNegativeMoney$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/money/PositiveMoney$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/BoundedInt$Companion;Lkotlin/ranges/IntRange;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/NegativeInt$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/NegativeLong$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/Percentage$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/PositiveInt$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/numeric/PositiveLong$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/text/NonBlankString$Companion;I)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/text/Secret$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/text/Slug$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/time/DateChecks;Lkotlin/ranges/ClosedRange;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/time/DateRange$Companion;Lkotlin/ranges/ClosedRange;I)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/time/PositiveDuration$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/time/TimeZoneId$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/web/DomainName$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/web/HttpUrl$Companion;)Lio/kotest/property/Arb;
+	public static final fun errorArb (Lio/liquidsoftware/safedomain/web/IpAddress$Companion;)Lio/kotest/property/Arb;
+	public static synthetic fun errorArb$default (Lio/liquidsoftware/safedomain/text/NonBlankString$Companion;IILjava/lang/Object;)Lio/kotest/property/Arb;
+	public static synthetic fun errorArb$default (Lio/liquidsoftware/safedomain/time/DateChecks;Lkotlin/ranges/ClosedRange;ILjava/lang/Object;)Lio/kotest/property/Arb;
+	public static synthetic fun errorArb$default (Lio/liquidsoftware/safedomain/time/DateRange$Companion;Lkotlin/ranges/ClosedRange;IILjava/lang/Object;)Lio/kotest/property/Arb;
+	public static final fun errorArb-SxA4cEA (Lio/liquidsoftware/safedomain/time/TimeWindow$Companion;Lio/kotest/property/Arb;J)Lio/kotest/property/Arb;
+	public static synthetic fun errorArb-SxA4cEA$default (Lio/liquidsoftware/safedomain/time/TimeWindow$Companion;Lio/kotest/property/Arb;JILjava/lang/Object;)Lio/kotest/property/Arb;
+	public static final fun nonEmptyError (Lio/kotest/property/Arb$Companion;)Lio/kotest/property/Arb;
+}
+
 public final class io/liquidsoftware/safedomain/testing/GeoArbsKt {
 	public static final fun arb (Lio/liquidsoftware/safedomain/geo/GeoPoint$Companion;)Lio/kotest/property/Arb;
 }
