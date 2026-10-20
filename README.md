@@ -988,10 +988,11 @@ must enforce the same validation.
 
 ## Build
 
-The library is Kotlin Multiplatform, built with Kotlin **2.4**, a **Java 26**
-toolchain for the JVM target, and the Gradle wrapper. The JVM artifacts
-target **Java 17**: they contain Java 17 bytecode and use only the JDK 17 API, so
-they run on JDK 17 and later. Targets:
+The library is Kotlin Multiplatform, built with Kotlin **2.4**, a **Java 17**
+toolchain for the JVM target, and the Gradle wrapper. Java 17 is the floor: the JVM
+artifacts contain Java 17 bytecode and use only the JDK 17 API, the JVM tests run on
+JDK 17, and the artifacts run on JDK 17 and later. Gradle downloads JDK 17 when it is
+not installed. Targets:
 
 | Target | Tests |
 | --- | --- |
@@ -1011,6 +1012,12 @@ iOS simulator tests on macOS. The same checks run locally:
 | Lint and formatting ([detekt](https://detekt.dev) with ktlint's rules) | `./gradlew detekt`; `./gradlew detekt -PdetektAutoCorrect` fixes formatting |
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
+
+The settings shared by all three modules (targets, toolchain, JVM bytecode level,
+explicit API mode, ABI validation, group and version) live in one convention plugin,
+[build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts](build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts).
+Each module applies `id("impossible.kotlin-library")` and declares only its own
+dependencies.
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
