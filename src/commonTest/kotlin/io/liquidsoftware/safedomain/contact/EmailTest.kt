@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.contact
 
 import arrow.core.Either
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.fromTrusted
+import io.liquidsoftware.safedomain.web.DomainName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -20,6 +22,7 @@ class EmailTest {
             "", "user", "@example.com", "user@", "a@@b.com", "a..b@example.com", ".a@example.com", "a.@example.com",
             "a b@example.com", "a@-example.com", "a@example-.com", "a@example..com", "a@example.com.", " a@example.com",
             "a@example.com\n", "\"a b\"@example.com", "ü@example.com", "a@bücher.example", "a@[127.0.0.1]",
+            "user@123", "user@example.123", "user@127.0.0.1",
         )) {
             assertEquals(
                 Either.Left(Email.Error.InvalidFormat(raw)),
@@ -63,8 +66,19 @@ class EmailTest {
             assertEquals("User@Example.com", email.value)
             assertEquals("User", email.localPart)
             assertEquals("Example.com", email.domain)
+            assertEquals(DomainName.fromTrusted("Example.com"), email.domainName)
+            assertEquals("Example.com", email.domainName.value)
         }
         assertEquals(Either.Right(Unit), result)
+    }
+
+    @Test
+    fun `accepts exactly the domains DomainName accepts`() {
+        for (domain in listOf("localhost", "a1", "123a", "example.com1", "xn--bcher-kva.example", "123", "1.2.3.4", "a_b.com")) {
+            val asDomain = either<DomainName.Error, DomainName> { DomainName.from(domain) }.isRight()
+            val asEmail = either<Email.Error, Email> { Email.from("user@$domain") }.isRight()
+            assertEquals(asDomain, asEmail, domain)
+        }
     }
 
     @Test
