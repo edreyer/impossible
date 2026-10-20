@@ -1,8 +1,8 @@
 plugins {
-  kotlin("multiplatform") version "2.4.21"
-  kotlin("plugin.serialization") version "2.4.21" apply false
-  id("dev.detekt") version "2.0.0-alpha.6"
-  id("org.jetbrains.kotlinx.kover") version "0.9.9"
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.kotlin.serialization) apply false
+  alias(libs.plugins.detekt)
+  alias(libs.plugins.kover)
 }
 
 // Lint and coverage apply to every module, so a new module is checked without extra setup.
@@ -27,7 +27,7 @@ allprojects {
 
   dependencies {
     // ktlint's formatting rules, run by detekt.
-    "detektPlugins"("dev.detekt:detekt-rules-ktlint-wrapper:2.0.0-alpha.6")
+    "detektPlugins"(rootProject.libs.detekt.rules.ktlint.wrapper)
   }
 }
 
@@ -61,6 +61,12 @@ kotlin {
   jvmToolchain(26)
 
   jvm {
+    compilerOptions {
+      // Build with a current JDK, but emit bytecode and link against the API of JDK 17,
+      // the oldest JDK consumers can run this library on.
+      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+      freeCompilerArgs.add("-Xjdk-release=17")
+    }
     testRuns.named("test") {
       executionTask.configure { useJUnitPlatform() }
     }
@@ -80,9 +86,9 @@ kotlin {
 
   sourceSets {
     commonMain.dependencies {
-      api("io.arrow-kt:arrow-core:2.2.3")
-      api("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
-      implementation("com.ionspin.kotlin:bignum:0.3.10")
+      api(libs.arrow.core)
+      api(libs.kotlinx.datetime)
+      implementation(libs.bignum)
     }
     jsMain.dependencies {
       // Time zone data for TimeZoneId; 2.23.0 is the newest release compatible with

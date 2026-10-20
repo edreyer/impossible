@@ -1,0 +1,30 @@
+# Every dependency and plugin version in one place. Dependabot proposes updates to this file.
+# Arrow is pinned exactly: `Validated<A>` exposes Arrow's experimental RaiseAccumulate API,
+# so an Arrow upgrade can change this library's public API (see the README).
+
+[versions]
+kotlin = "2.4.21"
+arrow = "2.2.3"
+kotlinx-datetime = "0.8.0"
+bignum = "0.3.10"
+kotest = "6.2.5"
+kotlinx-serialization = "1.11.0"
+kotlinx-coroutines = "1.10.2"
+detekt = "2.0.0-alpha.6"
+kover = "0.9.9"
+
+[libraries]
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

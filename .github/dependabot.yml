@@ -1,0 +1,12 @@
+# Weekly update proposals for the version catalog (gradle/libs.versions.toml),
+# the Gradle wrapper and the GitHub Actions used by the Checks workflow.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

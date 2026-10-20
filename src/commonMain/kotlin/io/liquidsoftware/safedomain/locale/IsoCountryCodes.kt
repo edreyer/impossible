@@ -2,8 +2,9 @@ package io.liquidsoftware.safedomain.locale
 
 /**
  * The 249 officially assigned ISO 3166-1 alpha-2 codes, as published in the JDK 21
- * locale data. Bundled so validation is identical on every platform. Update this list
- * when ISO 3166 assigns or withdraws codes.
+ * locale data (`java.util.Locale.getISOCountries()`), extracted on 2026-10-10. Bundled
+ * so validation is identical on every platform. Update this list, and the extraction
+ * date and JDK version above, when ISO 3166 assigns or withdraws codes.
  */
 internal val isoCountryCodes: Set<String> = listOf(
     "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ",
