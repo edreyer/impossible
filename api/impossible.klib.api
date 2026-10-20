@@ -240,6 +240,8 @@ final class <#A: out kotlin/Any?> io.liquidsoftware.safedomain/PathField { // io
 final class io.liquidsoftware.safedomain.contact/Email { // io.liquidsoftware.safedomain.contact/Email|null[0]
     final val domain // io.liquidsoftware.safedomain.contact/Email.domain|{}domain[0]
         final fun <get-domain>(): kotlin/String // io.liquidsoftware.safedomain.contact/Email.domain.<get-domain>|<get-domain>(){}[0]
+    final val domainName // io.liquidsoftware.safedomain.contact/Email.domainName|{}domainName[0]
+        final fun <get-domainName>(): io.liquidsoftware.safedomain.web/DomainName // io.liquidsoftware.safedomain.contact/Email.domainName.<get-domainName>|<get-domainName>(){}[0]
     final val localPart // io.liquidsoftware.safedomain.contact/Email.localPart|{}localPart[0]
         final fun <get-localPart>(): kotlin/String // io.liquidsoftware.safedomain.contact/Email.localPart.<get-localPart>|<get-localPart>(){}[0]
     final val value // io.liquidsoftware.safedomain.contact/Email.value|{}value[0]

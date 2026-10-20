@@ -351,6 +351,7 @@ public final class io/liquidsoftware/safedomain/contact/Email {
 	public static final field Companion Lio/liquidsoftware/safedomain/contact/Email$Companion;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDomain ()Ljava/lang/String;
+	public final fun getDomainName ()Lio/liquidsoftware/safedomain/web/DomainName;
 	public final fun getLocalPart ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
