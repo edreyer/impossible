@@ -1,7 +1,6 @@
 // Targets, toolchain and API checks shared by every module of the library. A module
 // applies this plugin and adds only its own dependencies.
 
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -19,15 +18,12 @@ kotlin {
   explicitApi()
   @OptIn(ExperimentalAbiValidation::class)
   abiValidation()
-  jvmToolchain(26)
+  // JDK 17 is the oldest JDK consumers can run this library on. Compiling and testing
+  // with it emits Java 17 bytecode, links only against the JDK 17 API, and runs the JVM
+  // tests on that floor.
+  jvmToolchain(17)
 
   jvm {
-    compilerOptions {
-      // Build with a current JDK, but emit bytecode and link against the API of JDK 17,
-      // the oldest JDK consumers can run this library on.
-      jvmTarget.set(JvmTarget.JVM_17)
-      freeCompilerArgs.add("-Xjdk-release=17")
-    }
     testRuns.named("test") {
       executionTask.configure { useJUnitPlatform() }
     }
