@@ -591,7 +591,7 @@ the time zone database does (`europe/berlin` fails). It exposes the resolved
 kotlinx-datetime `timeZone`. Fixed offsets such as `+02:00` are rejected; store a
 `UtcOffset` for those. Each platform resolves ids with its own database: the JDK's on
 the JVM, the operating system's on native targets, and the bundled
-`@js-joda/timezone` data on JS.
+`@js-joda/timezone` data on JS and Wasm.
 
 ## Money and currencies
 
@@ -1003,13 +1003,12 @@ not installed. Targets:
 | --- | --- |
 | `jvm` | `./gradlew jvmTest` |
 | `js` (browser and Node.js) | `./gradlew jsNodeTest`; browser tests are disabled because they would need a local browser |
+| `wasmJs` (browser and Node.js) | `./gradlew wasmJsNodeTest`; browser tests are disabled, as for `js` |
 | `linuxX64` | `./gradlew linuxX64Test` |
 | `macosArm64`, `iosArm64`, `iosSimulatorArm64` | `./gradlew macosArm64Test iosSimulatorArm64Test`; Apple targets build only on macOS |
 
-There is no Wasm target, because bignum does not publish one.
-
 Every pull request runs the [Checks](.github/workflows/checks.yml) workflow:
-detekt, the JVM, JS and Linux tests with a coverage floor on Linux, and the macOS and
+detekt, the JVM, JS, Wasm and Linux tests with a coverage floor on Linux, and the macOS and
 iOS simulator tests on macOS. The same checks run locally:
 
 | Check | Command |
@@ -1034,7 +1033,7 @@ every declaration visible outside the module states its visibility (`public`,
 so nothing becomes public API by default. A missing modifier fails compilation.
 
 Each module's public API is recorded in its `api/` folder: a `.api` file for the JVM
-and a `.klib.api` file for JS and native targets. `checkKotlinAbi` fails when the
+and a `.klib.api` file for the JS, Wasm and native targets. `checkKotlinAbi` fails when the
 compiled API differs from those files, so every addition, removal or signature change
 shows up in review as a diff to them. After an intended API change, run
 `./gradlew updateKotlinAbi` and commit the updated files with the change. The
@@ -1056,8 +1055,8 @@ Dependencies:
   standard library's `kotlin.time`.
 - [bignum](https://github.com/ionspin/kotlin-multiplatform-bignum), an
   implementation dependency behind `Decimal`.
-- [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), a JS-only
-  npm dependency that gives `TimeZoneId` the IANA database there. It is the newest
+- [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), an npm
+  dependency of the JS and Wasm targets only that gives `TimeZoneId` the IANA database there. It is the newest
   release compatible with the `@js-joda/core` version kotlinx-datetime uses.
 - [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html),
   an API dependency of `impossible-testing` only; the library itself does not use it.

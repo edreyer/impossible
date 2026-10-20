@@ -1,6 +1,7 @@
 // Targets, toolchain and API checks shared by every module of the library. A module
 // applies this plugin and adds only its own dependencies.
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -34,6 +35,14 @@ kotlin {
     nodejs {
       // The first time zone lookup loads the whole js-joda database, and the property and
       // law tests run many iterations, so allow more than Mocha's 2s default.
+      testTask { useMocha { timeout = "60s" } }
+    }
+  }
+  @OptIn(ExperimentalWasmDsl::class)
+  wasmJs {
+    // As for js: Node runs the tests, and the time zone database needs the longer timeout.
+    browser { testTask { enabled = false } }
+    nodejs {
       testTask { useMocha { timeout = "60s" } }
     }
   }
