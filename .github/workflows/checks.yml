@@ -19,7 +19,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 26
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Cache Kotlin/Native toolchain
         uses: actions/cache@v6
         with:
@@ -67,7 +67,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 26
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Cache Kotlin/Native toolchain
         uses: actions/cache@v6
         with:
