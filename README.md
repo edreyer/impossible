@@ -863,8 +863,11 @@ or a secret. Describe your own errors by delegating to it. To localize, look up 
 in your own catalog.
 
 `toProblemDetails(describe)` turns a batch of field errors into an RFC 9457 problem
-(`422` by default) whose `errors` list each field's pointer, code, and message. It is
-plain data; render it as `application/problem+json` with your JSON library.
+(`422` by default) whose `errors` list each field's pointer, code, message, and the
+message's arguments, so a client can show the problem in its own language. The
+problem's `detail` defaults to an English count such as "The request has 3 problems.";
+pass `detail =` your own text, or `null` to leave it out. It is plain data; render it as
+`application/problem+json` with your JSON library.
 [PathValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/PathValidationTest.kt)
 shows the whole flow.
 

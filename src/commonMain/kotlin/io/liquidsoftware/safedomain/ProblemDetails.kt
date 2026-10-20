@@ -23,14 +23,23 @@ public data class ProblemDetails(
 ) {
     /**
      * One failure: [pointer] is an RFC 6901 JSON Pointer to the field (empty for the
-     * whole request), [code] the stable error code, and [detail] its description.
+     * whole request), [code] the stable error code, [detail] its default English
+     * description, and [arguments] the values a translation of [code] needs, as in
+     * [ErrorMessage.arguments].
      */
-    public data class InvalidField(val pointer: String, val code: String, val detail: String)
+    public data class InvalidField(
+        val pointer: String,
+        val code: String,
+        val detail: String,
+        val arguments: Map<String, String> = emptyMap(),
+    )
 }
 
 /**
  * Describes every failure with [describe] and collects them into a single problem: by
- * default `422 Unprocessable Content`, whose `errors` point at each invalid field.
+ * default `422 Unprocessable Content`, whose `errors` point at each invalid field and
+ * carry each message's code and arguments, so a client can localize them. [detail]
+ * defaults to an English count of the problems; pass your own, or null to omit it.
  */
 public fun <Error> NonEmptyList<FieldError<Error>>.toProblemDetails(
     describe: (Error) -> ErrorMessage,
@@ -38,11 +47,11 @@ public fun <Error> NonEmptyList<FieldError<Error>>.toProblemDetails(
     status: Int = 422,
     type: String = "about:blank",
     instance: String? = null,
+    detail: String? = if (size == 1) "The request has 1 problem." else "The request has $size problems.",
 ): ProblemDetails {
     val fields = map { failure ->
         val message = describe(failure.error)
-        ProblemDetails.InvalidField(failure.path.toJsonPointer(), message.code, message.text)
+        ProblemDetails.InvalidField(failure.path.toJsonPointer(), message.code, message.text, message.arguments)
     }
-    val detail = if (size == 1) "The request has 1 problem." else "The request has $size problems."
     return ProblemDetails(type, title, status, detail, instance, fields)
 }
