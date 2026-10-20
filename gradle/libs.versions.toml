@@ -9,7 +9,7 @@ kotlinx-datetime = "0.8.0"
 bignum = "0.3.10"
 kotest = "6.2.5"
 kotlinx-serialization = "1.11.0"
-kotlinx-coroutines = "1.10.2"
+kotlinx-coroutines = "1.11.0"
 detekt = "2.0.0-alpha.6"
 kover = "0.9.9"
 
