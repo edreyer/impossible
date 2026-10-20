@@ -347,7 +347,10 @@ their first failure. `validate` has no field-count limit.
 `@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
 [Validation.kt](src/commonMain/kotlin/io/liquidsoftware/safedomain/Validation.kt);
 callers need none. `Validated<A>` is an alias for Arrow's
-`RaiseAccumulate.Value<A>`.
+`RaiseAccumulate.Value<A>`, so that experimental Arrow type is part of this
+library's public API: if Arrow changes it, upgrading Arrow is a breaking change
+here. Arrow is therefore pinned to an exact version in
+[gradle/libs.versions.toml](gradle/libs.versions.toml).
 [ValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
 covers ordering, flattening, indexing, dependent blocks, and early reads.
 
@@ -986,7 +989,9 @@ must enforce the same validation.
 ## Build
 
 The library is Kotlin Multiplatform, built with Kotlin **2.4.21**, a **Java 26**
-toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. Targets:
+toolchain for the JVM target, and the **Gradle 9.6.0** wrapper. The JVM artifacts
+target **Java 17**: they contain Java 17 bytecode and use only the JDK 17 API, so
+they run on JDK 17 and later. Targets:
 
 | Target | Tests |
 | --- | --- |
@@ -1025,7 +1030,10 @@ validation is an experimental Kotlin Gradle plugin feature, built in, with no ex
 dependency.
 
 Common code lives in `src/commonMain` and `src/commonTest`; it uses no JDK types,
-so validation behaves the same on every platform. Dependencies:
+so validation behaves the same on every platform. Every dependency and plugin version
+is declared once in [gradle/libs.versions.toml](gradle/libs.versions.toml) (the npm
+package below is the exception, declared in the build script), and
+[Dependabot](.github/dependabot.yml) proposes updates weekly. Dependencies:
 
 - [Arrow Core 2.2.3](https://github.com/arrow-kt/arrow/releases/tag/2.2.3), an API
   dependency because `Raise` appears in the public signatures.
@@ -1083,3 +1091,7 @@ and accumulating composition. The library is not yet
 configured for publication.
 
 Contributor rules are in [AGENTS.md](AGENTS.md).
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).

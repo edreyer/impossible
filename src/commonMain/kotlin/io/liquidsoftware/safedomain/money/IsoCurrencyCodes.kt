@@ -2,10 +2,12 @@ package io.liquidsoftware.safedomain.money
 
 /**
  * ISO 4217 alphabetic codes, including historic codes and funds such as XDR, with their
- * minor units (decimal places), as published in the JDK 21 currency data. `-` marks
- * codes without minor units, such as precious metals (XAU) and XXX. Bundled so
- * validation is identical on every platform. Update this list when ISO 4217 publishes
- * new codes.
+ * minor units (decimal places), as published in the JDK 21 currency data
+ * (`java.util.Currency.getAvailableCurrencies()` and `defaultFractionDigits`), extracted
+ * on 2026-10-10. `-` marks codes without minor units (`defaultFractionDigits` of -1),
+ * such as precious metals (XAU) and XXX. Bundled so validation is identical on every
+ * platform. Update this list, and the extraction date and JDK version above, when ISO
+ * 4217 publishes new codes.
  */
 internal val isoCurrencyMinorUnits: Map<String, Int?> = listOf(
     "ADP:0 AED:2 AFA:2 AFN:2 ALL:2 AMD:2 ANG:2 AOA:2 ARS:2 ATS:2 AUD:2 AWG:2",

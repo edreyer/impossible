@@ -16,6 +16,12 @@ kotlin {
   jvmToolchain(26)
 
   jvm {
+    compilerOptions {
+      // Build with a current JDK, but emit bytecode and link against the API of JDK 17,
+      // the oldest JDK consumers can run this library on.
+      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+      freeCompilerArgs.add("-Xjdk-release=17")
+    }
     testRuns.named("test") {
       executionTask.configure { useJUnitPlatform() }
     }
@@ -37,11 +43,11 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       api(project(":"))
-      api("io.kotest:kotest-property:6.2.5")
+      api(libs.kotest.property)
     }
     commonTest.dependencies {
       implementation(kotlin("test"))
-      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+      implementation(libs.kotlinx.coroutines.test)
     }
   }
 }
