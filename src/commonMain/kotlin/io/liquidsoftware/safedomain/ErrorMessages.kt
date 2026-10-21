@@ -152,6 +152,22 @@ public object ErrorMessages {
         is NegativeDecimal.Error.NonNegative -> lessThanZero("negative_decimal.non_negative")
     }
 
+    public fun describe(error: PositiveInt.Overflow): ErrorMessage = when (error) {
+        PositiveInt.Overflow -> outOfRange("positive_int.overflow")
+    }
+
+    public fun describe(error: PositiveLong.Overflow): ErrorMessage = when (error) {
+        PositiveLong.Overflow -> outOfRange("positive_long.overflow")
+    }
+
+    public fun describe(error: NegativeInt.Overflow): ErrorMessage = when (error) {
+        NegativeInt.Overflow -> outOfRange("negative_int.overflow")
+    }
+
+    public fun describe(error: NegativeLong.Overflow): ErrorMessage = when (error) {
+        NegativeLong.Overflow -> outOfRange("negative_long.overflow")
+    }
+
     public fun describe(error: NonNegativeDecimal.Error): ErrorMessage = when (error) {
         is NonNegativeDecimal.Error.Negative ->
             ErrorMessage("non_negative_decimal.negative", "Enter zero or a number greater than zero.")
@@ -326,6 +342,8 @@ public object ErrorMessages {
     private fun greaterThanZero(code: String) = ErrorMessage(code, "Enter a number greater than zero.")
 
     private fun lessThanZero(code: String) = ErrorMessage(code, "Enter a number less than zero.")
+
+    private fun outOfRange(code: String) = ErrorMessage(code, "The result is outside the range that can be represented.")
 
     private fun duplicate(code: String, firstIndex: Int, duplicateIndex: Int) = ErrorMessage(
         code,

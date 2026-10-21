@@ -959,6 +959,16 @@ of a few never overflow; pass a wider `minor` range to test overflow handling.
 `Arb.untrustedText()` and `Arb.nearMiss(valid)` produce input for exercising your own
 parsers: mixed scripts, odd whitespace and surrogate pairs, or valid text one edit away.
 
+Every error type has a generator too, such as `Email.errorArb()`,
+`Money.arithmeticErrorArb()` or `BoundedList.errorArb(1..10)`. Each one runs the real
+factory or operation on input built to fail, so it yields exactly the errors callers
+receive, every variant included. Use them to test how your application describes,
+translates, or reports failures:
+
+```kotlin
+checkAll(Money.errorArb()) { error -> assertNotNull(myCatalog[ErrorMessages.describe(error).code]) }
+```
+
 The module's own tests are laws the library promises on every platform:
 
 | Law | Test |
@@ -967,6 +977,7 @@ The module's own tests are laws the library promises on every platform:
 | Every parser returns a value or a typed error on any text, never an exception, and reparses its own output | `ParserLawsTest` |
 | Equality and hashing agree with each normalization (email domains, DNS case, IP text forms, decimal scale), and rejected personal data never reaches error text | `ValueSemanticsLawsTest` |
 | Error descriptions have well-formed codes and never quote rejected text; field paths survive JSON Pointer encoding | `MessageLawsTest` |
+| Every error has a well-formed description, and the codes produced are exactly the published set, so a renamed or missing code fails | `ErrorLawsTest` |
 | Sign-refined arithmetic is exact or reports overflow; rounding brackets the exact value | `NumericLawsTest` |
 | Money addition is commutative and associative, currencies never mix, and allocation and splitting never lose a minor unit | `MoneyLawsTest` |
 | Date ranges and half-open time windows overlap consistently; past and future checks split dates around today | `TimeLawsTest` |

@@ -16,6 +16,28 @@ import io.kotest.property.arbitrary.asString
 internal inline fun <Error, A> valid(block: Raise<Error>.() -> A): A =
     either(block).getOrElse { throw IllegalStateException("Generator produced invalid input: $it") }
 
+/**
+ * Runs a construction that a generator built to be invalid and returns its failure, so
+ * every generated error is one the library's real factories raise.
+ */
+internal inline fun <Error, A> rejected(block: Raise<Error>.() -> A): Error =
+    either(block).fold({ it }) { throw IllegalStateException("Generator produced valid input: $it") }
+
+/**
+ * Failures of [parse] for text drawn from [inputs], retrying the inputs it accepts. Fails
+ * loudly when [inputs] keeps producing accepted text.
+ */
+internal fun <Error : Any> rejections(inputs: Arb<String>, parse: Raise<Error>.(String) -> Unit): Arb<Error> =
+    arbitrary {
+        repeat(MAX_ATTEMPTS) {
+            val text = inputs.bind()
+            either { parse(text) }.leftOrNull()?.let { return@arbitrary it }
+        }
+        throw IllegalStateException("Generator produced only valid input in $MAX_ATTEMPTS attempts")
+    }
+
+private const val MAX_ATTEMPTS = 1_000
+
 internal const val LOWER = "abcdefghijklmnopqrstuvwxyz"
 internal const val UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 internal const val DIGITS = "0123456789"
