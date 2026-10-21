@@ -50,7 +50,7 @@ value class Shelf private constructor(val slug: Slug) {
             .map { it.value }
             .andThen(Slug) { Error.NotASlug(it) }
             .map { Shelf(it) }
-    )
+        )
 }
 
 // A fixed seed keeps every run reproducible. PropTestConfig's constructor exposes

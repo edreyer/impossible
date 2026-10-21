@@ -36,7 +36,7 @@ we ask for it:
 value class Title private constructor(val value: String) {
     companion object : ValueFactory<String, NonBlankString.Error, Title> by (
         NonBlankString.bounded(PositiveInt.fromTrusted(200), trim = true).map { Title(it.value) }
-    )
+        )
 }
 ```
 
@@ -65,7 +65,7 @@ value class Isbn private constructor(val value: String) {
             .ensure({ text -> text.value.length == 13 && text.value.all { it in '0'..'9' } }) { Error.NotThirteenDigits }
             .ensure({ text -> hasValidCheckDigit(text.value) }) { Error.WrongCheckDigit }
             .map { Isbn(it.value) }
-    )
+        )
 }
 
 private fun hasValidCheckDigit(digits: String): Boolean =
@@ -103,7 +103,7 @@ value class Shelf private constructor(val slug: Slug) {
             .map { it.value }
             .andThen(Slug) { Error.NotASlug(it) }
             .map { Shelf(it) }
-    )
+        )
 }
 ```
 
@@ -122,7 +122,7 @@ the bounds become part of your type:
 class Rating private constructor(val stars: Int) {
     companion object : ValueFactory<Int, BoundedInt.Error, Rating> by (
         BoundedInt.factory(1..5).map { Rating(it.value) }
-    )
+        )
 }
 ```
 

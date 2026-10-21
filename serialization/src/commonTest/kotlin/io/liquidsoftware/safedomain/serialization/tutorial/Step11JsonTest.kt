@@ -44,7 +44,7 @@ value class Isbn private constructor(val value: String) {
             .mapError { Error.Invalid }
             .ensure({ text -> text.value.length == 13 && text.value.all { it in '0'..'9' } }) { Error.Invalid }
             .map { Isbn(it.value) }
-    )
+        )
 }
 
 object IsbnSerializer : KSerializer<Isbn> by Isbn.asSerializer(
@@ -95,7 +95,8 @@ class Step11JsonTest {
 
     @Test
     fun `decoding runs the factory so invalid data never becomes a value`() {
-        val failure = assertFailsWith<InvalidValueException> { json.decodeFromString<Review>(body.replace("\"rating\":5", "\"rating\":6")) }
+        val sixStars = body.replace("\"rating\":5", "\"rating\":6")
+        val failure = assertFailsWith<InvalidValueException> { json.decodeFromString<Review>(sixStars) }
         assertEquals("io.liquidsoftware.safedomain.numeric.BoundedInt", failure.serialName)
         assertEquals(listOf("bounded_int.out_of_range"), failure.messages.map { it.code })
         assertIs<BoundedInt.Error.OutOfRange>(failure.error)
