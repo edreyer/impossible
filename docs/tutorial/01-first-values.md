@@ -25,8 +25,9 @@ fun titleOf(raw: String): Either<NonBlankString.Error, NonBlankString> =
     either { NonBlankString.from(raw) }
 ```
 
-`titleOf("Dune")` is `Right(NonBlankString("Dune"))`; `titleOf(" ")` is
-`Left(NonBlankString.Error.Blank)`. The text is kept exactly as given: `"  Dune  "`
+An `Either<E, A>` holds exactly one of two things: a `Right` with the value, or a
+`Left` with the error. `titleOf("Dune")` is `Right(NonBlankString("Dune"))`;
+`titleOf(" ")` is `Left(NonBlankString.Error.Blank)`. The text is kept exactly as given: `"  Dune  "`
 keeps its spaces. The library never trims, case-folds or repairs input unless you
 ask it to (step 3 shows how).
 
