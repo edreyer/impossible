@@ -86,7 +86,7 @@ public fun Percentage.Companion.arb(maxScale: Int = 4): Arb<Percentage> {
     }
 }
 
-private fun nonZeroMagnitudes(maxDigits: Int, scales: IntRange): Arb<Decimal> =
+internal fun nonZeroMagnitudes(maxDigits: Int, scales: IntRange): Arb<Decimal> =
     Decimal.arb(maxDigits, scales).map { if (it.sign == 0) Decimal.of(1, it.scale) else it.abs() }
 
 private fun tenTo(power: Int): Long {

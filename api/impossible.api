@@ -36,12 +36,16 @@ public final class io/liquidsoftware/safedomain/ErrorMessages {
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/BoundedInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
+	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeInt$Overflow;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeLong$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
+	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeLong$Overflow;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/Percentage$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
+	public final fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveInt$Overflow;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveLong$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
+	public final fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveLong$Overflow;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/text/NonBlankString$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/text/Secret$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/text/Slug$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
