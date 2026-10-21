@@ -21,7 +21,8 @@ class TutorialSnippetsTest {
         "testing/src/commonTest/kotlin/io/liquidsoftware/safedomain/testing/tutorial",
     )
 
-    private fun normalized(lines: List<String>): String = lines.joinToString("\n", prefix = "\n", postfix = "\n") { it.trim() }
+    private fun normalized(lines: List<String>): String =
+        lines.joinToString("\n", prefix = "\n", postfix = "\n") { it.trim() }
 
     private fun snippets(markdown: String): List<List<String>> {
         val blocks = mutableListOf<List<String>>()
@@ -44,7 +45,10 @@ class TutorialSnippetsTest {
         val code = sources
             .flatMap { File(root, it).walk().filter { file -> file.extension == "kt" }.toList() }
             .map { normalized(it.readLines()) }
-        val chapters = File(root, "docs/tutorial").listFiles { file -> file.extension == "md" }.orEmpty().sortedBy { it.name }
+        val chapters = File(root, "docs/tutorial")
+            .listFiles { file -> file.extension == "md" }
+            .orEmpty()
+            .sortedBy { it.name }
         assertTrue(chapters.size >= 12, "Expected the tutorial chapters in docs/tutorial")
         assertTrue(code.isNotEmpty(), "Expected the tutorial sources")
 
