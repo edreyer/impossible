@@ -95,10 +95,11 @@ jobs:
           # so editing a build script does not force a fresh ~600 MB download.
           key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
       - name: Test
-        # One task at a time: the runner has three cores, and linking two modules' test
-        # binaries at once took 11 minutes on the iOS simulator job against about one
-        # minute each when run alone.
-        run: ./gradlew ${{ matrix.target }}Test --max-workers=1
+        # Without compiler caches the linker compiles dependencies straight into each test
+        # binary. Building those caches first made each of the serialization and testing
+        # links take about five minutes on the iOS simulator job, and a fresh runner never
+        # reuses them.
+        run: ./gradlew ${{ matrix.target }}Test -Pkotlin.native.cacheKind.${{ matrix.target }}=none
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v7
