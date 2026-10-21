@@ -58,5 +58,9 @@ kotlin {
       // the @js-joda/core version kotlinx-datetime ships.
       implementation(npm("@js-joda/timezone", "2.23.0"))
     }
+    wasmJsMain.dependencies {
+      // The same time zone data for TimeZoneId on Wasm.
+      implementation(npm("@js-joda/timezone", "2.23.0"))
+    }
   }
 }
