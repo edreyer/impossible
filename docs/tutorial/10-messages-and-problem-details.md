@@ -62,7 +62,7 @@ generic "Add at least one item."
 
 `toProblemDetails(describe)` turns a batch of `FieldError`s into a `ProblemDetails`:
 by default status 422, a fixed title, a `detail` that counts the problems, and an
-`errors` list with each field's JSON Pointer, code, text and arguments:
+`errors` list with each field's JSON Pointer, code, message text (`detail`) and arguments:
 
 ```kotlin
 sealed interface PlaceOrderResponse {

@@ -63,8 +63,9 @@ Listing.from(ListingInput(title = "", isbn = "123", shelf = "Sci Fi", copies = 0
 
 A declared field's value is only available once its validation succeeded. Reading a
 failed field raises everything collected so far and ends the block, so the fields
-declared after it would never run. Read fields only in the final construction, or
-inside a dependent `field { }` block (step 5).
+declared after it would never run. So read fields only in the final construction.
+Step 5 shows `field { }`, a block that declares fields of its own and may read them,
+because a failure there stops only that block.
 
 ## The batch is still one value
 
