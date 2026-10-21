@@ -94,8 +94,9 @@ class Order private constructor(
             val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) { Error.InvalidEmail(it) }
             val shipTo by Address.nestedFieldAt(value.shipTo, name = "ship_to") { Error.InvalidAddress(it) }
             val isbns by Isbn.eachFieldAt(value.isbns) { Error.InvalidIsbn(it) }
-            val books by fieldAt(name = "isbns") { NonEmptyList.factory<Isbn>().from(isbns) { Error.NoBooks(it) } }
             val amount by Money.parser.flatFieldAt(value.total, name = "total") { Error.InvalidTotal(it) }
+            // Dependent fields come last: reading a failed field ends validation here.
+            val books by fieldAt(name = "isbns") { NonEmptyList.factory<Isbn>().from(isbns) { Error.NoBooks(it) } }
             val total by fieldAt { PositiveMoney.from(amount) { Error.TotalNotPositive(it) } }
             Order(customer, email, shipTo, books, total)
         }
@@ -109,10 +110,15 @@ The interesting lines:
   is reported at `ship_to.street`. `Error.InvalidAddress` wraps `Address.Error`
   without repeating its cases.
 - `eachFieldAt` reports each bad ISBN at `isbns[index]`; then the dependent `fieldAt`
-  block (named `isbns` too) reports an empty list at `isbns` itself. Reading `isbns`
-  there is safe: if any element failed, the block stops without adding an error.
+  block (named `isbns` too) reports an empty list at `isbns` itself.
 - `flatFieldAt` reports both of `Money.parser`'s possible errors at `total`, and the
   dependent block reports a zero total at `total` as well.
+- The dependent blocks read fields declared *outside* them, and reading a field that
+  failed ends the whole `validate` right there, with the errors collected so far. So
+  they come after every independent field: if an ISBN is invalid, the order still
+  reports every other independent field's problems, and only skips the checks that
+  need valid ISBNs. (Fields declared *inside* a `field { }` block, as in steps 5 to 8,
+  stop only that block.)
 
 Every field wrong at once:
 

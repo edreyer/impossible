@@ -82,8 +82,9 @@ class Order private constructor(
             val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) { Error.InvalidEmail(it) }
             val shipTo by Address.nestedFieldAt(value.shipTo, name = "ship_to") { Error.InvalidAddress(it) }
             val isbns by Isbn.eachFieldAt(value.isbns) { Error.InvalidIsbn(it) }
-            val books by fieldAt(name = "isbns") { NonEmptyList.factory<Isbn>().from(isbns) { Error.NoBooks(it) } }
             val amount by Money.parser.flatFieldAt(value.total, name = "total") { Error.InvalidTotal(it) }
+            // Dependent fields come last: reading a failed field ends validation here.
+            val books by fieldAt(name = "isbns") { NonEmptyList.factory<Isbn>().from(isbns) { Error.NoBooks(it) } }
             val total by fieldAt { PositiveMoney.from(amount) { Error.TotalNotPositive(it) } }
             Order(customer, email, shipTo, books, total)
         }
