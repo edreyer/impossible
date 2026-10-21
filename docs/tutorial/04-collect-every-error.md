@@ -92,6 +92,6 @@ A `Listing` whose factory reports every invalid field in one go, built from the 
 of step 3 without repeating any of their rules.
 
 The code and its tests are in
-[Step04ValidateTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step04ValidateTest.kt).
+[Step04ValidateTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step04/Step04ValidateTest.kt).
 
 Next: [Step 5, optional and dependent fields](05-optional-and-dependent-fields.md).

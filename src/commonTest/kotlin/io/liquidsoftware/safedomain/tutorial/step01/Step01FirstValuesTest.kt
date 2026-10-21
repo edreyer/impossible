@@ -32,7 +32,8 @@ context(raise: Raise<PositiveInt.Error>)
 fun restock(onHand: Int, delivered: Int): Pair<PositiveInt, PositiveInt> =
     copies(onHand) to copies(delivered)
 
-fun copiesOrOne(raw: Int): PositiveInt = either<PositiveInt.Error, PositiveInt> { copies(raw) }.getOrElse { PositiveInt.ONE }
+fun copiesOrOne(raw: Int): PositiveInt =
+    either<PositiveInt.Error, PositiveInt> { copies(raw) }.getOrElse { PositiveInt.ONE }
 
 val maximumBasketSize: PositiveInt = PositiveInt.fromTrusted(50)
 

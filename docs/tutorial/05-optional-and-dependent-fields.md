@@ -145,6 +145,6 @@ A `Customer` that always has a name and always has a way to be contacted, built 
 a form where anything may be missing, with every problem reported at once.
 
 The code and its tests are in
-[Step05OptionalAndDependentTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step05OptionalAndDependentTest.kt).
+[Step05OptionalAndDependentTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step05/Step05OptionalAndDependentTest.kt).
 
 Next: [Step 6, collections](06-collections.md).

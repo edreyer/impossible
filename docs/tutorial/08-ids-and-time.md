@@ -116,6 +116,6 @@ Ids the compiler keeps apart, promotions whose dates were checked against a cloc
 control, and delivery slots that tile without overlapping.
 
 The code and its tests are in
-[Step08IdsAndTimeTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step08IdsAndTimeTest.kt).
+[Step08IdsAndTimeTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step08/Step08IdsAndTimeTest.kt).
 
 Next: [Step 9, field paths](09-field-paths.md).

@@ -91,7 +91,9 @@ class Order private constructor(
         context(raise: Raise<NonEmptyList<FieldError<Error>>>)
         override fun from(value: OrderInput): Order = validate {
             val customer by customerIds.fieldAt(value.customerId, name = "customer_id") { Error.InvalidCustomerId(it) }
-            val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) { Error.InvalidEmail(it) }
+            val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) {
+                Error.InvalidEmail(it)
+            }
             val shipTo by Address.nestedFieldAt(value.shipTo, name = "ship_to") { Error.InvalidAddress(it) }
             val isbns by Isbn.eachFieldAt(value.isbns) { Error.InvalidIsbn(it) }
             val amount by Money.parser.flatFieldAt(value.total, name = "total") { Error.InvalidTotal(it) }
@@ -145,6 +147,6 @@ nested objects and lists, and reports every failure with the path of the input t
 an HTTP response.
 
 The code and its tests are in
-[Step09FieldPathsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step09FieldPathsTest.kt).
+[Step09FieldPathsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step09/Step09FieldPathsTest.kt).
 
 Next: [Step 10, messages and problem details](10-messages-and-problem-details.md).

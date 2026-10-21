@@ -113,6 +113,6 @@ Step 10 replaces these hand-written sentences with stable error codes and messag
 - A boundary that turns every failure into a closed outcome.
 
 The code and its tests are in
-[Step02OwnErrorsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step02OwnErrorsTest.kt).
+[Step02OwnErrorsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step02/Step02OwnErrorsTest.kt).
 
 Next: [Step 3, your own types](03-your-own-types.md).

@@ -92,7 +92,8 @@ class Preorder private constructor(val copies: PositiveInt, val limit: PositiveI
 class Step05OptionalAndDependentTest {
     private val valid = SignupForm(name = "Ada", nickname = null, email = "ada@example.com", phone = null)
 
-    private fun signUp(form: SignupForm): Either<NonEmptyList<Customer.Error>, Customer> = either { Customer.from(form) }
+    private fun signUp(form: SignupForm): Either<NonEmptyList<Customer.Error>, Customer> =
+        either { Customer.from(form) }
 
     @Test
     fun `required turns a missing value into a typed error`() {
@@ -136,10 +137,12 @@ class Step05OptionalAndDependentTest {
 
     @Test
     fun `a cross field check runs once its inputs are valid`() {
-        val over: Either<NonEmptyList<Preorder.Error>, Preorder> = either { Preorder.from(PreorderInput(copies = 3, limit = 2)) }
+        val over: Either<NonEmptyList<Preorder.Error>, Preorder> =
+            either { Preorder.from(PreorderInput(copies = 3, limit = 2)) }
         assertEquals(Either.Left(nonEmptyListOf(Preorder.Error.OverLimit(3, 2))), over)
 
-        val invalid: Either<NonEmptyList<Preorder.Error>, Preorder> = either { Preorder.from(PreorderInput(copies = 0, limit = 0)) }
+        val invalid: Either<NonEmptyList<Preorder.Error>, Preorder> =
+            either { Preorder.from(PreorderInput(copies = 0, limit = 0)) }
         assertEquals(
             Either.Left(
                 nonEmptyListOf(

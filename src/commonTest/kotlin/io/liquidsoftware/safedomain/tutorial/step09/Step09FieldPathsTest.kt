@@ -79,7 +79,9 @@ class Order private constructor(
         context(raise: Raise<NonEmptyList<FieldError<Error>>>)
         override fun from(value: OrderInput): Order = validate {
             val customer by customerIds.fieldAt(value.customerId, name = "customer_id") { Error.InvalidCustomerId(it) }
-            val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) { Error.InvalidEmail(it) }
+            val email by Email.required().fieldAt(value.email, onMissing = { Error.MissingEmail }) {
+                Error.InvalidEmail(it)
+            }
             val shipTo by Address.nestedFieldAt(value.shipTo, name = "ship_to") { Error.InvalidAddress(it) }
             val isbns by Isbn.eachFieldAt(value.isbns) { Error.InvalidIsbn(it) }
             val amount by Money.parser.flatFieldAt(value.total, name = "total") { Error.InvalidTotal(it) }
@@ -100,9 +102,11 @@ class Step09FieldPathsTest {
         total = Money.Text("12.99", "USD"),
     )
 
-    private fun order(input: OrderInput): Either<NonEmptyList<FieldError<Order.Error>>, Order> = either { Order.from(input) }
+    private fun order(input: OrderInput): Either<NonEmptyList<FieldError<Order.Error>>, Order> =
+        either { Order.from(input) }
 
-    private fun pathsOf(input: OrderInput): List<String> = order(input).leftOrNull().orEmpty().map { it.path.toString() }
+    private fun pathsOf(input: OrderInput): List<String> =
+        order(input).leftOrNull().orEmpty().map { it.path.toString() }
 
     @Test
     fun `every failure carries the path of the field that caused it`() {

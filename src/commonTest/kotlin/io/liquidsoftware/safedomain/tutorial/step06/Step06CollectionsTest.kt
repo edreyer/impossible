@@ -68,7 +68,8 @@ class Step06CollectionsTest {
     private val dune = Isbn.fromTrusted("9780441013593")
     private val valid = WishlistInput(owner = "Ada", isbns = listOf("9780441013593"), tags = listOf("classics", "space-opera"))
 
-    private fun wishlist(input: WishlistInput): Either<NonEmptyList<Wishlist.Error>, Wishlist> = either { Wishlist.from(input) }
+    private fun wishlist(input: WishlistInput): Either<NonEmptyList<Wishlist.Error>, Wishlist> =
+        either { Wishlist.from(input) }
 
     @Test
     fun `eachField reports every invalid element with its index`() {

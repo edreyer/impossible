@@ -85,7 +85,8 @@ class Step08IdsAndTimeTest {
     fun `typed ids parse once and keep their tag`() {
         val id: Either<TypedId.Error, CustomerId> = either { customerIds.from("550E8400-E29B-41D4-A716-446655440000") }
         assertEquals("Hello, customer 550e8400-e29b-41d4-a716-446655440000", id.map(::greet).getOrNull())
-        assertEquals(Either.Left(TypedId.Error.InvalidFormat("42")), either<TypedId.Error, CustomerId> { customerIds.from("42") })
+        val notAnId: Either<TypedId.Error, CustomerId> = either { customerIds.from("42") }
+        assertEquals(Either.Left(TypedId.Error.InvalidFormat("42")), notAnId)
     }
 
     @Test

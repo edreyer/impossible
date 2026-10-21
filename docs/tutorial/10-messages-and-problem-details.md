@@ -72,7 +72,9 @@ sealed interface PlaceOrderResponse {
 
 fun placeOrder(input: OrderInput): PlaceOrderResponse =
     either<NonEmptyList<FieldError<Order.Error>>, Order> { Order.from(input) }.fold(
-        ifLeft = { failures -> PlaceOrderResponse.Invalid(failures.toProblemDetails({ describe(it) }, instance = "/orders")) },
+        ifLeft = { failures ->
+            PlaceOrderResponse.Invalid(failures.toProblemDetails({ describe(it) }, instance = "/orders"))
+        },
         ifRight = { order -> PlaceOrderResponse.Placed(order) },
     )
 ```
@@ -128,6 +130,6 @@ readable and translatable error response, with no error-to-text mapping hidden i
 controller.
 
 The code and its tests are in
-[Step10MessagesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step10MessagesTest.kt).
+[Step10MessagesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step10/Step10MessagesTest.kt).
 
 Next: [Step 11, JSON](11-json.md).

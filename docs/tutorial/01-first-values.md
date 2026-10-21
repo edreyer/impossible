@@ -75,7 +75,8 @@ second call never ran.
 At the edge of your program you can also fall back to a default with `getOrElse`:
 
 ```kotlin
-fun copiesOrOne(raw: Int): PositiveInt = either<PositiveInt.Error, PositiveInt> { copies(raw) }.getOrElse { PositiveInt.ONE }
+fun copiesOrOne(raw: Int): PositiveInt =
+    either<PositiveInt.Error, PositiveInt> { copies(raw) }.getOrElse { PositiveInt.ONE }
 ```
 
 ## Literals you know are valid
@@ -100,6 +101,6 @@ Common constants such as `PositiveInt.ONE` already exist.
   compose failures without unwrapping.
 
 The code and its tests are in
-[Step01FirstValuesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step01FirstValuesTest.kt).
+[Step01FirstValuesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step01/Step01FirstValuesTest.kt).
 
 Next: [Step 2, your own errors](02-your-own-errors.md).

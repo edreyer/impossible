@@ -61,7 +61,8 @@ fun lineTotal(unitPrice: Money, copies: PositiveInt, discount: Percentage): Mone
 }
 
 class Step07MoneyTest {
-    private fun tag(input: PriceTagInput): Either<NonEmptyList<PriceTag.Error>, PriceTag> = either { PriceTag.from(input) }
+    private fun tag(input: PriceTagInput): Either<NonEmptyList<PriceTag.Error>, PriceTag> =
+        either { PriceTag.from(input) }
 
     @Test
     fun `decimals keep their scale and compare by value`() {
@@ -108,7 +109,9 @@ class Step07MoneyTest {
     @Test
     fun `arithmetic rounds only where you say so`() {
         val total: Either<Money.ArithmeticError, Money> =
-            either { lineTotal(dollars("12.99"), PositiveInt.fromTrusted(3), Percentage.fromTrusted(Decimal.parse("10"))) }
+            either {
+                lineTotal(dollars("12.99"), PositiveInt.fromTrusted(3), Percentage.fromTrusted(Decimal.parse("10")))
+            }
         assertEquals(Either.Right(dollars("35.07")), total)
     }
 

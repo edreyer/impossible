@@ -106,6 +106,6 @@ A `Wishlist` that always has at least one valid book and never repeats a tag, an
 basket that can't grow past its limit, with every element failure reported by index.
 
 The code and its tests are in
-[Step06CollectionsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step06CollectionsTest.kt).
+[Step06CollectionsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step06/Step06CollectionsTest.kt).
 
 Next: [Step 7, decimals and money](07-decimals-and-money.md).

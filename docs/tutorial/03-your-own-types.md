@@ -62,11 +62,13 @@ value class Isbn private constructor(val value: String) {
     companion object : ValueFactory<String, Error, Isbn> by (
         NonBlankString
             .mapError(Error::InvalidText)
-            .ensure({ text -> text.value.length == 13 && text.value.all { it in '0'..'9' } }) { Error.NotThirteenDigits }
+            .ensure({ text -> isThirteenDigits(text.value) }) { Error.NotThirteenDigits }
             .ensure({ text -> hasValidCheckDigit(text.value) }) { Error.WrongCheckDigit }
             .map { Isbn(it.value) }
         )
 }
+
+private fun isThirteenDigits(text: String): Boolean = text.length == 13 && text.all { it in '0'..'9' }
 
 private fun hasValidCheckDigit(digits: String): Boolean =
     digits.mapIndexed { index, digit -> (digit - '0') * if (index % 2 == 0) 1 else 3 }.sum() % 10 == 0
@@ -139,6 +141,6 @@ Four domain types, each a few lines, each impossible to construct from invalid i
 The next steps use them to build bigger things.
 
 The code and its tests are in
-[Step03OwnTypesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step03OwnTypesTest.kt).
+[Step03OwnTypesTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step03/Step03OwnTypesTest.kt).
 
 Next: [Step 4, collect every error](04-collect-every-error.md).

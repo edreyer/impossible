@@ -114,6 +114,6 @@ real percentages; and arithmetic whose every failure and rounding decision is in
 signature.
 
 The code and its tests are in
-[Step07MoneyTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/Step07MoneyTest.kt).
+[Step07MoneyTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step07/Step07MoneyTest.kt).
 
 Next: [Step 8, identifiers and time](08-ids-and-time.md).

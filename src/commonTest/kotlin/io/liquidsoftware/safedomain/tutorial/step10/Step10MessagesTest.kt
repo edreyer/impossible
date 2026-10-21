@@ -51,7 +51,9 @@ sealed interface PlaceOrderResponse {
 
 fun placeOrder(input: OrderInput): PlaceOrderResponse =
     either<NonEmptyList<FieldError<Order.Error>>, Order> { Order.from(input) }.fold(
-        ifLeft = { failures -> PlaceOrderResponse.Invalid(failures.toProblemDetails({ describe(it) }, instance = "/orders")) },
+        ifLeft = { failures ->
+            PlaceOrderResponse.Invalid(failures.toProblemDetails({ describe(it) }, instance = "/orders"))
+        },
         ifRight = { order -> PlaceOrderResponse.Placed(order) },
     )
 
