@@ -9,6 +9,9 @@ A shared type establishes a narrow guarantee. A consuming application's
 `CustomerName` or `OrderQuantity` can build on that guarantee while retaining
 its own meaning and policies.
 
+New here? The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step
+by step, from a single value to JSON and property tests.
+
 ## Types
 
 Types are grouped by domain under `io.liquidsoftware.safedomain`. The root
