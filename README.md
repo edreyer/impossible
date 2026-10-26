@@ -12,6 +12,22 @@ its own meaning and policies.
 New here? The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step
 by step, from a single value to JSON and property tests.
 
+## Installation
+
+The library is published to Maven Central for every target in the [Build](#build)
+section. In a multiplatform project, add it to `commonMain`; in a JVM project, add it
+to `dependencies` the same way.
+
+```kotlin
+dependencies {
+  implementation("io.liquidsoftware:impossible:0.1.0")
+  // kotlinx.serialization serializers that validate while decoding.
+  implementation("io.liquidsoftware:impossible-serialization:0.1.0")
+  // kotest generators for property tests.
+  testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
+}
+```
+
 ## Types
 
 Types are grouped by domain under `io.liquidsoftware.safedomain`. The root
@@ -1114,8 +1130,10 @@ accumulating construction with decimals, percentages, tagged IDs, and HTTP URLs.
 Money tests cover minor-unit construction, exact and rounded arithmetic, overflow,
 allocation, and typed failures. Collection tests cover empty inputs, duplicate positions,
 inclusive size bounds, snapshot immutability, invariant-preserving operations,
-and accumulating composition. The library is not yet
-configured for publication.
+and accumulating composition.
+
+Releases go to Maven Central; [RELEASING.md](RELEASING.md) has the steps and
+[CHANGELOG.md](CHANGELOG.md) the history.
 
 Contributor rules are in [AGENTS.md](AGENTS.md).
 

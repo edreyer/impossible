@@ -4,6 +4,9 @@ plugins {
   alias(libs.plugins.kover)
 }
 
+// The POM description on Maven Central.
+description = "Kotlin Multiplatform value types whose invalid states cannot be constructed."
+
 // Lint and coverage apply to every module, so a new module is checked without extra setup.
 allprojects {
   apply(plugin = "dev.detekt")
