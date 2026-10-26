@@ -26,6 +26,10 @@ invalid data, and property tests for all of it.
 | [11. JSON](11-json.md) | Read and write JSON through the validating factories | `impossible-serialization`, `asSerializer`, `InvalidValueException` |
 | [12. Property testing](12-property-testing.md) | Generate valid values and real errors to test your own code | `impossible-testing`, `arb()`, `errorArb()`, `untrustedText()`, `nearMiss()` |
 
+Already know the basics and want to see the library inside a framework? The
+[recipes](../recipes/README.md) cover Ktor, Spring, persistence, and normalizing input
+before parsing.
+
 ## Before you start
 
 The library is Kotlin Multiplatform and needs Kotlin 2.4 or later, because its API

@@ -23,7 +23,11 @@ class TutorialSnippetsTest {
         "serialization/src/commonTest/kotlin/io/liquidsoftware/safedomain/serialization/tutorial",
         "testing/src/commonTest/kotlin/io/liquidsoftware/safedomain/testing/tutorial",
         "src/jvmTest/kotlin/io/liquidsoftware/safedomain/readme",
+        "src/commonTest/kotlin/io/liquidsoftware/safedomain/recipes",
     )
+
+    /** Recipes whose code is compiled; the others say in their first line that they are not. */
+    private val compiledRecipes = listOf(File(root, "docs/recipes/normalize-then-parse.md"))
 
     private fun normalized(lines: List<String>): String =
         lines.joinToString("\n", prefix = "\n", postfix = "\n") { it.trim() }
@@ -55,7 +59,7 @@ class TutorialSnippetsTest {
         val chapters = File(root, "docs/tutorial")
             .listFiles { file -> file.extension == "md" }
             .orEmpty()
-            .sortedBy { it.name }
+            .sortedBy { it.name } + compiledRecipes
         assertTrue(chapters.size >= 12, "Expected the tutorial chapters in docs/tutorial")
         assertTrue(code.isNotEmpty(), "Expected the tutorial sources")
 

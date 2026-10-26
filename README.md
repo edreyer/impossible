@@ -78,6 +78,8 @@ a translation needs. The rejected email address never appears in it.
 
 - The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step by step,
   from a single value to JSON and property tests.
+- The [recipes](docs/recipes/README.md) show the library in Ktor, Spring, Exposed and
+  JPA, and how to accept friendly input such as spaced phone numbers.
 - The rest of this README is the reference: every type, its invariant, and its errors.
 
 ## Types
