@@ -403,6 +403,17 @@ throw `ArithmeticException` when the scale leaves the `Int` range, when
 [bignum](https://github.com/ionspin/kotlin-multiplatform-bignum), an internal
 dependency that is not part of the public API.
 
+`Decimal` arithmetic is plain arithmetic, not validation, so it follows
+`java.math.BigDecimal` and throws `ArithmeticException` on division by zero, on
+`UNNECESSARY` rounding that would lose digits, and on scale overflow. `Money`
+is different: its operations raise a typed `Money.ArithmeticError`. To make a decimal
+operation total inside a `Raise` scope, catch the exception and raise your own error:
+
+```kotlin
+val perUnit = Either.catch { total.divide(count, 2, RoundingMode.HALF_EVEN) }
+    .mapLeft { PriceError.NotDivisible }.bind()
+```
+
 `PositiveDecimal.from(Decimal.parse(...))` and `NonNegativeDecimal.from(Decimal.parse(...))`
 enforce their sign invariants. `Percentage.from(Decimal.parse("12.5"))` means **12.5%**
 and accepts the inclusive range `0..100`. It is suitable for bounded proportions,
@@ -538,6 +549,12 @@ address can identify a person, so `InvalidFormat` redacts its input in `toString
 `Secret(<redacted>)`, so it can sit in a data class that gets logged; `reveal()` reads
 the content at the point of use. Equality takes time independent of where two secrets
 first differ, and the hash code uses only the length.
+
+The redaction rule across the library: an error's `toString` never shows rejected
+personal data, such as the text of an invalid email address or phone number. A valid
+value prints as written, so `Email` and `Phone` show their addresses and numbers;
+they are data the application already stores and displays. Text that must never be
+printed, logged, or serialized belongs in `Secret`.
 
 `GeoPoint` is a WGS 84 latitude and longitude in decimal degrees. Both are checked and
 reported together, and nothing is wrapped or clamped: `181.0` fails rather than becoming
@@ -940,7 +957,11 @@ The `impossible-testing` module (in `testing/`) publishes [kotest](https://kotes
 generators for every type, so you can property-test the business types you build
 from them. Each generator is an extension on the type's companion and produces
 values through the type's real factory, so a generated value has passed the same
-validation as production input:
+validation as production input.
+
+`impossible-testing` depends on kotest-property 6.x as an API dependency, since its
+generators are kotest `Arb`s. A project still on kotest 5 cannot use it until it
+upgrades.
 
 ```kotlin
 import io.liquidsoftware.safedomain.testing.arb
@@ -995,7 +1016,8 @@ it, because Kotlin/JS `Regex.matches` does not backtrack to a longer match.
 This library supplies validated construction, mapped factories, value semantics,
 date range operations, collection invariants, and minor-unit money arithmetic on every
 Kotlin Multiplatform target listed under [Build](#build), plus a few JVM
-conversions. It does not yet include serialization adapters. Arithmetic on an extracted
+conversions. Serialization adapters live in the separate `impossible-serialization`
+module (see [JSON and other formats](#json-and-other-formats)). Arithmetic on an extracted
 `Int` has ordinary Kotlin semantics; the wrappers' own operations preserve their
 invariants and report overflow explicitly. `TimeZoneId` is the one type whose
 validation depends on platform data: each target resolves ids with its own time zone
@@ -1071,8 +1093,11 @@ Dependencies:
   implementation dependency behind `Decimal`.
 - [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), an npm
   dependency of the JS and Wasm targets only that gives `TimeZoneId` the IANA database there. It is the newest
-  release compatible with the `@js-joda/core` version kotlinx-datetime uses.
-- [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html),
+  release compatible with the `@js-joda/core` version kotlinx-datetime uses. The library
+  loads the full database, about 730 KB minified (about 40 KB gzipped), so every JS and
+  Wasm bundle that depends on the library carries it, even one that never uses
+  `TimeZoneId`.
+- [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html) 6.x,
   an API dependency of `impossible-testing` only; the library itself does not use it.
   That module's tests also use kotlinx-coroutines-test to run suspending checks.
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), an

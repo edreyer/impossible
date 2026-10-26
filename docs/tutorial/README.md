@@ -51,6 +51,9 @@ dependencies {
 }
 ```
 
+Step 12 uses `impossible-testing`, which depends on kotest-property 6.x; a project on
+kotest 5 has to upgrade before it can use that module.
+
 Every type lives in a subpackage of `io.liquidsoftware.safedomain` named after its
 domain (`text`, `numeric`, `money`, `contact`, `time`, and so on); the construction
 tools (`ValueFactory`, `validate`, the combinators) live in the root package. Each
