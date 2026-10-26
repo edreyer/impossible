@@ -19,7 +19,7 @@ package holds the construction contract shared by every type.
 
 | Package | Contents |
 | --- | --- |
-| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()`, `fromTrusted` and the combinators `map`, `mapError`, `andThen` and `ensure`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
+| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()`, `fromTrusted` and the combinators `map`, `mapError`, `andThen` and `ensure`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `ValidationScope`, `Validated`) |
 | `.text` | `NonBlankString`, `Slug`, `Secret` |
 | `.contact` | `Email`, `Phone` |
 | `.numeric` | `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt`, `PositiveDecimal`, `NegativeDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
@@ -361,14 +361,12 @@ expose a `NonEmptyList<Error>` factory, as `Money.parser` does. Use the mapped
 `from(raw, onError = ...)` overload directly for composites that should stop at
 their first failure. `validate` has no field-count limit.
 
-`validate` wraps Arrow's `accumulate` API, which Arrow marks
-`@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
-[Validation.kt](src/commonMain/kotlin/io/liquidsoftware/safedomain/Validation.kt);
-callers need none. `Validated<A>` is an alias for Arrow's
-`RaiseAccumulate.Value<A>`, so that experimental Arrow type is part of this
-library's public API: if Arrow changes it, upgrading Arrow is a breaking change
-here. Arrow is therefore pinned to an exact version in
-[gradle/libs.versions.toml](gradle/libs.versions.toml).
+The DSL is built on Arrow's accumulate API internally. That API is experimental in
+Arrow, so the library keeps it out of its own API: the block's receiver is the
+library's `ValidationScope<Error>` (a `Raise<Error>`, so `ensure` and `raise` work in
+it) and fields are the library's `Validated<A>`. No Arrow experimental type appears in
+a public signature, callers need no opt-in, and Arrow is an ordinary pinned
+dependency in [gradle/libs.versions.toml](gradle/libs.versions.toml).
 [ValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
 covers ordering, flattening, indexing, dependent blocks, and early reads.
 

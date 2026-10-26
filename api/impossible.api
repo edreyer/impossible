@@ -118,7 +118,7 @@ public final class io/liquidsoftware/safedomain/FieldPath$Segment$Name : io/liqu
 }
 
 public final class io/liquidsoftware/safedomain/PathField {
-	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Larrow/core/raise/RaiseAccumulate$Value;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lio/liquidsoftware/safedomain/Validated;
 }
 
 public final class io/liquidsoftware/safedomain/ProblemDetails {
@@ -186,25 +186,43 @@ public final class io/liquidsoftware/safedomain/RequiredError$Missing : io/liqui
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/liquidsoftware/safedomain/Validated {
+	public final fun getValue ()Ljava/lang/Object;
+	public final fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+}
+
 public final class io/liquidsoftware/safedomain/ValidationKt {
-	public static final fun eachField (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Larrow/core/raise/RaiseAccumulate$Value;
-	public static final fun eachFieldAt (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun eachFieldAt$default (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
-	public static final fun field (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Larrow/core/raise/RaiseAccumulate$Value;
-	public static final fun field (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Larrow/core/raise/RaiseAccumulate$Value;
-	public static final fun field (Larrow/core/raise/RaiseAccumulate;Lkotlin/jvm/functions/Function1;)Larrow/core/raise/RaiseAccumulate$Value;
-	public static final fun fieldAt (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static final fun fieldAt (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static final fun fieldAt (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun fieldAt$default (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun fieldAt$default (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun fieldAt$default (Larrow/core/raise/RaiseAccumulate;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
-	public static final fun flatField (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Larrow/core/raise/RaiseAccumulate$Value;
-	public static final fun flatFieldAt (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun flatFieldAt$default (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
-	public static final fun nestedFieldAt (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
-	public static synthetic fun nestedFieldAt$default (Larrow/core/raise/RaiseAccumulate;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun eachField (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun eachFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun eachFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun flatField (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun flatFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun flatFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun nestedFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun nestedFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun validate (Larrow/core/raise/Raise;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public final class io/liquidsoftware/safedomain/ValidationScope : arrow/core/raise/Raise {
+	public fun bind (Larrow/core/Either;)Ljava/lang/Object;
+	public fun bind (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun bind (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun bindAll (Ljava/lang/Iterable;)Ljava/util/List;
+	public fun bindAll (Ljava/util/Map;)Ljava/util/Map;
+	public fun bindAll-1TN0_VU (Ljava/util/Set;)Ljava/util/Set;
+	public fun bindAll-vcjLgH4 (Ljava/util/List;)Ljava/util/List;
+	public fun invoke (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public fun invoke (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun raise (Ljava/lang/Object;)Ljava/lang/Void;
 }
 
 public abstract interface class io/liquidsoftware/safedomain/ValueFactory {

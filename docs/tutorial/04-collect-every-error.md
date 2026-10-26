@@ -83,9 +83,11 @@ fun publish(input: ListingInput): Listing = Listing.from(input, onError = Catalo
 
 ## About the DSL
 
-`validate` wraps Arrow's `accumulate` API. Arrow marks that API experimental; the
-library confines the opt-in to one file, so your code needs no `@OptIn`. There's no
-limit on the number of fields.
+`validate` is built on Arrow's `accumulate` API, which Arrow marks experimental. The
+library keeps that API inside: the block runs in the library's own `ValidationScope`,
+which is a `Raise` of your error, and each field is a `Validated` value, so your code
+needs no `@OptIn` and an Arrow upgrade cannot change it. There's no limit on the
+number of fields.
 
 ## What you have now
 

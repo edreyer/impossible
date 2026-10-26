@@ -9,26 +9,46 @@ import arrow.core.raise.withError
 import kotlin.reflect.KProperty
 
 /**
+ * The scope of a [validate] block. It is a [Raise] of the composite's error, so `ensure`
+ * and `raise` work inside it; declare fields with [field] and its siblings.
+ *
+ * The DSL is built on Arrow's accumulation API, which is experimental; this class keeps
+ * that API out of the library's public signatures.
+ */
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+public class ValidationScope<Error> internal constructor(
+    private val accumulate: RaiseAccumulate<Error>,
+) : Raise<Error> {
+    override fun raise(r: Error): Nothing = accumulate.raise(r)
+
+    internal inline fun <A> accumulating(crossinline block: RaiseAccumulate<Error>.() -> A): Validated<A> =
+        Validated(accumulate.accumulating { block() })
+}
+
+/**
  * A field declared inside [validate]. Read it with `by`; reading a failed field
  * raises every error collected so far, so read fields only once all are declared,
  * or inside a dependent [field] block.
  */
-public typealias Validated<A> = RaiseAccumulate.Value<A>
+@OptIn(ExperimentalRaiseAccumulateApi::class)
+public class Validated<out A> internal constructor(private val delegate: RaiseAccumulate.Value<A>) {
+    /** The field's value; reading it when the field failed raises every error collected so far. */
+    public val value: A get() = delegate.value
+
+    public operator fun getValue(thisRef: Any?, property: KProperty<*>): A = value
+}
 
 /**
  * Accumulating construction for composite types: every field declared in [block]
  * runs, and all failures are raised together in declaration order.
- *
- * This is the only entry point to Arrow's experimental accumulation API; callers
- * need no opt-in.
  */
 @OptIn(ExperimentalRaiseAccumulateApi::class)
 context(raise: Raise<NonEmptyList<Error>>)
-public inline fun <Error, A> validate(block: RaiseAccumulate<Error>.() -> A): A = raise.accumulate(block)
+public fun <Error, A> validate(block: ValidationScope<Error>.() -> A): A =
+    raise.accumulate { ValidationScope(this).block() }
 
 /** Validates one field, mapping its failure (including a whole error batch) with [onError]. */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<Mapped>)
+context(scope: ValidationScope<Mapped>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field(
     value: Input,
     onError: (Error) -> Mapped,
@@ -38,8 +58,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field
  * Validates one [required] field, mapping absence with [onMissing] and an invalid
  * value with [onError].
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<Mapped>)
+context(scope: ValidationScope<Mapped>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.field(
     value: Input,
     onMissing: () -> Mapped,
@@ -52,8 +71,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error
 }
 
 /** Validates one field from an accumulating factory, mapping each nested error into the parent list. */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<Mapped>)
+context(scope: ValidationScope<Mapped>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatField(
     value: Input,
     onError: (Error) -> Mapped,
@@ -62,8 +80,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>
 }
 
 /** Validates every element, reporting each failure with its zero-based index. */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<Mapped>)
+context(scope: ValidationScope<Mapped>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachField(
     values: Iterable<Input>,
     onError: (index: Int, Error) -> Mapped,
@@ -77,9 +94,9 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachF
  * A field computed by [block]. A failure stops only this block; other fields still run.
  * Use it for steps that depend on earlier fields or for checks across fields.
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<Error>)
-public fun <Error, A> field(block: RaiseAccumulate<Error>.() -> A): Validated<A> = scope.accumulating(block)
+context(scope: ValidationScope<Error>)
+public fun <Error, A> field(block: ValidationScope<Error>.() -> A): Validated<A> =
+    scope.accumulating { ValidationScope(this).block() }
 
 /**
  * A field declared with one of the path-aware helpers ([fieldAt], [eachFieldAt],
@@ -102,8 +119,7 @@ public class PathField<out A> internal constructor(
  * val email by Email.fieldAt(input.email) { OrderError.Email(it) }   // path "email"
  * ```
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.fieldAt(
     value: Input,
     name: String? = null,
@@ -113,7 +129,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.field
 }
 
 /** Validates one [required] field at its path, mapping absence with [onMissing] and an invalid value with [onError]. */
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error>, Value>.fieldAt(
     value: Input,
     name: String? = null,
@@ -127,8 +143,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, RequiredError<Error
 }
 
 /** Validates every element, recording each failure at `field[index]`. */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachFieldAt(
     values: Iterable<Input>,
     name: String? = null,
@@ -147,8 +162,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, Error, Value>.eachF
  * Validates one field from an accumulating factory without paths of its own, such as
  * `GeoPoint` or `Money.parser`, recording each of its errors at the field's path.
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>, Value>.flatFieldAt(
     value: Input,
     name: String? = null,
@@ -166,8 +180,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<Error>
  * path with this field's path: a `price` failure inside the `shipping` field is
  * reported at `shipping.price`.
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldError<Error>>, Value>.nestedFieldAt(
     value: Input,
     name: String? = null,
@@ -187,8 +200,7 @@ public fun <Input, Error, Value, Mapped> ValueFactory<Input, NonEmptyList<FieldE
  * steps that depend on earlier fields or check several at once; report a failure that
  * belongs to no single field with `raise(FieldError(FieldPath.ROOT, error))` in [field].
  */
-@OptIn(ExperimentalRaiseAccumulateApi::class)
-context(scope: RaiseAccumulate<FieldError<Mapped>>)
+context(scope: ValidationScope<FieldError<Mapped>>)
 public fun <Mapped, A> fieldAt(name: String? = null, block: Raise<Mapped>.() -> A): PathField<A> =
     PathField(name) { path ->
         scope.accumulating { withError({ error: Mapped -> FieldError(path, error) }) { block() } }
