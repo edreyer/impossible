@@ -154,6 +154,9 @@ their domain names, policies, authorization decisions, and workflows.
   `safeDomainSerializersModule` when it needs no configuration, and to
   `SerializationLawsTest`. Never decode through `fromTrusted`, never write a
   `Secret`, and never quote rejected input in a serialization error.
+- Every new type also gets a Jackson deserializer and serializer in
+  `impossible-jackson` (`jackson/`, JVM only) with the same wire form, registered in
+  `ImpossibleModule`, and joins `CrossCheckTest`, which compares both modules' JSON.
 - On Kotlin/JS, `Regex.matches` takes the first match and checks its length without
   backtracking to a longer one. End a validation pattern with `$` when an optional
   or alternative part could match a shorter prefix, as `LanguageTag` does.

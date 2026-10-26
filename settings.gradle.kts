@@ -15,3 +15,7 @@ project(":impossible-testing").projectDir = file("testing")
 // kotlinx.serialization serializers that decode through the validating factories.
 include(":impossible-serialization")
 project(":impossible-serialization").projectDir = file("serialization")
+
+// Jackson (de)serializers that decode through the validating factories; JVM only.
+include(":impossible-jackson")
+project(":impossible-jackson").projectDir = file("jackson")

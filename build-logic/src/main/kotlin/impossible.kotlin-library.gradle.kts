@@ -1,5 +1,5 @@
-// Targets, toolchain and API checks shared by every module of the library. A module
-// applies this plugin and adds only its own dependencies.
+// Targets, toolchain and API checks shared by every multiplatform module of the library.
+// A module applies this plugin and adds only its own dependencies.
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
@@ -8,8 +8,8 @@ plugins {
   kotlin("multiplatform")
 }
 
-group = "io.liquidsoftware"
-version = "1.0-SNAPSHOT"
+group = ImpossibleBuild.GROUP
+version = ImpossibleBuild.VERSION
 
 repositories {
   mavenCentral()
@@ -22,7 +22,7 @@ kotlin {
   // JDK 17 is the oldest JDK consumers can run this library on. Compiling and testing
   // with it emits Java 17 bytecode, links only against the JDK 17 API, and runs the JVM
   // tests on that floor.
-  jvmToolchain(17)
+  jvmToolchain(ImpossibleBuild.JVM_TOOLCHAIN)
 
   jvm {
     testRuns.named("test") {

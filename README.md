@@ -68,8 +68,8 @@ a translation needs. The rejected email address never appears in it.
 - Kotlin 2.4 or later: the API uses context parameters.
 - Arrow 2 on the classpath, as an API dependency. You need only `Raise`, `either` and
   `NonEmptyList`; the tutorial introduces them.
-- JSON through kotlinx.serialization (`impossible-serialization`); every decoder runs
-  the real validation.
+- JSON through kotlinx.serialization (`impossible-serialization`) or Jackson 2
+  (`impossible-jackson`, JVM); every decoder runs the real validation.
 - Targets: JVM 17+, JS, Wasm, Linux x64, macOS and iOS (arm64 and simulator).
 - Version 0.x: the API may still change between minor versions, and every change shows
   up in the committed ABI dumps.
@@ -1087,6 +1087,35 @@ path-aware helpers under [Field paths, messages, and problem details](#field-pat
 shows each case, and `SerializationLawsTest` checks that every serializer reads back
 what it writes and turns arbitrary text into a value or an `InvalidValueException`.
 
+### Jackson
+
+The `impossible-jackson` module (in `jackson/`, JVM only, coordinates
+`io.liquidsoftware:impossible-jackson`) gives Jackson 2 the same support with one line:
+
+```kotlin
+val mapper = ObjectMapper().registerModule(ImpossibleModule())
+```
+
+The JSON is the same as in the table above, and a test checks that for every type's
+generator both modules write equal JSON and read each other's output. Reading runs the
+real factory; a rejected value throws the module's `InvalidValueException`, a
+`JsonMappingException` with the typed `error`, its `messages`, and the JSON Pointer of
+the value (`pointer`, such as `/email`), and never the rejected input. Numbers are
+never coerced: a float is not truncated into a `PositiveInt`, and a decimal must be a
+string.
+
+- `Secret` is read but never written.
+- `BoundedInt` and `BoundedList` need bounds: declare `class RatingDeserializer :
+  BoundedIntDeserializer(1..5)` (or a `BoundedListDeserializer` subclass) and name it
+  with `@JsonDeserialize(using = ...)`.
+- Kotlin classes that hold value classes such as `Email` need jackson-module-kotlin as
+  well (`jacksonObjectMapper().registerModule(ImpossibleModule())`), which Spring Boot
+  registers automatically when it is on the classpath.
+- Your own types: `Sku.asJacksonDeserializer("com.example.Sku", String::class.java, ::describe)`
+  and `jacksonSerializer(Sku::value)`.
+
+The [Spring recipe](docs/recipes/spring.md) shows the module in a Spring Boot application.
+
 ## Property-based testing
 
 The `impossible-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
@@ -1189,16 +1218,18 @@ iOS simulator tests on macOS. The same checks run locally:
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
 
-The settings shared by all three modules (targets, toolchain, JVM bytecode level,
-explicit API mode, ABI validation, group and version) live in one convention plugin,
+The settings shared by the three multiplatform modules (targets, toolchain, JVM bytecode
+level, explicit API mode, ABI validation, group and version) live in one convention plugin,
 [build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts](build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts).
-Each module applies `id("impossible.kotlin-library")` and declares only its own
-dependencies.
+Each of them applies `id("impossible.kotlin-library")` and declares only its own
+dependencies. The JVM-only `impossible-jackson` applies
+[impossible.jvm-library](build-logic/src/main/kotlin/impossible.jvm-library.gradle.kts)
+instead, which shares the group, version and JDK floor through `ImpossibleBuild`.
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
 
-All three modules compile in Kotlin's
+All modules compile in Kotlin's
 [explicit API mode](https://kotlinlang.org/docs/api-guidelines-simplicity.html#use-explicit-api-mode):
 every declaration visible outside the module states its visibility (`public`,
 `internal` or `private`) and every public function or property states its type,
@@ -1239,6 +1270,9 @@ Dependencies:
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), an
   API dependency of `impossible-serialization` only (core; its tests use the JSON
   format). That module applies the Kotlin serialization compiler plugin.
+- [Jackson](https://github.com/FasterXML/jackson-databind) databind 2.x, an API
+  dependency of `impossible-jackson` only. Its tests also use jackson-module-kotlin,
+  which the module itself does not need.
 - Build tooling only, not shipped: [detekt](https://detekt.dev) with its
   ktlint rules (a detekt 2 pre-release, built on the Kotlin 2.4 compiler), and
   [Kover](https://github.com/Kotlin/kotlinx-kover) for coverage.
