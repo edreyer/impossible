@@ -10,6 +10,9 @@ import kotlin.test.assertTrue
  * line, in the tutorial test sources, which compile and run on every target. Indentation
  * is ignored, so a snippet may be lifted out of a class body; anything else that differs
  * fails here with the chapter and the snippet's first line.
+ *
+ * README.md is checked the same way, but only for blocks marked with a `<!-- checked -->`
+ * line just before the fence; their code lives in the `readme` test package.
  */
 class TutorialSnippetsTest {
     private val root: File = generateSequence(File("").absoluteFile) { it.parentFile }
@@ -19,17 +22,21 @@ class TutorialSnippetsTest {
         "src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial",
         "serialization/src/commonTest/kotlin/io/liquidsoftware/safedomain/serialization/tutorial",
         "testing/src/commonTest/kotlin/io/liquidsoftware/safedomain/testing/tutorial",
+        "src/jvmTest/kotlin/io/liquidsoftware/safedomain/readme",
     )
 
     private fun normalized(lines: List<String>): String =
         lines.joinToString("\n", prefix = "\n", postfix = "\n") { it.trim() }
 
-    private fun snippets(markdown: String): List<List<String>> {
+    private fun snippets(markdown: String, markedOnly: Boolean = false): List<List<String>> {
         val blocks = mutableListOf<List<String>>()
         var current: MutableList<String>? = null
+        var previous = ""
         for (line in markdown.lines()) {
+            val marked = !markedOnly || previous.trim() == "<!-- checked -->"
+            previous = line
             when {
-                current == null && line.trim() == "```kotlin" -> current = mutableListOf()
+                current == null && line.trim() == "```kotlin" && marked -> current = mutableListOf()
                 current != null && line.trim() == "```" -> {
                     blocks += current
                     current = null
@@ -58,5 +65,18 @@ class TutorialSnippetsTest {
                 .map { snippet -> "${chapter.name}: ${snippet.firstOrNull { it.isNotBlank() }?.trim()}" }
         }
         assertEquals(emptyList(), missing, "Snippets that no tutorial source contains")
+    }
+
+    @Test
+    fun `every checked kotlin snippet in the README is compiled code`() {
+        val code = sources
+            .flatMap { File(root, it).walk().filter { file -> file.extension == "kt" }.toList() }
+            .map { normalized(it.readLines()) }
+        val checked = snippets(File(root, "README.md").readText(), markedOnly = true)
+        assertTrue(checked.isNotEmpty(), "Expected checked snippets in README.md")
+        val missing = checked
+            .filter { snippet -> code.none { normalized(snippet) in it } }
+            .map { snippet -> snippet.firstOrNull { it.isNotBlank() }?.trim() }
+        assertEquals(emptyList(), missing, "README snippets that no source contains")
     }
 }

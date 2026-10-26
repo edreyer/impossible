@@ -9,8 +9,76 @@ A shared type establishes a narrow guarantee. A consuming application's
 `CustomerName` or `OrderQuantity` can build on that guarantee while retaining
 its own meaning and policies.
 
-New here? The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step
-by step, from a single value to JSON and property tests.
+impossible is a construction kit for domain types plus an error pipeline: over 30
+validated value types (email, money, typed ids, date ranges, URLs, and more), a
+`validate { }` DSL that composes them into your own types and reports every failure at
+once, and stable error codes that become an RFC 9457 HTTP response in one call.
+Validation behaves identically on the JVM, JS, Wasm, iOS, macOS and Linux, and failures
+are typed values built on Arrow's `Raise`, never exceptions.
+
+### Before and after
+
+The usual way: checks scattered in `init` blocks, the first failure thrown as an
+exception, and the raw input echoed into the message.
+
+<!-- checked -->
+```kotlin
+data class Order(val email: String, val quantity: Int, val total: BigDecimal) {
+    init {
+        require("@" in email) { "Invalid email: $email" }
+        require(quantity > 0) { "Quantity must be positive" }
+        require(total.signum() > 0) { "Total must be positive" }
+    }
+}
+```
+
+With impossible: each field is a type that cannot hold an invalid value, every failure
+is collected against the field that caused it, and the error path is one line.
+
+<!-- checked -->
+```kotlin
+data class OrderInput(val email: String?, val quantity: Int, val total: Money.Text)
+
+data class Order(val email: Email, val quantity: PositiveInt, val total: PositiveMoney) {
+    companion object : ValueFactory<OrderInput, NonEmptyList<FieldError<ValidationError>>, Order> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: OrderInput): Order = validate {
+            val email by Email.required().fieldAt(value.email)
+            val quantity by PositiveInt.fieldAt(value.quantity)
+            val amount by Money.parser.flatFieldAt(value.total, name = "total")
+            val total by fieldAt { PositiveMoney.from(amount) }
+            Order(email, quantity, total)
+        }
+    }
+}
+
+fun accept(input: OrderInput): String = Order.fromEither(input).fold(
+    ifLeft = { failures -> render(failures.toProblemDetails()) }, // 422 application/problem+json
+    ifRight = { order -> "accepted ${order.quantity.value}" },
+)
+```
+
+`OrderInput("nope", 0, Money.Text("0.00", "EUR"))` yields one problem with three
+entries, `/email` `email.invalid_format`, `/quantity` `positive_int.non_positive` and
+`/total` `positive_money.non_positive`, each with an English message and the arguments
+a translation needs. The rejected email address never appears in it.
+
+### Is it for you
+
+- Kotlin 2.4 or later: the API uses context parameters.
+- Arrow 2 on the classpath, as an API dependency. You need only `Raise`, `either` and
+  `NonEmptyList`; the tutorial introduces them.
+- JSON through kotlinx.serialization (`impossible-serialization`); every decoder runs
+  the real validation.
+- Targets: JVM 17+, JS, Wasm, Linux x64, macOS and iOS (arm64 and simulator).
+- Version 0.x: the API may still change between minor versions, and every change shows
+  up in the committed ABI dumps.
+
+### Where next
+
+- The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step by step,
+  from a single value to JSON and property tests.
+- The rest of this README is the reference: every type, its invariant, and its errors.
 
 ## Types
 
