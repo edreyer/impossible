@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.web
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -13,7 +14,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * equality and hashing ignore ASCII case, as DNS does. No DNS lookup is performed.
  */
 public class DomainName private constructor(public val value: String) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class InvalidFormat(val value: String) : Error
     }
 

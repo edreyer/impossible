@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlinx.datetime.IllegalTimeZoneException
 import kotlinx.datetime.TimeZone
@@ -15,7 +16,7 @@ import kotlinx.datetime.TimeZone
  * Equality and hashing use [value].
  */
 public class TimeZoneId private constructor(public val value: String, public val timeZone: TimeZone) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class UnknownZone(val value: String) : Error
     }
 

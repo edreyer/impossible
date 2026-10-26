@@ -21,6 +21,7 @@ invalid data, and property tests for all of it.
 | [7. Decimals and money](07-decimals-and-money.md) | Exact amounts, discounts, and arithmetic that never rounds by accident | `Decimal`, `Percentage`, `Money`, `PositiveMoney`, `flatField` |
 | [8. Identifiers and time](08-ids-and-time.md) | Ids that can't be mixed up, dates checked against a clock | `TypedId`, `DateChecks`, `DateRange`, `TimeWindow`, `PositiveDuration` |
 | [9. Field paths](09-field-paths.md) | Say which field failed, including nested and list fields | `fieldAt`, `nestedFieldAt`, `eachFieldAt`, `flatFieldAt`, `FieldPath` |
+| [9b. Boundary mode](09b-boundary-mode.md) | Check a request with no wrapper errors and answer with one call | `ValidationError`, `fieldAt` without a lambda, `toProblemDetails()` |
 | [10. Messages and problem details](10-messages-and-problem-details.md) | Turn errors into stable codes, text, and an RFC 9457 response | `ErrorMessages`, `ErrorMessage`, `toProblemDetails` |
 | [11. JSON](11-json.md) | Read and write JSON through the validating factories | `impossible-serialization`, `asSerializer`, `InvalidValueException` |
 | [12. Property testing](12-property-testing.md) | Generate valid values and real errors to test your own code | `impossible-testing`, `arb()`, `errorArb()`, `untrustedText()`, `nearMiss()` |

@@ -17,6 +17,7 @@ public final class io/liquidsoftware/safedomain/ErrorMessage {
 public final class io/liquidsoftware/safedomain/ErrorMessages {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/ErrorMessages;
 	public final fun describe (Lio/liquidsoftware/safedomain/RequiredError;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/ErrorMessage;
+	public final fun describe (Lio/liquidsoftware/safedomain/ValidationError;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/collections/BoundedList$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/collections/DistinctError;)Lio/liquidsoftware/safedomain/ErrorMessage;
 	public final fun describe (Lio/liquidsoftware/safedomain/collections/NonEmptyError;)Lio/liquidsoftware/safedomain/ErrorMessage;
@@ -161,6 +162,8 @@ public final class io/liquidsoftware/safedomain/ProblemDetails$InvalidField {
 }
 
 public final class io/liquidsoftware/safedomain/ProblemDetailsKt {
+	public static final fun toProblemDetails-8L6vy7A (Ljava/util/List;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/ProblemDetails;
+	public static synthetic fun toProblemDetails-8L6vy7A$default (Ljava/util/List;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails;
 	public static final fun toProblemDetails-XggiU5o (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/ProblemDetails;
 	public static synthetic fun toProblemDetails-XggiU5o$default (Ljava/util/List;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/ProblemDetails;
 }
@@ -179,7 +182,7 @@ public final class io/liquidsoftware/safedomain/RequiredError$Invalid : io/liqui
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/liquidsoftware/safedomain/RequiredError$Missing : io/liquidsoftware/safedomain/RequiredError {
+public final class io/liquidsoftware/safedomain/RequiredError$Missing : io/liquidsoftware/safedomain/RequiredError, io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/RequiredError$Missing;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -191,24 +194,37 @@ public final class io/liquidsoftware/safedomain/Validated {
 	public final fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 }
 
+public abstract interface class io/liquidsoftware/safedomain/ValidationError {
+}
+
 public final class io/liquidsoftware/safedomain/ValidationKt {
 	public static final fun eachField (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun eachFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun eachFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun eachFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun eachFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Iterable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
 	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
 	public static final fun field (Lio/liquidsoftware/safedomain/ValidationScope;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun fieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun fieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun flatField (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/Validated;
+	public static final fun flatFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun flatFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun flatFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun flatFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun nestedFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun nestedFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun nestedFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static synthetic fun nestedFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
+	public static final fun requiredFieldAt (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;)Lio/liquidsoftware/safedomain/PathField;
+	public static synthetic fun requiredFieldAt$default (Lio/liquidsoftware/safedomain/ValidationScope;Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/PathField;
 	public static final fun validate (Larrow/core/raise/Raise;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
@@ -270,7 +286,7 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Companio
 	public final fun factory (Lkotlin/ranges/IntRange;)Lio/liquidsoftware/safedomain/ValueFactory;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/collections/BoundedList$Error {
+public abstract interface class io/liquidsoftware/safedomain/collections/BoundedList$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$TooLarge : io/liquidsoftware/safedomain/collections/BoundedList$Error {
@@ -299,7 +315,7 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$To
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/collections/DistinctError {
+public abstract interface class io/liquidsoftware/safedomain/collections/DistinctError : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/collections/DistinctError$Duplicate : io/liquidsoftware/safedomain/collections/DistinctError {
@@ -322,7 +338,7 @@ public final class io/liquidsoftware/safedomain/collections/DistinctError$Empty 
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/collections/NonEmptyError {
+public abstract interface class io/liquidsoftware/safedomain/collections/NonEmptyError : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/collections/NonEmptyError$Empty : io/liquidsoftware/safedomain/collections/NonEmptyError {
@@ -356,7 +372,7 @@ public final class io/liquidsoftware/safedomain/collections/UniqueList$Companion
 	public final fun factory ()Lio/liquidsoftware/safedomain/ValueFactory;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/collections/UniqueList$Error {
+public abstract interface class io/liquidsoftware/safedomain/collections/UniqueList$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/collections/UniqueList$Error$Duplicate : io/liquidsoftware/safedomain/collections/UniqueList$Error {
@@ -390,7 +406,7 @@ public final class io/liquidsoftware/safedomain/contact/Email$Companion : io/liq
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/contact/Email;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/contact/Email$Error {
+public abstract interface class io/liquidsoftware/safedomain/contact/Email$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/contact/Email$Error$InvalidFormat : io/liquidsoftware/safedomain/contact/Email$Error {
@@ -425,7 +441,7 @@ public final class io/liquidsoftware/safedomain/contact/Phone$Companion : io/liq
 	public fun from-e005qoI (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/contact/Phone$Error {
+public abstract interface class io/liquidsoftware/safedomain/contact/Phone$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/contact/Phone$Error$InvalidFormat : io/liquidsoftware/safedomain/contact/Phone$Error {
@@ -455,7 +471,7 @@ public final class io/liquidsoftware/safedomain/geo/GeoPoint$Companion : io/liqu
 	public synthetic fun from (Larrow/core/raise/Raise;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/geo/GeoPoint$Error {
+public abstract interface class io/liquidsoftware/safedomain/geo/GeoPoint$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOfRange : io/liquidsoftware/safedomain/geo/GeoPoint$Error {
@@ -513,7 +529,7 @@ public final class io/liquidsoftware/safedomain/identity/TypedId$Companion {
 	public final fun random-DBWnjEI ()Lkotlin/uuid/Uuid;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/identity/TypedId$Error {
+public abstract interface class io/liquidsoftware/safedomain/identity/TypedId$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFormat : io/liquidsoftware/safedomain/identity/TypedId$Error {
@@ -548,7 +564,7 @@ public final class io/liquidsoftware/safedomain/locale/CountryCode$Companion : i
 	public fun from-ti7jrTE (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/locale/CountryCode$Error {
+public abstract interface class io/liquidsoftware/safedomain/locale/CountryCode$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/locale/CountryCode$Error$UnsupportedCode : io/liquidsoftware/safedomain/locale/CountryCode$Error {
@@ -584,7 +600,7 @@ public final class io/liquidsoftware/safedomain/locale/LanguageTag$Companion : i
 	public fun from-egjwp0U (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/locale/LanguageTag$Error {
+public abstract interface class io/liquidsoftware/safedomain/locale/LanguageTag$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/locale/LanguageTag$Error$InvalidFormat : io/liquidsoftware/safedomain/locale/LanguageTag$Error {
@@ -620,7 +636,7 @@ public final class io/liquidsoftware/safedomain/money/Currency$Companion : io/li
 	public fun from-nVOLU74 (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/Currency$Error {
+public abstract interface class io/liquidsoftware/safedomain/money/Currency$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/Currency$Error$UnsupportedCode : io/liquidsoftware/safedomain/money/Currency$Error {
@@ -659,7 +675,7 @@ public final class io/liquidsoftware/safedomain/money/Money {
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/Money$ArithmeticError {
+public abstract interface class io/liquidsoftware/safedomain/money/Money$ArithmeticError : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$CurrencyMismatch : io/liquidsoftware/safedomain/money/Money$ArithmeticError {
@@ -708,7 +724,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Companion : io/liqui
 	public final fun zero-UEbxpqI (Larrow/core/raise/Raise;Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Money;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/Money$Error {
+public abstract interface class io/liquidsoftware/safedomain/money/Money$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/Money$Error$InvalidAmount : io/liquidsoftware/safedomain/money/Money$Error {
@@ -819,7 +835,7 @@ public final class io/liquidsoftware/safedomain/money/NegativeMoney$Companion : 
 	public fun from-UcSYfu8 (Larrow/core/raise/Raise;Lio/liquidsoftware/safedomain/money/Money;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/money/Money;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/NegativeMoney$Error {
+public abstract interface class io/liquidsoftware/safedomain/money/NegativeMoney$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNegative : io/liquidsoftware/safedomain/money/NegativeMoney$Error {
@@ -861,7 +877,7 @@ public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Companion
 	public final fun zero-Y46MLaI (Larrow/core/raise/Raise;Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Money;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error {
+public abstract interface class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Negative : io/liquidsoftware/safedomain/money/NonNegativeMoney$Error {
@@ -901,7 +917,7 @@ public final class io/liquidsoftware/safedomain/money/PositiveMoney$Companion : 
 	public fun from-8-fntTA (Larrow/core/raise/Raise;Lio/liquidsoftware/safedomain/money/Money;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/money/Money;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/money/PositiveMoney$Error {
+public abstract interface class io/liquidsoftware/safedomain/money/PositiveMoney$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPositive : io/liquidsoftware/safedomain/money/PositiveMoney$Error {
@@ -930,7 +946,7 @@ public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Companion {
 	public final fun factory (Lkotlin/ranges/IntRange;)Lio/liquidsoftware/safedomain/ValueFactory;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/BoundedInt$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/BoundedInt$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRange : io/liquidsoftware/safedomain/numeric/BoundedInt$Error {
@@ -1003,7 +1019,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Companio
 	public synthetic fun from (Larrow/core/raise/Raise;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error {
@@ -1046,7 +1062,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Companion : 
 	public final fun getMINUS_ONE-pH27xsE ()I
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeInt$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeInt$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeInt$Error {
@@ -1060,7 +1076,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNeg
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Overflow {
+public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/NegativeInt$Overflow;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -1095,7 +1111,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Companion :
 	public final fun getMINUS_ONE-dDTCewY ()J
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeLong$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeLong$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeLong$Error {
@@ -1109,7 +1125,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNe
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Overflow {
+public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/NegativeLong$Overflow;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -1135,7 +1151,7 @@ public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Compa
 	public final fun getZERO ()Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$Negative : io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error {
@@ -1167,7 +1183,7 @@ public final class io/liquidsoftware/safedomain/numeric/Percentage$Companion : i
 	public synthetic fun from (Larrow/core/raise/Raise;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/Percentage$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/Percentage$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRange : io/liquidsoftware/safedomain/numeric/Percentage$Error {
@@ -1201,7 +1217,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Companio
 	public synthetic fun from (Larrow/core/raise/Raise;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error {
@@ -1244,7 +1260,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Companion : 
 	public final fun getONE-aky8fnA ()I
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveInt$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveInt$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveInt$Error {
@@ -1258,7 +1274,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPos
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Overflow {
+public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/PositiveInt$Overflow;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -1293,7 +1309,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Companion :
 	public final fun getONE-zhiapUM ()J
 }
 
-public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveLong$Error {
+public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveLong$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveLong$Error {
@@ -1307,7 +1323,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPo
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Overflow {
+public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/PositiveLong$Overflow;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -1351,7 +1367,7 @@ public final class io/liquidsoftware/safedomain/text/NonBlankString$Companion : 
 	public fun from-Pn0dnWI (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/text/NonBlankString$Error {
+public abstract interface class io/liquidsoftware/safedomain/text/NonBlankString$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/text/NonBlankString$Error$Blank : io/liquidsoftware/safedomain/text/NonBlankString$Error {
@@ -1389,7 +1405,7 @@ public final class io/liquidsoftware/safedomain/text/Secret$Companion : io/liqui
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/text/Secret;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/text/Secret$Error {
+public abstract interface class io/liquidsoftware/safedomain/text/Secret$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/text/Secret$Error$Blank : io/liquidsoftware/safedomain/text/Secret$Error {
@@ -1420,7 +1436,7 @@ public final class io/liquidsoftware/safedomain/text/Slug$Companion : io/liquids
 	public fun from-sGNfdZ8 (Larrow/core/raise/Raise;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/text/Slug$Error {
+public abstract interface class io/liquidsoftware/safedomain/text/Slug$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat : io/liquidsoftware/safedomain/text/Slug$Error {
@@ -1440,7 +1456,7 @@ public final class io/liquidsoftware/safedomain/time/DateChecks {
 	public final fun past (Lkotlin/time/Clock;Lkotlinx/datetime/TimeZone;)Lio/liquidsoftware/safedomain/ValueFactory;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/time/DateChecks$Error {
+public abstract interface class io/liquidsoftware/safedomain/time/DateChecks$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture : io/liquidsoftware/safedomain/time/DateChecks$Error {
@@ -1489,7 +1505,7 @@ public final class io/liquidsoftware/safedomain/time/DateRange$Companion : io/li
 	public synthetic fun from (Larrow/core/raise/Raise;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/time/DateRange$Error {
+public abstract interface class io/liquidsoftware/safedomain/time/DateRange$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeStart : io/liquidsoftware/safedomain/time/DateRange$Error {
@@ -1575,7 +1591,7 @@ public final class io/liquidsoftware/safedomain/time/PositiveDuration$Companion 
 	public fun from-9fqJOGg (Larrow/core/raise/Raise;JLkotlin/jvm/functions/Function1;)J
 }
 
-public abstract interface class io/liquidsoftware/safedomain/time/PositiveDuration$Error {
+public abstract interface class io/liquidsoftware/safedomain/time/PositiveDuration$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/time/PositiveDuration$Error$Infinite : io/liquidsoftware/safedomain/time/PositiveDuration$Error {
@@ -1616,7 +1632,7 @@ public final class io/liquidsoftware/safedomain/time/TimeWindow$Companion : io/l
 	public final fun starting-pAAfHa4 (Lkotlin/time/Instant;J)Lio/liquidsoftware/safedomain/time/TimeWindow;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/time/TimeWindow$Error {
+public abstract interface class io/liquidsoftware/safedomain/time/TimeWindow$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterStart : io/liquidsoftware/safedomain/time/TimeWindow$Error {
@@ -1661,7 +1677,7 @@ public final class io/liquidsoftware/safedomain/time/TimeZoneId$Companion : io/l
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/time/TimeZoneId;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/time/TimeZoneId$Error {
+public abstract interface class io/liquidsoftware/safedomain/time/TimeZoneId$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZone : io/liquidsoftware/safedomain/time/TimeZoneId$Error {
@@ -1691,7 +1707,7 @@ public final class io/liquidsoftware/safedomain/web/DomainName$Companion : io/li
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/web/DomainName;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/web/DomainName$Error {
+public abstract interface class io/liquidsoftware/safedomain/web/DomainName$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/web/DomainName$Error$InvalidFormat : io/liquidsoftware/safedomain/web/DomainName$Error {
@@ -1727,7 +1743,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Companion : io/liqui
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/web/HttpUrl;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/web/HttpUrl$Error {
+public abstract interface class io/liquidsoftware/safedomain/web/HttpUrl$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort : io/liquidsoftware/safedomain/web/HttpUrl$Error {
@@ -1803,7 +1819,7 @@ public final class io/liquidsoftware/safedomain/web/IpAddress$Companion : io/liq
 	public fun from (Larrow/core/raise/Raise;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/liquidsoftware/safedomain/web/IpAddress;
 }
 
-public abstract interface class io/liquidsoftware/safedomain/web/IpAddress$Error {
+public abstract interface class io/liquidsoftware/safedomain/web/IpAddress$Error : io/liquidsoftware/safedomain/ValidationError {
 }
 
 public final class io/liquidsoftware/safedomain/web/IpAddress$Error$InvalidFormat : io/liquidsoftware/safedomain/web/IpAddress$Error {

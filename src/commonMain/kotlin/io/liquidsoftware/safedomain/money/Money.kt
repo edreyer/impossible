@@ -4,6 +4,7 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.field
 import io.liquidsoftware.safedomain.numeric.Decimal
@@ -28,7 +29,7 @@ public class Money private constructor(public val minor: Long, public val curren
     /** Amount and currency as text, for [parser]. */
     public data class Text(val amount: String, val currency: String)
 
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class InvalidAmount(val value: String) : Error
         public data class InvalidCurrency(val cause: Currency.Error) : Error
 
@@ -42,7 +43,7 @@ public class Money private constructor(public val minor: Long, public val curren
         public data class OutOfRange(val amount: Decimal) : Error
     }
 
-    public sealed interface ArithmeticError {
+    public sealed interface ArithmeticError : ValidationError {
         public data class CurrencyMismatch(val expected: Currency, val actual: Currency) : ArithmeticError
         public data object DivisionByZero : ArithmeticError
 

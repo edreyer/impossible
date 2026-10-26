@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.money
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.jvm.JvmInline
 
@@ -13,7 +14,7 @@ import kotlin.jvm.JvmInline
  */
 @JvmInline
 public value class Currency private constructor(public val code: String) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class UnsupportedCode(val value: String) : Error
     }
 

@@ -28,6 +28,8 @@ abstract interface <#A: in kotlin/Any?, #B: out kotlin/Any?, #C: out kotlin/Any?
     open fun <#A1: kotlin/Any?> (context(arrow.core.raise/Raise<#A1>)).from(#A, kotlin/Function1<#B, #A1>): #C // io.liquidsoftware.safedomain/ValueFactory.from|from(arrow.core.raise.Raise<0:0>)(1:0;kotlin.Function1<1:1,0:0>){0§<kotlin.Any?>}[0]
 }
 
+abstract interface io.liquidsoftware.safedomain/ValidationError // io.liquidsoftware.safedomain/ValidationError|null[0]
+
 sealed interface <#A: out kotlin/Any?> io.liquidsoftware.safedomain/RequiredError { // io.liquidsoftware.safedomain/RequiredError|null[0]
     final class <#A1: out kotlin/Any?> Invalid : io.liquidsoftware.safedomain/RequiredError<#A1> { // io.liquidsoftware.safedomain/RequiredError.Invalid|null[0]
         constructor <init>(#A1) // io.liquidsoftware.safedomain/RequiredError.Invalid.<init>|<init>(1:0){}[0]
@@ -42,14 +44,14 @@ sealed interface <#A: out kotlin/Any?> io.liquidsoftware.safedomain/RequiredErro
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain/RequiredError.Invalid.toString|toString(){}[0]
     }
 
-    final object Missing : io.liquidsoftware.safedomain/RequiredError<kotlin/Nothing> { // io.liquidsoftware.safedomain/RequiredError.Missing|null[0]
+    final object Missing : io.liquidsoftware.safedomain/RequiredError<kotlin/Nothing>, io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain/RequiredError.Missing|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain/RequiredError.Missing.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain/RequiredError.Missing.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain/RequiredError.Missing.toString|toString(){}[0]
     }
 }
 
-sealed interface io.liquidsoftware.safedomain.collections/DistinctError { // io.liquidsoftware.safedomain.collections/DistinctError|null[0]
+sealed interface io.liquidsoftware.safedomain.collections/DistinctError : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.collections/DistinctError|null[0]
     final class Duplicate : io.liquidsoftware.safedomain.collections/DistinctError { // io.liquidsoftware.safedomain.collections/DistinctError.Duplicate|null[0]
         constructor <init>(kotlin/Int, kotlin/Int) // io.liquidsoftware.safedomain.collections/DistinctError.Duplicate.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
 
@@ -73,7 +75,7 @@ sealed interface io.liquidsoftware.safedomain.collections/DistinctError { // io.
     }
 }
 
-sealed interface io.liquidsoftware.safedomain.collections/NonEmptyError { // io.liquidsoftware.safedomain.collections/NonEmptyError|null[0]
+sealed interface io.liquidsoftware.safedomain.collections/NonEmptyError : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.collections/NonEmptyError|null[0]
     final object Empty : io.liquidsoftware.safedomain.collections/NonEmptyError { // io.liquidsoftware.safedomain.collections/NonEmptyError.Empty|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.collections/NonEmptyError.Empty.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.collections/NonEmptyError.Empty.hashCode|hashCode(){}[0]
@@ -138,7 +140,7 @@ final class <#A: kotlin/Any?> io.liquidsoftware.safedomain.collections/BoundedLi
     final fun iterator(): kotlin.collections/Iterator<#A> // io.liquidsoftware.safedomain.collections/BoundedList.iterator|iterator(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.collections/BoundedList.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.collections/BoundedList.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.collections/BoundedList.Error|null[0]
         final class TooLarge : io.liquidsoftware.safedomain.collections/BoundedList.Error { // io.liquidsoftware.safedomain.collections/BoundedList.Error.TooLarge|null[0]
             constructor <init>(kotlin/Int, kotlin/Int) // io.liquidsoftware.safedomain.collections/BoundedList.Error.TooLarge.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
 
@@ -192,7 +194,7 @@ final class <#A: kotlin/Any?> io.liquidsoftware.safedomain.collections/UniqueLis
     final fun iterator(): kotlin.collections/Iterator<#A> // io.liquidsoftware.safedomain.collections/UniqueList.iterator|iterator(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.collections/UniqueList.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.collections/UniqueList.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.collections/UniqueList.Error|null[0]
         final class Duplicate : io.liquidsoftware.safedomain.collections/UniqueList.Error { // io.liquidsoftware.safedomain.collections/UniqueList.Error.Duplicate|null[0]
             constructor <init>(kotlin/Int, kotlin/Int) // io.liquidsoftware.safedomain.collections/UniqueList.Error.Duplicate.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
 
@@ -262,7 +264,7 @@ final class io.liquidsoftware.safedomain.contact/Email { // io.liquidsoftware.sa
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.contact/Email.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.contact/Email.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.contact/Email.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.contact/Email.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.contact/Email.Error { // io.liquidsoftware.safedomain.contact/Email.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.contact/Email.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -292,7 +294,7 @@ final class io.liquidsoftware.safedomain.geo/GeoPoint { // io.liquidsoftware.saf
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.geo/GeoPoint.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.geo/GeoPoint.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.geo/GeoPoint.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.geo/GeoPoint.Error|null[0]
         final class LatitudeOutOfRange : io.liquidsoftware.safedomain.geo/GeoPoint.Error { // io.liquidsoftware.safedomain.geo/GeoPoint.Error.LatitudeOutOfRange|null[0]
             constructor <init>(kotlin/Double) // io.liquidsoftware.safedomain.geo/GeoPoint.Error.LatitudeOutOfRange.<init>|<init>(kotlin.Double){}[0]
 
@@ -365,7 +367,7 @@ final class io.liquidsoftware.safedomain.money/Money { // io.liquidsoftware.safe
     final fun split(io.liquidsoftware.safedomain.numeric/PositiveInt): arrow.core/NonEmptyList<io.liquidsoftware.safedomain.money/Money> // io.liquidsoftware.safedomain.money/Money.split|split(io.liquidsoftware.safedomain.numeric.PositiveInt){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.money/Money.toString|toString(){}[0]
 
-    sealed interface ArithmeticError { // io.liquidsoftware.safedomain.money/Money.ArithmeticError|null[0]
+    sealed interface ArithmeticError : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/Money.ArithmeticError|null[0]
         final class CurrencyMismatch : io.liquidsoftware.safedomain.money/Money.ArithmeticError { // io.liquidsoftware.safedomain.money/Money.ArithmeticError.CurrencyMismatch|null[0]
             constructor <init>(io.liquidsoftware.safedomain.money/Currency, io.liquidsoftware.safedomain.money/Currency) // io.liquidsoftware.safedomain.money/Money.ArithmeticError.CurrencyMismatch.<init>|<init>(io.liquidsoftware.safedomain.money.Currency;io.liquidsoftware.safedomain.money.Currency){}[0]
 
@@ -401,7 +403,7 @@ final class io.liquidsoftware.safedomain.money/Money { // io.liquidsoftware.safe
         }
     }
 
-    sealed interface Error { // io.liquidsoftware.safedomain.money/Money.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/Money.Error|null[0]
         final class InvalidAmount : io.liquidsoftware.safedomain.money/Money.Error { // io.liquidsoftware.safedomain.money/Money.Error.InvalidAmount|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.money/Money.Error.InvalidAmount.<init>|<init>(kotlin.String){}[0]
 
@@ -526,7 +528,7 @@ final class io.liquidsoftware.safedomain.numeric/BoundedInt : kotlin/Comparable<
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/BoundedInt.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/BoundedInt.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/BoundedInt.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/BoundedInt.Error|null[0]
         final class OutOfRange : io.liquidsoftware.safedomain.numeric/BoundedInt.Error { // io.liquidsoftware.safedomain.numeric/BoundedInt.Error.OutOfRange|null[0]
             constructor <init>(kotlin/Int, kotlin.ranges/IntRange) // io.liquidsoftware.safedomain.numeric/BoundedInt.Error.OutOfRange.<init>|<init>(kotlin.Int;kotlin.ranges.IntRange){}[0]
 
@@ -598,7 +600,7 @@ final class io.liquidsoftware.safedomain.numeric/NegativeDecimal : kotlin/Compar
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NegativeDecimal.toString|toString(){}[0]
     final fun unaryMinus(): io.liquidsoftware.safedomain.numeric/PositiveDecimal // io.liquidsoftware.safedomain.numeric/NegativeDecimal.unaryMinus|unaryMinus(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/NegativeDecimal.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NegativeDecimal.Error|null[0]
         final class NonNegative : io.liquidsoftware.safedomain.numeric/NegativeDecimal.Error { // io.liquidsoftware.safedomain.numeric/NegativeDecimal.Error.NonNegative|null[0]
             constructor <init>(io.liquidsoftware.safedomain.numeric/Decimal) // io.liquidsoftware.safedomain.numeric/NegativeDecimal.Error.NonNegative.<init>|<init>(io.liquidsoftware.safedomain.numeric.Decimal){}[0]
 
@@ -628,7 +630,7 @@ final class io.liquidsoftware.safedomain.numeric/NonNegativeDecimal : kotlin/Com
     final fun plus(io.liquidsoftware.safedomain.numeric/NonNegativeDecimal): io.liquidsoftware.safedomain.numeric/NonNegativeDecimal // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.plus|plus(io.liquidsoftware.safedomain.numeric.NonNegativeDecimal){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.Error|null[0]
         final class Negative : io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.Error { // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.Error.Negative|null[0]
             constructor <init>(io.liquidsoftware.safedomain.numeric/Decimal) // io.liquidsoftware.safedomain.numeric/NonNegativeDecimal.Error.Negative.<init>|<init>(io.liquidsoftware.safedomain.numeric.Decimal){}[0]
 
@@ -662,7 +664,7 @@ final class io.liquidsoftware.safedomain.numeric/Percentage : kotlin/Comparable<
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/Percentage.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/Percentage.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/Percentage.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/Percentage.Error|null[0]
         final class OutOfRange : io.liquidsoftware.safedomain.numeric/Percentage.Error { // io.liquidsoftware.safedomain.numeric/Percentage.Error.OutOfRange|null[0]
             constructor <init>(io.liquidsoftware.safedomain.numeric/Decimal) // io.liquidsoftware.safedomain.numeric/Percentage.Error.OutOfRange.<init>|<init>(io.liquidsoftware.safedomain.numeric.Decimal){}[0]
 
@@ -694,7 +696,7 @@ final class io.liquidsoftware.safedomain.numeric/PositiveDecimal : kotlin/Compar
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/PositiveDecimal.toString|toString(){}[0]
     final fun unaryMinus(): io.liquidsoftware.safedomain.numeric/NegativeDecimal // io.liquidsoftware.safedomain.numeric/PositiveDecimal.unaryMinus|unaryMinus(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/PositiveDecimal.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/PositiveDecimal.Error|null[0]
         final class NonPositive : io.liquidsoftware.safedomain.numeric/PositiveDecimal.Error { // io.liquidsoftware.safedomain.numeric/PositiveDecimal.Error.NonPositive|null[0]
             constructor <init>(io.liquidsoftware.safedomain.numeric/Decimal) // io.liquidsoftware.safedomain.numeric/PositiveDecimal.Error.NonPositive.<init>|<init>(io.liquidsoftware.safedomain.numeric.Decimal){}[0]
 
@@ -720,7 +722,7 @@ final class io.liquidsoftware.safedomain.text/Secret { // io.liquidsoftware.safe
     final fun reveal(): kotlin/String // io.liquidsoftware.safedomain.text/Secret.reveal|reveal(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.text/Secret.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.text/Secret.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.text/Secret.Error|null[0]
         final object Blank : io.liquidsoftware.safedomain.text/Secret.Error { // io.liquidsoftware.safedomain.text/Secret.Error.Blank|null[0]
             final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.text/Secret.Error.Blank.equals|equals(kotlin.Any?){}[0]
             final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.text/Secret.Error.Blank.hashCode|hashCode(){}[0]
@@ -748,7 +750,7 @@ final class io.liquidsoftware.safedomain.time/DateRange { // io.liquidsoftware.s
     final fun overlaps(io.liquidsoftware.safedomain.time/DateRange): kotlin/Boolean // io.liquidsoftware.safedomain.time/DateRange.overlaps|overlaps(io.liquidsoftware.safedomain.time.DateRange){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.time/DateRange.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.time/DateRange.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.time/DateRange.Error|null[0]
         final class EndBeforeStart : io.liquidsoftware.safedomain.time/DateRange.Error { // io.liquidsoftware.safedomain.time/DateRange.Error.EndBeforeStart|null[0]
             constructor <init>(kotlinx.datetime/LocalDate, kotlinx.datetime/LocalDate) // io.liquidsoftware.safedomain.time/DateRange.Error.EndBeforeStart.<init>|<init>(kotlinx.datetime.LocalDate;kotlinx.datetime.LocalDate){}[0]
 
@@ -801,7 +803,7 @@ final class io.liquidsoftware.safedomain.time/TimeWindow { // io.liquidsoftware.
     final fun overlaps(io.liquidsoftware.safedomain.time/TimeWindow): kotlin/Boolean // io.liquidsoftware.safedomain.time/TimeWindow.overlaps|overlaps(io.liquidsoftware.safedomain.time.TimeWindow){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.time/TimeWindow.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.time/TimeWindow.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.time/TimeWindow.Error|null[0]
         final class NotAfterStart : io.liquidsoftware.safedomain.time/TimeWindow.Error { // io.liquidsoftware.safedomain.time/TimeWindow.Error.NotAfterStart|null[0]
             constructor <init>(kotlin.time/Instant, kotlin.time/Instant) // io.liquidsoftware.safedomain.time/TimeWindow.Error.NotAfterStart.<init>|<init>(kotlin.time.Instant;kotlin.time.Instant){}[0]
 
@@ -851,7 +853,7 @@ final class io.liquidsoftware.safedomain.time/TimeZoneId { // io.liquidsoftware.
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.time/TimeZoneId.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.time/TimeZoneId.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.time/TimeZoneId.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.time/TimeZoneId.Error|null[0]
         final class UnknownZone : io.liquidsoftware.safedomain.time/TimeZoneId.Error { // io.liquidsoftware.safedomain.time/TimeZoneId.Error.UnknownZone|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.time/TimeZoneId.Error.UnknownZone.<init>|<init>(kotlin.String){}[0]
 
@@ -881,7 +883,7 @@ final class io.liquidsoftware.safedomain.web/DomainName { // io.liquidsoftware.s
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.web/DomainName.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.web/DomainName.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.web/DomainName.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.web/DomainName.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.web/DomainName.Error { // io.liquidsoftware.safedomain.web/DomainName.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.web/DomainName.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -923,7 +925,7 @@ final class io.liquidsoftware.safedomain.web/HttpUrl { // io.liquidsoftware.safe
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.web/HttpUrl.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.web/HttpUrl.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.web/HttpUrl.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.web/HttpUrl.Error|null[0]
         final class InvalidPort : io.liquidsoftware.safedomain.web/HttpUrl.Error { // io.liquidsoftware.safedomain.web/HttpUrl.Error.InvalidPort|null[0]
             constructor <init>(kotlin/Int) // io.liquidsoftware.safedomain.web/HttpUrl.Error.InvalidPort.<init>|<init>(kotlin.Int){}[0]
 
@@ -1122,7 +1124,7 @@ final value class <#A: kotlin/Any?> io.liquidsoftware.safedomain.identity/TypedI
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.identity/TypedId.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.identity/TypedId.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.identity/TypedId.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.identity/TypedId.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.identity/TypedId.Error { // io.liquidsoftware.safedomain.identity/TypedId.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.identity/TypedId.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -1152,7 +1154,7 @@ final value class io.liquidsoftware.safedomain.contact/Phone { // io.liquidsoftw
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.contact/Phone.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.contact/Phone.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.contact/Phone.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.contact/Phone.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.contact/Phone.Error { // io.liquidsoftware.safedomain.contact/Phone.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.contact/Phone.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -1180,7 +1182,7 @@ final value class io.liquidsoftware.safedomain.locale/CountryCode { // io.liquid
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.locale/CountryCode.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.locale/CountryCode.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.locale/CountryCode.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.locale/CountryCode.Error|null[0]
         final class UnsupportedCode : io.liquidsoftware.safedomain.locale/CountryCode.Error { // io.liquidsoftware.safedomain.locale/CountryCode.Error.UnsupportedCode|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.locale/CountryCode.Error.UnsupportedCode.<init>|<init>(kotlin.String){}[0]
 
@@ -1210,7 +1212,7 @@ final value class io.liquidsoftware.safedomain.locale/LanguageTag { // io.liquid
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.locale/LanguageTag.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.locale/LanguageTag.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.locale/LanguageTag.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.locale/LanguageTag.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.locale/LanguageTag.Error { // io.liquidsoftware.safedomain.locale/LanguageTag.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.locale/LanguageTag.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -1240,7 +1242,7 @@ final value class io.liquidsoftware.safedomain.money/Currency { // io.liquidsoft
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.money/Currency.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.money/Currency.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.money/Currency.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/Currency.Error|null[0]
         final class UnsupportedCode : io.liquidsoftware.safedomain.money/Currency.Error { // io.liquidsoftware.safedomain.money/Currency.Error.UnsupportedCode|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.money/Currency.Error.UnsupportedCode.<init>|<init>(kotlin.String){}[0]
 
@@ -1272,7 +1274,7 @@ final value class io.liquidsoftware.safedomain.money/NegativeMoney { // io.liqui
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.money/NegativeMoney.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.money/NegativeMoney.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.money/NegativeMoney.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/NegativeMoney.Error|null[0]
         final class NonNegative : io.liquidsoftware.safedomain.money/NegativeMoney.Error { // io.liquidsoftware.safedomain.money/NegativeMoney.Error.NonNegative|null[0]
             constructor <init>(io.liquidsoftware.safedomain.money/Money) // io.liquidsoftware.safedomain.money/NegativeMoney.Error.NonNegative.<init>|<init>(io.liquidsoftware.safedomain.money.Money){}[0]
 
@@ -1306,7 +1308,7 @@ final value class io.liquidsoftware.safedomain.money/NonNegativeMoney { // io.li
     final fun split(io.liquidsoftware.safedomain.numeric/PositiveInt): arrow.core/NonEmptyList<io.liquidsoftware.safedomain.money/NonNegativeMoney> // io.liquidsoftware.safedomain.money/NonNegativeMoney.split|split(io.liquidsoftware.safedomain.numeric.PositiveInt){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.money/NonNegativeMoney.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.money/NonNegativeMoney.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/NonNegativeMoney.Error|null[0]
         final class Negative : io.liquidsoftware.safedomain.money/NonNegativeMoney.Error { // io.liquidsoftware.safedomain.money/NonNegativeMoney.Error.Negative|null[0]
             constructor <init>(io.liquidsoftware.safedomain.money/Money) // io.liquidsoftware.safedomain.money/NonNegativeMoney.Error.Negative.<init>|<init>(io.liquidsoftware.safedomain.money.Money){}[0]
 
@@ -1340,7 +1342,7 @@ final value class io.liquidsoftware.safedomain.money/PositiveMoney { // io.liqui
     final fun toNonNegativeMoney(): io.liquidsoftware.safedomain.money/NonNegativeMoney // io.liquidsoftware.safedomain.money/PositiveMoney.toNonNegativeMoney|toNonNegativeMoney(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.money/PositiveMoney.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.money/PositiveMoney.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.money/PositiveMoney.Error|null[0]
         final class NonPositive : io.liquidsoftware.safedomain.money/PositiveMoney.Error { // io.liquidsoftware.safedomain.money/PositiveMoney.Error.NonPositive|null[0]
             constructor <init>(io.liquidsoftware.safedomain.money/Money) // io.liquidsoftware.safedomain.money/PositiveMoney.Error.NonPositive.<init>|<init>(io.liquidsoftware.safedomain.money.Money){}[0]
 
@@ -1373,7 +1375,7 @@ final value class io.liquidsoftware.safedomain.numeric/NegativeInt : kotlin/Comp
     final fun toNegativeLong(): io.liquidsoftware.safedomain.numeric/NegativeLong // io.liquidsoftware.safedomain.numeric/NegativeInt.toNegativeLong|toNegativeLong(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NegativeInt.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/NegativeInt.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NegativeInt.Error|null[0]
         final class NonNegative : io.liquidsoftware.safedomain.numeric/NegativeInt.Error { // io.liquidsoftware.safedomain.numeric/NegativeInt.Error.NonNegative|null[0]
             constructor <init>(kotlin/Int) // io.liquidsoftware.safedomain.numeric/NegativeInt.Error.NonNegative.<init>|<init>(kotlin.Int){}[0]
 
@@ -1395,7 +1397,7 @@ final value class io.liquidsoftware.safedomain.numeric/NegativeInt : kotlin/Comp
         final fun (context(arrow.core.raise/Raise<io.liquidsoftware.safedomain.numeric/NegativeInt.Error>)).from(kotlin/Int): io.liquidsoftware.safedomain.numeric/NegativeInt // io.liquidsoftware.safedomain.numeric/NegativeInt.Companion.from|from(arrow.core.raise.Raise<io.liquidsoftware.safedomain.numeric.NegativeInt.Error>)(kotlin.Int){}[0]
     }
 
-    final object Overflow { // io.liquidsoftware.safedomain.numeric/NegativeInt.Overflow|null[0]
+    final object Overflow : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NegativeInt.Overflow|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.numeric/NegativeInt.Overflow.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/NegativeInt.Overflow.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NegativeInt.Overflow.toString|toString(){}[0]
@@ -1414,7 +1416,7 @@ final value class io.liquidsoftware.safedomain.numeric/NegativeLong : kotlin/Com
     final fun toNegativeDecimal(): io.liquidsoftware.safedomain.numeric/NegativeDecimal // io.liquidsoftware.safedomain.numeric/NegativeLong.toNegativeDecimal|toNegativeDecimal(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NegativeLong.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/NegativeLong.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NegativeLong.Error|null[0]
         final class NonNegative : io.liquidsoftware.safedomain.numeric/NegativeLong.Error { // io.liquidsoftware.safedomain.numeric/NegativeLong.Error.NonNegative|null[0]
             constructor <init>(kotlin/Long) // io.liquidsoftware.safedomain.numeric/NegativeLong.Error.NonNegative.<init>|<init>(kotlin.Long){}[0]
 
@@ -1436,7 +1438,7 @@ final value class io.liquidsoftware.safedomain.numeric/NegativeLong : kotlin/Com
         final fun (context(arrow.core.raise/Raise<io.liquidsoftware.safedomain.numeric/NegativeLong.Error>)).from(kotlin/Long): io.liquidsoftware.safedomain.numeric/NegativeLong // io.liquidsoftware.safedomain.numeric/NegativeLong.Companion.from|from(arrow.core.raise.Raise<io.liquidsoftware.safedomain.numeric.NegativeLong.Error>)(kotlin.Long){}[0]
     }
 
-    final object Overflow { // io.liquidsoftware.safedomain.numeric/NegativeLong.Overflow|null[0]
+    final object Overflow : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/NegativeLong.Overflow|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.numeric/NegativeLong.Overflow.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/NegativeLong.Overflow.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/NegativeLong.Overflow.toString|toString(){}[0]
@@ -1456,7 +1458,7 @@ final value class io.liquidsoftware.safedomain.numeric/PositiveInt : kotlin/Comp
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/PositiveInt.toString|toString(){}[0]
     final fun unaryMinus(): io.liquidsoftware.safedomain.numeric/NegativeInt // io.liquidsoftware.safedomain.numeric/PositiveInt.unaryMinus|unaryMinus(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/PositiveInt.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/PositiveInt.Error|null[0]
         final class NonPositive : io.liquidsoftware.safedomain.numeric/PositiveInt.Error { // io.liquidsoftware.safedomain.numeric/PositiveInt.Error.NonPositive|null[0]
             constructor <init>(kotlin/Int) // io.liquidsoftware.safedomain.numeric/PositiveInt.Error.NonPositive.<init>|<init>(kotlin.Int){}[0]
 
@@ -1478,7 +1480,7 @@ final value class io.liquidsoftware.safedomain.numeric/PositiveInt : kotlin/Comp
         final fun (context(arrow.core.raise/Raise<io.liquidsoftware.safedomain.numeric/PositiveInt.Error>)).from(kotlin/Int): io.liquidsoftware.safedomain.numeric/PositiveInt // io.liquidsoftware.safedomain.numeric/PositiveInt.Companion.from|from(arrow.core.raise.Raise<io.liquidsoftware.safedomain.numeric.PositiveInt.Error>)(kotlin.Int){}[0]
     }
 
-    final object Overflow { // io.liquidsoftware.safedomain.numeric/PositiveInt.Overflow|null[0]
+    final object Overflow : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/PositiveInt.Overflow|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.numeric/PositiveInt.Overflow.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/PositiveInt.Overflow.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/PositiveInt.Overflow.toString|toString(){}[0]
@@ -1497,7 +1499,7 @@ final value class io.liquidsoftware.safedomain.numeric/PositiveLong : kotlin/Com
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/PositiveLong.toString|toString(){}[0]
     final fun unaryMinus(): io.liquidsoftware.safedomain.numeric/NegativeLong // io.liquidsoftware.safedomain.numeric/PositiveLong.unaryMinus|unaryMinus(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.numeric/PositiveLong.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/PositiveLong.Error|null[0]
         final class NonPositive : io.liquidsoftware.safedomain.numeric/PositiveLong.Error { // io.liquidsoftware.safedomain.numeric/PositiveLong.Error.NonPositive|null[0]
             constructor <init>(kotlin/Long) // io.liquidsoftware.safedomain.numeric/PositiveLong.Error.NonPositive.<init>|<init>(kotlin.Long){}[0]
 
@@ -1519,7 +1521,7 @@ final value class io.liquidsoftware.safedomain.numeric/PositiveLong : kotlin/Com
         final fun (context(arrow.core.raise/Raise<io.liquidsoftware.safedomain.numeric/PositiveLong.Error>)).from(kotlin/Long): io.liquidsoftware.safedomain.numeric/PositiveLong // io.liquidsoftware.safedomain.numeric/PositiveLong.Companion.from|from(arrow.core.raise.Raise<io.liquidsoftware.safedomain.numeric.PositiveLong.Error>)(kotlin.Long){}[0]
     }
 
-    final object Overflow { // io.liquidsoftware.safedomain.numeric/PositiveLong.Overflow|null[0]
+    final object Overflow : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.numeric/PositiveLong.Overflow|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.numeric/PositiveLong.Overflow.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.numeric/PositiveLong.Overflow.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.liquidsoftware.safedomain.numeric/PositiveLong.Overflow.toString|toString(){}[0]
@@ -1534,7 +1536,7 @@ final value class io.liquidsoftware.safedomain.text/NonBlankString { // io.liqui
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.text/NonBlankString.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.text/NonBlankString.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.text/NonBlankString.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.text/NonBlankString.Error|null[0]
         final class TooLong : io.liquidsoftware.safedomain.text/NonBlankString.Error { // io.liquidsoftware.safedomain.text/NonBlankString.Error.TooLong|null[0]
             constructor <init>(kotlin/Int, kotlin/Int) // io.liquidsoftware.safedomain.text/NonBlankString.Error.TooLong.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
 
@@ -1572,7 +1574,7 @@ final value class io.liquidsoftware.safedomain.text/Slug { // io.liquidsoftware.
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.text/Slug.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.text/Slug.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.text/Slug.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.text/Slug.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.text/Slug.Error { // io.liquidsoftware.safedomain.text/Slug.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.text/Slug.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -1601,7 +1603,7 @@ final value class io.liquidsoftware.safedomain.time/PositiveDuration : kotlin/Co
     final fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.time/PositiveDuration.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.liquidsoftware.safedomain.time/PositiveDuration.toString|toString(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.time/PositiveDuration.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.time/PositiveDuration.Error|null[0]
         final class NonPositive : io.liquidsoftware.safedomain.time/PositiveDuration.Error { // io.liquidsoftware.safedomain.time/PositiveDuration.Error.NonPositive|null[0]
             constructor <init>(kotlin.time/Duration) // io.liquidsoftware.safedomain.time/PositiveDuration.Error.NonPositive.<init>|<init>(kotlin.time.Duration){}[0]
 
@@ -1635,7 +1637,7 @@ sealed class io.liquidsoftware.safedomain.web/IpAddress { // io.liquidsoftware.s
     open fun equals(kotlin/Any?): kotlin/Boolean // io.liquidsoftware.safedomain.web/IpAddress.equals|equals(kotlin.Any?){}[0]
     open fun hashCode(): kotlin/Int // io.liquidsoftware.safedomain.web/IpAddress.hashCode|hashCode(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.web/IpAddress.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.web/IpAddress.Error|null[0]
         final class InvalidFormat : io.liquidsoftware.safedomain.web/IpAddress.Error { // io.liquidsoftware.safedomain.web/IpAddress.Error.InvalidFormat|null[0]
             constructor <init>(kotlin/String) // io.liquidsoftware.safedomain.web/IpAddress.Error.InvalidFormat.<init>|<init>(kotlin.String){}[0]
 
@@ -1675,7 +1677,7 @@ final object io.liquidsoftware.safedomain.time/DateChecks { // io.liquidsoftware
     final fun (context(kotlin.time/Clock, kotlinx.datetime/TimeZone)).future(): io.liquidsoftware.safedomain/ValueFactory<kotlinx.datetime/LocalDate, io.liquidsoftware.safedomain.time/DateChecks.Error.NotFuture, kotlinx.datetime/LocalDate> // io.liquidsoftware.safedomain.time/DateChecks.future|future(kotlin.time.Clock;kotlinx.datetime.TimeZone)(){}[0]
     final fun (context(kotlin.time/Clock, kotlinx.datetime/TimeZone)).past(): io.liquidsoftware.safedomain/ValueFactory<kotlinx.datetime/LocalDate, io.liquidsoftware.safedomain.time/DateChecks.Error.NotPast, kotlinx.datetime/LocalDate> // io.liquidsoftware.safedomain.time/DateChecks.past|past(kotlin.time.Clock;kotlinx.datetime.TimeZone)(){}[0]
 
-    sealed interface Error { // io.liquidsoftware.safedomain.time/DateChecks.Error|null[0]
+    sealed interface Error : io.liquidsoftware.safedomain/ValidationError { // io.liquidsoftware.safedomain.time/DateChecks.Error|null[0]
         final class NotFuture : io.liquidsoftware.safedomain.time/DateChecks.Error { // io.liquidsoftware.safedomain.time/DateChecks.Error.NotFuture|null[0]
             constructor <init>(kotlinx.datetime/LocalDate, kotlinx.datetime/LocalDate) // io.liquidsoftware.safedomain.time/DateChecks.Error.NotFuture.<init>|<init>(kotlinx.datetime.LocalDate;kotlinx.datetime.LocalDate){}[0]
 
@@ -1752,10 +1754,17 @@ final object io.liquidsoftware.safedomain/ErrorMessages { // io.liquidsoftware.s
     final fun describe(io.liquidsoftware.safedomain.web/DomainName.Error): io.liquidsoftware.safedomain/ErrorMessage // io.liquidsoftware.safedomain/ErrorMessages.describe|describe(io.liquidsoftware.safedomain.web.DomainName.Error){}[0]
     final fun describe(io.liquidsoftware.safedomain.web/HttpUrl.Error): io.liquidsoftware.safedomain/ErrorMessage // io.liquidsoftware.safedomain/ErrorMessages.describe|describe(io.liquidsoftware.safedomain.web.HttpUrl.Error){}[0]
     final fun describe(io.liquidsoftware.safedomain.web/IpAddress.Error): io.liquidsoftware.safedomain/ErrorMessage // io.liquidsoftware.safedomain/ErrorMessages.describe|describe(io.liquidsoftware.safedomain.web.IpAddress.Error){}[0]
+    final fun describe(io.liquidsoftware.safedomain/ValidationError): io.liquidsoftware.safedomain/ErrorMessage // io.liquidsoftware.safedomain/ErrorMessages.describe|describe(io.liquidsoftware.safedomain.ValidationError){}[0]
 }
 
+final fun (arrow.core/NonEmptyList<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>).io.liquidsoftware.safedomain/toProblemDetails(kotlin/String = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ...): io.liquidsoftware.safedomain/ProblemDetails // io.liquidsoftware.safedomain/toProblemDetails|toProblemDetails@arrow.core.NonEmptyList<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>(kotlin.String;kotlin.Int;kotlin.String;kotlin.String?;kotlin.String?){}[0]
 final fun <#A: kotlin/Any, #B: kotlin/Any?, #C: kotlin/Any> (io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/optional(): io.liquidsoftware.safedomain/ValueFactory<#A?, #B, #C?> // io.liquidsoftware.safedomain/optional|optional@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(){0§<kotlin.Any>;1§<kotlin.Any?>;2§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any, #B: kotlin/Any?, #C: kotlin/Any?> (io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/required(): io.liquidsoftware.safedomain/ValueFactory<#A?, io.liquidsoftware.safedomain/RequiredError<#B>, #C> // io.liquidsoftware.safedomain/required|required@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(){0§<kotlin.Any>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: io.liquidsoftware.safedomain/ValidationError, #C: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>), io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/eachFieldAt(kotlin.collections/Iterable<#A>, kotlin/String? = ...): io.liquidsoftware.safedomain/PathField<kotlin.collections/List<#C>> // io.liquidsoftware.safedomain/eachFieldAt|eachFieldAt(io.liquidsoftware.safedomain.ValidationScope<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>)@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(kotlin.collections.Iterable<0:0>;kotlin.String?){0§<kotlin.Any?>;1§<io.liquidsoftware.safedomain.ValidationError>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: io.liquidsoftware.safedomain/ValidationError, #C: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>), io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/fieldAt(#A, kotlin/String? = ...): io.liquidsoftware.safedomain/PathField<#C> // io.liquidsoftware.safedomain/fieldAt|fieldAt(io.liquidsoftware.safedomain.ValidationScope<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>)@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(0:0;kotlin.String?){0§<kotlin.Any?>;1§<io.liquidsoftware.safedomain.ValidationError>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: io.liquidsoftware.safedomain/ValidationError, #C: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>), io.liquidsoftware.safedomain/ValueFactory<#A, arrow.core/NonEmptyList<#B>, #C>).io.liquidsoftware.safedomain/flatFieldAt(#A, kotlin/String? = ...): io.liquidsoftware.safedomain/PathField<#C> // io.liquidsoftware.safedomain/flatFieldAt|flatFieldAt(io.liquidsoftware.safedomain.ValidationScope<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>)@io.liquidsoftware.safedomain.ValueFactory<0:0,arrow.core.NonEmptyList<0:1>,0:2>(0:0;kotlin.String?){0§<kotlin.Any?>;1§<io.liquidsoftware.safedomain.ValidationError>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: io.liquidsoftware.safedomain/ValidationError, #C: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>), io.liquidsoftware.safedomain/ValueFactory<#A, arrow.core/NonEmptyList<io.liquidsoftware.safedomain/FieldError<#B>>, #C>).io.liquidsoftware.safedomain/nestedFieldAt(#A, kotlin/String? = ...): io.liquidsoftware.safedomain/PathField<#C> // io.liquidsoftware.safedomain/nestedFieldAt|nestedFieldAt(io.liquidsoftware.safedomain.ValidationScope<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>)@io.liquidsoftware.safedomain.ValueFactory<0:0,arrow.core.NonEmptyList<io.liquidsoftware.safedomain.FieldError<0:1>>,0:2>(0:0;kotlin.String?){0§<kotlin.Any?>;1§<io.liquidsoftware.safedomain.ValidationError>;2§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: io.liquidsoftware.safedomain/ValidationError, #C: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<io.liquidsoftware.safedomain/FieldError<io.liquidsoftware.safedomain/ValidationError>>), io.liquidsoftware.safedomain/ValueFactory<#A, io.liquidsoftware.safedomain/RequiredError<#B>, #C>).io.liquidsoftware.safedomain/fieldAt(#A, kotlin/String? = ...): io.liquidsoftware.safedomain/PathField<#C> // io.liquidsoftware.safedomain/fieldAt|fieldAt(io.liquidsoftware.safedomain.ValidationScope<io.liquidsoftware.safedomain.FieldError<io.liquidsoftware.safedomain.ValidationError>>)@io.liquidsoftware.safedomain.ValueFactory<0:0,io.liquidsoftware.safedomain.RequiredError<0:1>,0:2>(0:0;kotlin.String?){0§<kotlin.Any?>;1§<io.liquidsoftware.safedomain.ValidationError>;2§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any> (io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/fromOrNull(#A): #C? // io.liquidsoftware.safedomain/fromOrNull|fromOrNull@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?, #D: kotlin/Any?, #E: kotlin/Any?> (io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/andThen(io.liquidsoftware.safedomain/ValueFactory<#C, #D, #E>, kotlin/Function1<#D, #B>): io.liquidsoftware.safedomain/ValueFactory<#A, #B, #E> // io.liquidsoftware.safedomain/andThen|andThen@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(io.liquidsoftware.safedomain.ValueFactory<0:2,0:3,0:4>;kotlin.Function1<0:3,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>;3§<kotlin.Any?>;4§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?, #D: kotlin/Any?> (context(io.liquidsoftware.safedomain/ValidationScope<#D>), io.liquidsoftware.safedomain/ValueFactory<#A, #B, #C>).io.liquidsoftware.safedomain/eachField(kotlin.collections/Iterable<#A>, kotlin/Function2<kotlin/Int, #B, #D>): io.liquidsoftware.safedomain/Validated<kotlin.collections/List<#C>> // io.liquidsoftware.safedomain/eachField|eachField(io.liquidsoftware.safedomain.ValidationScope<0:3>)@io.liquidsoftware.safedomain.ValueFactory<0:0,0:1,0:2>(kotlin.collections.Iterable<0:0>;kotlin.Function2<kotlin.Int,0:1,0:3>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>;3§<kotlin.Any?>}[0]

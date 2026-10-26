@@ -49,7 +49,12 @@ their domain names, policies, authorization decisions, and workflows.
   `raise.ensure(...)` or `raise.raise(...)` as appropriate.
 - Preserve precise error types. Do not introduce artificial shared error
   hierarchies, widen errors to `Any`, or add functional abstractions solely to
-  avoid a small explicit `when`.
+  avoid a small explicit `when`. The one exception is the `ValidationError`
+  marker interface: it exists so a boundary (an HTTP handler, a form) can collect
+  and describe library errors without wrapping each one. It carries no meaning
+  and nothing branches on it inside a domain. Every error type the library
+  defines implements it, has a branch in `ErrorMessages.describe(ValidationError)`,
+  and joins the dispatcher check in `ErrorLawsTest`.
 - Keep explicit result types required by ports, framework contracts, or
   meaningful domain outcomes. Do not replace closed domain outcomes for style.
 - At application boundaries, consume typed results explicitly and translate
@@ -62,11 +67,15 @@ their domain names, policies, authorization decisions, and workflows.
   rather than `zipOrAccumulate` or direct use of Arrow's `accumulate`. Read
   field values only in the final construction or inside a dependent
   `field { }` block. Keep Arrow's experimental accumulate opt-in confined to
-  `Validation.kt`.
+  `Validation.kt`, and keep Arrow's experimental types out of public signatures
+  (`ValidationScope` and `Validated` wrap them).
 - Composites that boundaries report field by field use the path-aware helpers
   (`fieldAt`, `eachFieldAt`, `flatFieldAt`, `nestedFieldAt`) and raise
   `NonEmptyList<FieldError<Error>>`. Paths come from property names; pass `name`
-  only when the wire name differs.
+  only when the wire name differs. A composite whose only consumer is a message
+  or a response may use boundary mode instead: raise
+  `NonEmptyList<FieldError<ValidationError>>` and call the helpers without an
+  `onError` lambda, so library errors are recorded as they are.
 - Every error type the library defines has a `describe` overload in
   `ErrorMessages` with a stable snake_case `type.error` code. Codes are public API:
   never rename one. Descriptions never quote rejected free text.

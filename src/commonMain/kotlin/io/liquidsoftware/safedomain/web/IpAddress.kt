@@ -5,6 +5,7 @@ package io.liquidsoftware.safedomain.web
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensureNotNull
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -16,7 +17,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * brackets are rejected. An IPv4-mapped IPv6 address (`::ffff:192.0.2.1`) stays IPv6.
  */
 public sealed class IpAddress {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         /** [toString] redacts [value], because an IP address can identify a person. */
         public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"

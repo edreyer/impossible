@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.collections
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.mapOrAccumulate
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -12,7 +13,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * Equality and hashing use the ordered elements within this type, not ordinary list equality.
  */
 public class UniqueList<A> private constructor(public val value: List<A>) : Iterable<A> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         /** Zero-based positions; each repeat refers to the first equal element. */
         public data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : Error
     }

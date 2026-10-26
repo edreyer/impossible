@@ -5,6 +5,7 @@ import io.kotest.property.arbitrary.map
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.RequiredError
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.collections.BoundedList
 import io.liquidsoftware.safedomain.collections.UniqueList
 import io.liquidsoftware.safedomain.contact.Email
@@ -166,5 +167,62 @@ class ErrorLawsTest {
             }
         }
         assertEquals(publishedCodes, seen)
+    }
+
+    /** Each generator's errors, described by their own overload and through the [ValidationError] dispatcher. */
+    private val dispatched: List<Arb<Pair<ErrorMessage, ErrorMessage>>> = listOf(
+        agreement(NonBlankString.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Slug.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Secret.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Email.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Phone.errorArb()) { ErrorMessages.describe(it) },
+        agreement(CountryCode.errorArb()) { ErrorMessages.describe(it) },
+        agreement(LanguageTag.errorArb()) { ErrorMessages.describe(it) },
+        agreement(TypedId.errorArb()) { ErrorMessages.describe(it) },
+        agreement(PositiveInt.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NegativeInt.errorArb()) { ErrorMessages.describe(it) },
+        agreement(PositiveLong.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NegativeLong.errorArb()) { ErrorMessages.describe(it) },
+        agreement(PositiveDecimal.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NegativeDecimal.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NonNegativeDecimal.errorArb()) { ErrorMessages.describe(it) },
+        agreement(BoundedInt.errorArb(1..10)) { ErrorMessages.describe(it) },
+        agreement(Percentage.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Currency.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Money.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Money.arithmeticErrorArb()) { ErrorMessages.describe(it) },
+        agreement(PositiveMoney.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NonNegativeMoney.errorArb()) { ErrorMessages.describe(it) },
+        agreement(NegativeMoney.errorArb()) { ErrorMessages.describe(it) },
+        agreement(DateRange.errorArb()) { ErrorMessages.describe(it) },
+        agreement(DateChecks.errorArb()) { ErrorMessages.describe(it) },
+        agreement(TimeWindow.errorArb()) { ErrorMessages.describe(it) },
+        agreement(PositiveDuration.errorArb()) { ErrorMessages.describe(it) },
+        agreement(TimeZoneId.errorArb()) { ErrorMessages.describe(it) },
+        agreement(DomainName.errorArb()) { ErrorMessages.describe(it) },
+        agreement(IpAddress.errorArb()) { ErrorMessages.describe(it) },
+        agreement(HttpUrl.errorArb()) { ErrorMessages.describe(it) },
+        agreement(GeoPoint.errorArb()) { ErrorMessages.describe(it) },
+        agreement(BoundedList.errorArb(1..10)) { ErrorMessages.describe(it) },
+        agreement(UniqueList.errorArb()) { ErrorMessages.describe(it) },
+        agreement(Arb.nonEmptyError()) { ErrorMessages.describe(it) },
+        agreement(Arb.distinctError()) { ErrorMessages.describe(it) },
+    )
+
+    private fun <E : ValidationError> agreement(errors: Arb<E>, describe: (E) -> ErrorMessage): Arb<Pair<ErrorMessage, ErrorMessage>> =
+        errors.map { describe(it) to ErrorMessages.describe(it as ValidationError) }
+
+    @Test
+    fun `the ValidationError dispatcher describes every error as its own overload does`() = runTest {
+        for (pairs in dispatched) {
+            forAll(pairs, iterations = 50) { (specific, dispatched) -> assertEquals(specific, dispatched) }
+        }
+        val overflows: List<ValidationError> =
+            listOf(PositiveInt.Overflow, PositiveLong.Overflow, NegativeInt.Overflow, NegativeLong.Overflow)
+        assertEquals(
+            listOf("positive_int.overflow", "positive_long.overflow", "negative_int.overflow", "negative_long.overflow"),
+            overflows.map { ErrorMessages.describe(it).code },
+        )
+        assertEquals("required.missing", ErrorMessages.describe(RequiredError.Missing as ValidationError).code)
     }
 }

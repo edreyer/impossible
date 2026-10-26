@@ -904,6 +904,59 @@ pass `detail =` your own text, or `null` to leave it out. It is plain data; rend
 [PathValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/PathValidationTest.kt)
 shows the whole flow.
 
+### Boundary mode
+
+Every error this library defines implements the marker interface `ValidationError`.
+A composite that only exists to check a request or a form can raise
+`NonEmptyList<FieldError<ValidationError>>` and declare its fields with no wrapper
+errors and no `onError` lambdas; each library error is recorded as it is:
+
+```kotlin
+data class SignupRequest(val email: Email, val name: NonBlankString, val country: CountryCode, val seats: PositiveInt) {
+    data class Input(val email: String?, val name: String, val country: String, val seats: Int)
+
+    companion object : ValueFactory<Input, NonEmptyList<FieldError<ValidationError>>, SignupRequest> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: Input): SignupRequest = validate {
+            val email by Email.required().fieldAt(value.email) // RequiredError.Missing or an Email.Error
+            val name by NonBlankString.fieldAt(value.name)
+            val country by CountryCode.fieldAt(value.country)
+            val seats by PositiveInt.fieldAt(value.seats)
+            SignupRequest(email, name, country, seats)
+        }
+    }
+}
+
+val problem = SignupRequest.fromEither(input).mapLeft { it.toProblemDetails() }
+```
+
+`toProblemDetails()` without a `describe` argument uses
+`ErrorMessages.describe(ValidationError)`, which describes any library error. The
+other boundary-mode helpers are `eachFieldAt(values)`, `flatFieldAt(value)` and
+`nestedFieldAt(value)` (for a nested boundary composite), and the precise forms with a
+lambda still work in the same block.
+
+Which to use: keep precise per-composite errors (the `Shipment` above) when the domain
+branches on them, such as retrying, compensating, or choosing an outcome. Use boundary
+mode when the only consumer of the errors is a message or a response. To add your own
+failure to a boundary composite, give it a type that implements `ValidationError` and
+describe it yourself, delegating everything else:
+
+```kotlin
+data class SeatsOverLimit(val limit: Int) : ValidationError
+
+val describe = { error: ValidationError ->
+    when (error) {
+        is SeatsOverLimit -> ErrorMessage("signup.seats_over_limit", "Book at most ${error.limit} seats.")
+        else -> ErrorMessages.describe(error)
+    }
+}
+failures.toProblemDetails(describe)
+```
+
+`ErrorMessages.describe(ValidationError)` throws `IllegalArgumentException` for an error
+the library does not define, so a consumer error always needs its own branch.
+
 ## JSON and other formats
 
 The `impossible-serialization` module (in `serialization/`) has a

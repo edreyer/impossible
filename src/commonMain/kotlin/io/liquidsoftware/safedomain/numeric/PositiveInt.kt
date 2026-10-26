@@ -2,18 +2,19 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range 1..[Int.MAX_VALUE]. */
 @JvmInline
 public value class PositiveInt private constructor(public val value: Int) : Comparable<PositiveInt> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class NonPositive(val value: Int) : Error
     }
 
     /** The sum exceeded [Int.MAX_VALUE]. */
-    public data object Overflow
+    public data object Overflow : ValidationError
 
     override fun compareTo(other: PositiveInt): Int = value.compareTo(other.value)
 

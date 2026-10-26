@@ -6,6 +6,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.RaiseAccumulate
 import arrow.core.raise.accumulate
 import arrow.core.raise.withError
+import kotlin.jvm.JvmName
 import kotlin.reflect.KProperty
 
 /**
@@ -205,3 +206,53 @@ public fun <Mapped, A> fieldAt(name: String? = null, block: Raise<Mapped>.() -> 
     PathField(name) { path ->
         scope.accumulating { withError({ error: Mapped -> FieldError(path, error) }) { block() } }
     }
+
+// Boundary mode: in a composite whose error is FieldError<ValidationError>, a library
+// factory's field records the library's own error as it is, with no wrapper and no
+// mapping. Precise per-composite errors stay the recommended model inside a domain.
+
+/**
+ * Validates one field and records the factory's own error at the field's path, for a
+ * boundary composite that raises `NonEmptyList<FieldError<ValidationError>>`:
+ *
+ * ```kotlin
+ * val email by Email.fieldAt(input.email)   // an Email.Error at "email"
+ * ```
+ */
+context(scope: ValidationScope<FieldError<ValidationError>>)
+public fun <Input, Error : ValidationError, Value> ValueFactory<Input, Error, Value>.fieldAt(
+    value: Input,
+    name: String? = null,
+): PathField<Value> = fieldAt<Input, Error, Value, ValidationError>(value, name) { it }
+
+/**
+ * Validates one [required] field at its path, recording absence as
+ * [RequiredError.Missing] and an invalid value as the factory's own error.
+ */
+@JvmName("requiredFieldAt")
+context(scope: ValidationScope<FieldError<ValidationError>>)
+public fun <Input, Error : ValidationError, Value> ValueFactory<Input, RequiredError<Error>, Value>.fieldAt(
+    value: Input,
+    name: String? = null,
+): PathField<Value> = fieldAt<Input, Error, Value, ValidationError>(value, name, { RequiredError.Missing }) { it }
+
+/** Validates every element, recording each factory error as it is at `field[index]`. */
+context(scope: ValidationScope<FieldError<ValidationError>>)
+public fun <Input, Error : ValidationError, Value> ValueFactory<Input, Error, Value>.eachFieldAt(
+    values: Iterable<Input>,
+    name: String? = null,
+): PathField<List<Value>> = eachFieldAt<Input, Error, Value, ValidationError>(values, name) { it }
+
+/** Validates one field from an accumulating factory, recording each of its errors as it is at the field's path. */
+context(scope: ValidationScope<FieldError<ValidationError>>)
+public fun <Input, Error : ValidationError, Value> ValueFactory<Input, NonEmptyList<Error>, Value>.flatFieldAt(
+    value: Input,
+    name: String? = null,
+): PathField<Value> = flatFieldAt<Input, Error, Value, ValidationError>(value, name) { it }
+
+/** Validates a nested composite, prefixing each of its inner paths with this field's path and keeping its errors. */
+context(scope: ValidationScope<FieldError<ValidationError>>)
+public fun <Input, Error : ValidationError, Value> ValueFactory<Input, NonEmptyList<FieldError<Error>>, Value>.nestedFieldAt(
+    value: Input,
+    name: String? = null,
+): PathField<Value> = nestedFieldAt<Input, Error, Value, ValidationError>(value, name) { it }

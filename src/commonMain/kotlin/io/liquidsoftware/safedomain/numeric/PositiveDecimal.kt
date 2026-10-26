@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -9,7 +10,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * rounding; equality, hashing, and ordering use numeric value (1.0 equals 1.00).
  */
 public class PositiveDecimal private constructor(public val value: Decimal) : Comparable<PositiveDecimal> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class NonPositive(val value: Decimal) : Error
     }
 

@@ -14,6 +14,7 @@ import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /** A nested composite whose own factory reports paths. */
 private data class Address(val street: NonBlankString, val country: CountryCode) {
@@ -75,6 +76,58 @@ private data class Shipment(
                 limit
             }
             Shipment(contact, address, quantities, price, maximum)
+        }
+    }
+}
+
+/** A nested boundary composite: library errors are recorded as they are. */
+private data class BoundaryAddress(val street: NonBlankString, val country: CountryCode) {
+    data class Input(val street: String, val country: String)
+
+    companion object : ValueFactory<Input, NonEmptyList<FieldError<ValidationError>>, BoundaryAddress> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: Input): BoundaryAddress = validate {
+            val street by NonBlankString.fieldAt(value.street)
+            val country by CountryCode.fieldAt(value.country)
+            BoundaryAddress(street, country)
+        }
+    }
+}
+
+/** A consumer error that joins a boundary composite. */
+private data class TooManyItems(val maximum: Int) : ValidationError
+
+/** A boundary composite with no wrapper errors: every identity overload, plus a precise and a dependent field. */
+private data class Signup(
+    val email: Email,
+    val address: BoundaryAddress,
+    val quantities: List<PositiveInt>,
+    val price: Money,
+    val nickname: NonBlankString,
+    val items: Int,
+) {
+    data class Input(
+        val email: String?,
+        val address: BoundaryAddress.Input,
+        val quantities: List<Int>,
+        val price: Money.Text,
+        val nickname: String,
+    )
+
+    companion object : ValueFactory<Input, NonEmptyList<FieldError<ValidationError>>, Signup> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: Input): Signup = validate {
+            val email by Email.required().fieldAt(value.email)
+            val address by BoundaryAddress.nestedFieldAt(value.address)
+            val quantities by PositiveInt.eachFieldAt(value.quantities)
+            val price by Money.parser.flatFieldAt(value.price, name = "unit_price")
+            // The precise form, with a lambda, still binds in the same block.
+            val nickname by NonBlankString.fieldAt(value.nickname) { it }
+            val items by fieldAt {
+                ensure(quantities.size <= 3) { TooManyItems(3) }
+                quantities.size
+            }
+            Signup(email, address, quantities, price, nickname, items)
         }
     }
 }
@@ -233,5 +286,88 @@ class PathValidationTest {
         assertEquals("The request has 1 problem.", failures.toProblemDetails(describe).detail)
         assertEquals("Die Anfrage ist ungültig.", failures.toProblemDetails(describe, detail = "Die Anfrage ist ungültig.").detail)
         assertEquals(null, failures.toProblemDetails(describe, detail = null).detail)
+    }
+
+    private val validSignup = Signup.Input(
+        email = "ada@example.com",
+        address = BoundaryAddress.Input("1 Main St", "GB"),
+        quantities = listOf(1, 2),
+        price = Money.Text("9.99", "USD"),
+        nickname = "Ada",
+    )
+
+    @Test
+    fun `boundary mode records library errors as they are at their paths`() {
+        val input = validSignup.copy(
+            email = "nope",
+            address = BoundaryAddress.Input(" ", "gb"),
+            quantities = listOf(1, 0),
+            price = Money.Text("x", "usd"),
+            nickname = "",
+        )
+        val priceErrors = either { Money.parser.from(input.price) }.leftOrNull()!!
+        val expected: List<FieldError<ValidationError>> = listOf(
+            FieldError(FieldPath.of("email"), Email.Error.InvalidFormat("nope")),
+            FieldError(FieldPath.of("address").child("street"), NonBlankString.Error.Blank),
+            FieldError(FieldPath.of("address").child("country"), either { CountryCode.from("gb") }.leftOrNull()!!),
+            FieldError(FieldPath.of("quantities").index(1), PositiveInt.Error.NonPositive(0)),
+        ) + priceErrors.map { FieldError(FieldPath.of("unit_price"), it) } +
+            FieldError(FieldPath.of("nickname"), NonBlankString.Error.Blank)
+        assertEquals(expected, either { Signup.from(input) }.leftOrNull()?.toList())
+    }
+
+    @Test
+    fun `boundary mode records a missing required value and a consumer error`() {
+        val result = either { Signup.from(validSignup.copy(email = null, quantities = listOf(1, 1, 1, 1))) }
+        assertEquals(
+            Either.Left(
+                nonEmptyListOf(
+                    FieldError(FieldPath.of("email"), RequiredError.Missing),
+                    FieldError(FieldPath.of("items"), TooManyItems(3)),
+                ),
+            ),
+            result,
+        )
+    }
+
+    @Test
+    fun `boundary mode builds the composite from valid input`() {
+        val signup = either { Signup.from(validSignup) }.getOrNull()!!
+        assertEquals("ada@example.com", signup.email.value)
+        assertEquals(2, signup.items)
+    }
+
+    @Test
+    fun `boundary failures become problem details with one call`() {
+        val failures = either { Signup.from(validSignup.copy(email = null, quantities = listOf(0))) }.leftOrNull()!!
+        assertEquals(
+            listOf(
+                ProblemDetails.InvalidField("/email", "required.missing", "A value is required."),
+                ProblemDetails.InvalidField("/quantities/0", "positive_int.non_positive", "Enter a number greater than zero."),
+            ),
+            failures.toProblemDetails().errors,
+        )
+        assertEquals("The request has 2 problems.", failures.toProblemDetails().detail)
+    }
+
+    @Test
+    fun `a consumer error is described by the consumer and library errors by the dispatcher`() {
+        val input = validSignup.copy(nickname = " ", quantities = listOf(1, 1, 1, 1))
+        val failures = either { Signup.from(input) }.leftOrNull()!!
+        val describe = { error: ValidationError ->
+            when (error) {
+                is TooManyItems -> ErrorMessage("signup.too_many_items", "Choose at most ${error.maximum} items.")
+                else -> ErrorMessages.describe(error)
+            }
+        }
+        assertEquals(
+            listOf("non_blank_string.blank", "signup.too_many_items"),
+            failures.toProblemDetails(describe).errors.map { it.code },
+        )
+    }
+
+    @Test
+    fun `the dispatcher rejects an error the library does not define`() {
+        assertFailsWith<IllegalArgumentException> { ErrorMessages.describe(TooManyItems(3)) }
     }
 }

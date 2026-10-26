@@ -6,6 +6,7 @@ package io.liquidsoftware.safedomain.web
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -28,7 +29,7 @@ public class HttpUrl private constructor(
     public val query: String?,
     public val fragment: String?,
 ) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class InvalidSyntax(val value: String) : Error
         public data class NotAbsolute(val value: String) : Error
         public data class UnsupportedScheme(val scheme: String) : Error

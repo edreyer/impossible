@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -11,7 +12,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * range require a different consuming-domain type.
  */
 public class Percentage private constructor(public val value: Decimal) : Comparable<Percentage> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class OutOfRange(val value: Decimal) : Error
     }
 

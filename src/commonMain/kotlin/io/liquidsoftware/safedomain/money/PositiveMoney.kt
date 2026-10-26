@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.money
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import kotlin.jvm.JvmInline
@@ -12,7 +13,7 @@ import kotlin.jvm.JvmInline
  */
 @JvmInline
 public value class PositiveMoney private constructor(public val money: Money) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class NonPositive(val money: Money) : Error
     }
 

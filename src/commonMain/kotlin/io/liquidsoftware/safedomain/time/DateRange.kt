@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -12,7 +13,7 @@ import kotlinx.datetime.plus
 public class DateRange private constructor(public val start: LocalDate, public val endInclusive: LocalDate) {
     public data class Input(val start: LocalDate, val endInclusive: LocalDate)
 
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class EndBeforeStart(val start: LocalDate, val endInclusive: LocalDate) : Error
     }
 

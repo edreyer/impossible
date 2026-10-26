@@ -3,6 +3,7 @@ package io.liquidsoftware.safedomain.geo
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.field
 import io.liquidsoftware.safedomain.validate
@@ -16,7 +17,7 @@ import io.liquidsoftware.safedomain.validate
 public class GeoPoint private constructor(public val latitude: Double, public val longitude: Double) {
     public data class Input(val latitude: Double, val longitude: Double)
 
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class LatitudeOutOfRange(val value: Double) : Error
         public data class LongitudeOutOfRange(val value: Double) : Error
     }

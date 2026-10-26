@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.collections
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -11,7 +12,7 @@ import io.liquidsoftware.safedomain.ValueFactory
  * Equality and hashing include the ordered elements and bounds within this type.
  */
 public class BoundedList<A> private constructor(public val value: List<A>, public val bounds: IntRange) : Iterable<A> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class TooSmall(val minimum: Int, val actual: Int) : Error
         public data class TooLarge(val maximum: Int, val actual: Int) : Error
     }

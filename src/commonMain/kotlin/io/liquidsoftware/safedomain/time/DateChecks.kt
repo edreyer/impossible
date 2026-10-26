@@ -2,6 +2,7 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -16,7 +17,7 @@ import kotlin.time.Clock
  * validation; supply a fixed clock for deterministic tests.
  */
 public object DateChecks {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
         public data class NotPast(val value: LocalDate, val today: LocalDate) : Error
         public data class NotFuture(val value: LocalDate, val today: LocalDate) : Error
     }
