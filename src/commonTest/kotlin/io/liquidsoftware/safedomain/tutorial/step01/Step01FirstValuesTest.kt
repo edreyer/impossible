@@ -4,6 +4,9 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.raise.Raise
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.fromEither
+import io.liquidsoftware.safedomain.fromOrElse
+import io.liquidsoftware.safedomain.fromOrNull
 import io.liquidsoftware.safedomain.fromTrusted
 import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.text.NonBlankString
@@ -16,6 +19,11 @@ import kotlin.test.assertFailsWith
 
 fun titleOf(raw: String): Either<NonBlankString.Error, NonBlankString> =
     either { NonBlankString.from(raw) }
+
+fun titleOrNull(raw: String): NonBlankString? = NonBlankString.fromOrNull(raw)
+
+fun titleOrUntitled(raw: String): NonBlankString =
+    NonBlankString.fromOrElse(raw) { NonBlankString.fromTrusted("Untitled") }
 
 fun describeTitle(raw: String): String = when (val title = titleOf(raw)) {
     is Either.Right -> "Title: ${title.value.value}"
@@ -40,8 +48,16 @@ val maximumBasketSize: PositiveInt = PositiveInt.fromTrusted(50)
 class Step01FirstValuesTest {
     @Test
     fun `either turns a validation into a value`() {
+        assertEquals(NonBlankString.fromEither("  Dune  "), titleOf("  Dune  "))
         assertEquals("  Dune  ", titleOf("  Dune  ").getOrNull()?.value)
         assertEquals(Either.Left(NonBlankString.Error.Blank), titleOf(" \t"))
+    }
+
+    @Test
+    fun `shortcuts give a nullable value or a fallback outside a Raise scope`() {
+        assertEquals("Dune", titleOrNull("Dune")?.value)
+        assertEquals(null, titleOrNull(""))
+        assertEquals("Untitled", titleOrUntitled(" ").value)
     }
 
     @Test

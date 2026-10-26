@@ -91,7 +91,22 @@ repairing it.
 
 ## Usage
 
-Use `either` when a result needs to exist as a value:
+Outside a `Raise` scope, such as in a test, a script, a controller or Java code, ask
+a factory for an `Either` or a nullable value directly:
+
+```kotlin
+import io.liquidsoftware.safedomain.contact.Email
+import io.liquidsoftware.safedomain.fromEither
+import io.liquidsoftware.safedomain.fromOrElse
+import io.liquidsoftware.safedomain.fromOrNull
+
+val parsed = Email.fromEither("ann@example.com") // Right(Email(ann@example.com)).
+val maybe = Email.fromOrNull("nope")              // null; use it only when the reason does not matter.
+val email = Email.fromOrElse(raw) { return badRequest(it) } // recover may return early.
+```
+
+`fromEither(x)` is exactly `either { from(x) }`. Use `either` itself when a block
+constructs several values:
 
 ```kotlin
 import arrow.core.Either

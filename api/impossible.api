@@ -225,6 +225,9 @@ public final class io/liquidsoftware/safedomain/ValueFactoryCombinatorsKt {
 }
 
 public final class io/liquidsoftware/safedomain/ValueFactoryKt {
+	public static final fun fromEither (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;)Larrow/core/Either;
+	public static final fun fromOrElse (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun fromOrNull (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun fromTrusted (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun optional (Lio/liquidsoftware/safedomain/ValueFactory;)Lio/liquidsoftware/safedomain/ValueFactory;
 	public static final fun required (Lio/liquidsoftware/safedomain/ValueFactory;)Lio/liquidsoftware/safedomain/ValueFactory;
