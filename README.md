@@ -1205,13 +1205,17 @@ not installed. Targets:
 
 Every pull request runs the [Checks](.github/workflows/checks.yml) workflow:
 detekt, the JVM, JS, Wasm and Linux tests with a coverage floor on Linux, and the macOS and
-iOS simulator tests on macOS. The same checks run locally:
+iOS simulator tests on macOS. A separate [Workflow lint](.github/workflows/workflow-lint.yml)
+workflow runs [actionlint](https://github.com/rhysd/actionlint) over the workflow files, so a
+broken `checks.yml`, which GitHub would otherwise skip without running a single job, fails
+visibly. The same checks run locally:
 
 | Check | Command |
 | --- | --- |
 | Lint and formatting ([detekt](https://detekt.dev) with ktlint's rules) | `./gradlew detekt`; `./gradlew detekt -PdetektAutoCorrect` fixes formatting |
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
+| Workflow files ([actionlint](https://github.com/rhysd/actionlint)) | `actionlint` from the repository root |
 
 The settings shared by the three multiplatform modules (targets, toolchain, JVM bytecode
 level, explicit API mode, ABI validation, group and version) live in one convention plugin,

@@ -1,0 +1,28 @@
+name: Workflow lint
+
+# Checks the workflow files themselves. It lives apart from checks.yml because GitHub rejects
+# an invalid workflow file outright: none of its jobs run and the pull request shows no Checks
+# at all. A separate workflow still runs then, and fails with the reason.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: workflow-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  actionlint:
+    name: Workflow lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install actionlint
+        # The download script and binary are pinned to one release, so the check cannot change
+        # under a pull request.
+        run: |
+          bash <(curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash) 1.7.12
+      - name: Lint the workflow files
+        # Also runs shellcheck over each run: script, which the runner image provides.
+        run: ./actionlint -color
