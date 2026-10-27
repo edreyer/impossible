@@ -3,6 +3,9 @@ plugins {
   kotlin("plugin.serialization")
 }
 
+// The POM description on Maven Central.
+description = "kotlinx.serialization serializers that decode through the impossible validating factories."
+
 kotlin {
   sourceSets {
     commonMain.dependencies {

@@ -2,6 +2,9 @@ plugins {
   id("impossible.jvm-library")
 }
 
+// The POM description on Maven Central.
+description = "Jackson (de)serializers that decode through the impossible validating factories."
+
 dependencies {
   api(project(":"))
   api(libs.jackson.databind)

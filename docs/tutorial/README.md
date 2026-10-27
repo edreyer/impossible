@@ -37,22 +37,14 @@ uses context parameters (`context(raise: Raise<Error>)`). It builds on
 [Arrow](https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/)'s `Raise`;
 you don't need to know Arrow first, as step 1 introduces the few pieces you need.
 
-The library is not yet published to Maven Central. Until it is, build against a
-checkout, for example with a [composite build](https://docs.gradle.org/current/userguide/composite_builds.html)
-in your `settings.gradle.kts`:
-
-```kotlin-gradle
-includeBuild("../impossible")
-```
-
-and the coordinates in your module's dependencies:
+The library is published to Maven Central. Add it to your module's dependencies:
 
 ```kotlin-gradle
 dependencies {
-    implementation("io.liquidsoftware:impossible:1.0-SNAPSHOT")
+    implementation("io.liquidsoftware:impossible:0.1.0")
     // Optional modules, used in steps 11 and 12:
-    implementation("io.liquidsoftware:impossible-serialization:1.0-SNAPSHOT")
-    testImplementation("io.liquidsoftware:impossible-testing:1.0-SNAPSHOT")
+    implementation("io.liquidsoftware:impossible-serialization:0.1.0")
+    testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
 }
 ```
 

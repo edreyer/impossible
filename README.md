@@ -82,6 +82,25 @@ a translation needs. The rejected email address never appears in it.
   JPA, and how to accept friendly input such as spaced phone numbers.
 - The rest of this README is the reference: every type, its invariant, and its errors.
 
+## Installation
+
+The library is published to Maven Central for every target in the [Build](#build)
+section. In a multiplatform project, add it to `commonMain`; in a JVM project, add it
+to `dependencies` the same way.
+
+```kotlin
+dependencies {
+  implementation("io.liquidsoftware:impossible:0.1.0")
+  // kotlinx.serialization serializers that validate while decoding.
+  implementation("io.liquidsoftware:impossible-serialization:0.1.0")
+  // kotest generators for property tests.
+  testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
+}
+```
+
+On the JVM, `io.liquidsoftware:impossible-jackson:0.1.0` adds the
+[Jackson module](#jackson).
+
 ## Types
 
 Types are grouped by domain under `io.liquidsoftware.safedomain`. The root
@@ -1223,7 +1242,9 @@ level, explicit API mode, ABI validation, group and version) live in one convent
 Each of them applies `id("impossible.kotlin-library")` and declares only its own
 dependencies. The JVM-only `impossible-jackson` applies
 [impossible.jvm-library](build-logic/src/main/kotlin/impossible.jvm-library.gradle.kts)
-instead, which shares the group, version and JDK floor through `ImpossibleBuild`.
+instead, which shares the group, version and JDK floor through `ImpossibleBuild`. Both apply
+[impossible.publishing](build-logic/src/main/kotlin/impossible.publishing.gradle.kts), which
+adds the Maven Central POM, the Dokka javadoc jars and signing.
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
@@ -1308,8 +1329,10 @@ accumulating construction with decimals, percentages, tagged IDs, and HTTP URLs.
 Money tests cover minor-unit construction, exact and rounded arithmetic, overflow,
 allocation, and typed failures. Collection tests cover empty inputs, duplicate positions,
 inclusive size bounds, snapshot immutability, invariant-preserving operations,
-and accumulating composition. The library is not yet
-configured for publication.
+and accumulating composition.
+
+Releases go to Maven Central; [RELEASING.md](RELEASING.md) has the steps and
+[CHANGELOG.md](CHANGELOG.md) the history.
 
 Contributor rules are in [AGENTS.md](AGENTS.md).
 

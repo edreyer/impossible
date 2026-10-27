@@ -1,11 +1,12 @@
-// Targets, toolchain and API checks shared by every multiplatform module of the library.
-// A module applies this plugin and adds only its own dependencies.
+// Targets, toolchain, API checks and publishing shared by every multiplatform module of the
+// library. A module applies this plugin, sets its description and adds only its own dependencies.
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
   kotlin("multiplatform")
+  id("impossible.publishing")
 }
 
 group = ImpossibleBuild.GROUP

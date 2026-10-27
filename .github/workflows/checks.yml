@@ -34,6 +34,32 @@ jobs:
         # Compares the public API with the committed dumps in each module's api/ folder.
         run: ./gradlew checkKotlinAbi
 
+  package:
+    # Builds every artifact exactly as it is published, unsigned, so packaging breaks here
+    # and not at release time. Linux builds the Apple klibs too.
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Cache Kotlin/Native toolchain
+        uses: actions/cache@v6
+        with:
+          path: ~/.konan
+          # The toolchain depends only on the Kotlin version, which the version catalog holds,
+          # so editing a build script does not force a fresh ~600 MB download.
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+      - name: Publish to Maven Local
+        run: ./gradlew publishToMavenLocal
+      - name: Check the published files
+        # A block scalar, because the sed pattern's "version: " would end a plain YAML value.
+        run: |
+          scripts/check-publication.sh "$(./gradlew -q properties --property version | sed -n 's/^version: //p')"
+
   test:
     name: JVM/JS/Linux tests, coverage
     runs-on: ubuntu-latest

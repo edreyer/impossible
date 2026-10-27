@@ -2,6 +2,9 @@ plugins {
   id("impossible.kotlin-library")
 }
 
+// The POM description on Maven Central.
+description = "kotest property-test generators for the impossible value types."
+
 kotlin {
   sourceSets {
     commonMain.dependencies {
