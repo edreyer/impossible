@@ -3,6 +3,9 @@ package io.liquidsoftware.safedomain.money
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.numeric.Percentage
 import io.liquidsoftware.safedomain.numeric.PositiveInt
@@ -15,7 +18,9 @@ import kotlin.jvm.JvmInline
  */
 @JvmInline
 public value class NonNegativeMoney private constructor(public val money: Money) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class Negative(val money: Money) : Error
     }
 

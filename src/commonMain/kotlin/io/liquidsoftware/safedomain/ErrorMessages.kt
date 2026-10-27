@@ -65,9 +65,16 @@ public data class ErrorMessage(val code: String, val text: String, val arguments
 public object ErrorMessages {
     public fun <Error> describe(error: RequiredError<Error>, describeCause: (Error) -> ErrorMessage): ErrorMessage =
         when (error) {
-            RequiredError.Missing -> ErrorMessage("required.missing", "A value is required.")
+            RequiredError.Missing -> missing()
             is RequiredError.Invalid -> describeCause(error.cause)
         }
+
+    /**
+     * Describes any [ValidationError] by its own [ValidationError.describe], which every
+     * library error delegates to its overload here. Kept for callers that pass
+     * `ErrorMessages::describe` as a describe function.
+     */
+    public fun describe(error: ValidationError): ErrorMessage = error.describe()
 
     // text
 
@@ -338,6 +345,8 @@ public object ErrorMessages {
         DistinctError.Empty -> ErrorMessage("collection.empty", "Add at least one item.")
         is DistinctError.Duplicate -> duplicate("collection.duplicate", error.firstIndex, error.duplicateIndex)
     }
+
+    internal fun missing(): ErrorMessage = ErrorMessage("required.missing", "A value is required.")
 
     private fun greaterThanZero(code: String) = ErrorMessage(code, "Enter a number greater than zero.")
 

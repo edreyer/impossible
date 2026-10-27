@@ -2,6 +2,9 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -14,7 +17,9 @@ import kotlin.time.Instant
 public class TimeWindow private constructor(public val start: Instant, public val endExclusive: Instant) {
     public data class Input(val start: Instant, val endExclusive: Instant)
 
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class NotAfterStart(val start: Instant, val endExclusive: Instant) : Error
     }
 

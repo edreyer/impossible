@@ -2,18 +2,25 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.jvm.JvmInline
 
 /** An integer in the inclusive range [Long.MIN_VALUE]..-1. */
 @JvmInline
 public value class NegativeLong private constructor(public val value: Long) : Comparable<NegativeLong> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class NonNegative(val value: Long) : Error
     }
 
     /** The result is below [Long.MIN_VALUE], or is the negation of [Long.MIN_VALUE]. */
-    public data object Overflow
+    public data object Overflow : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+    }
 
     override fun compareTo(other: NegativeLong): Int = value.compareTo(other.value)
 

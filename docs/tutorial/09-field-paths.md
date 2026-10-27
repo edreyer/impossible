@@ -149,4 +149,5 @@ an HTTP response.
 The code and its tests are in
 [Step09FieldPathsTest.kt](../../src/commonTest/kotlin/io/liquidsoftware/safedomain/tutorial/step09/Step09FieldPathsTest.kt).
 
-Next: [Step 10, messages and problem details](10-messages-and-problem-details.md).
+Next: [Step 9b, boundary mode](09b-boundary-mode.md), a shorter form for request checks, or
+straight on to [Step 10, messages and problem details](10-messages-and-problem-details.md).

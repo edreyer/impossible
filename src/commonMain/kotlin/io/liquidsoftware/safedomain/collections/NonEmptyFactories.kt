@@ -9,15 +9,22 @@ import arrow.core.raise.ensure
 import arrow.core.raise.mapOrAccumulate
 import arrow.core.wrapAsNonEmptyListOrThrow
 import arrow.core.wrapAsNonEmptySetOrThrow
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /** The input had no elements. */
-public sealed interface NonEmptyError {
+public sealed interface NonEmptyError : ValidationError {
+    override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
     public data object Empty : NonEmptyError
 }
 
 /** Why input could not become a non-empty set without silently dropping elements. */
-public sealed interface DistinctError {
+public sealed interface DistinctError : ValidationError {
+    override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
     public data object Empty : DistinctError
 
     /** Zero-based positions; each repeat refers to the first equal element. */

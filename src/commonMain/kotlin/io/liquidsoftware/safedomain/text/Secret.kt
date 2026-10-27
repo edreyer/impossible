@@ -2,6 +2,9 @@ package io.liquidsoftware.safedomain.text
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
 /**
@@ -12,7 +15,9 @@ import io.liquidsoftware.safedomain.ValueFactory
  * is; [hashCode] uses only the length, so hashing reveals nothing more than that.
  */
 public class Secret private constructor(private val value: String) {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         /** The input was empty or only whitespace. Carries no input, by design. */
         public data object Blank : Error
     }

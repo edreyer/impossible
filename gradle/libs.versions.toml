@@ -1,6 +1,6 @@
 # Every dependency and plugin version in one place. Dependabot proposes updates to this file.
-# Arrow is pinned exactly: `Validated<A>` exposes Arrow's experimental RaiseAccumulate API,
-# so an Arrow upgrade can change this library's public API (see the README).
+# The validate DSL uses Arrow's experimental accumulate API internally only; no Arrow
+# experimental type is part of this library's API (see the README).
 
 [versions]
 kotlin = "2.4.21"
@@ -12,6 +12,7 @@ kotlinx-serialization = "1.11.0"
 kotlinx-coroutines = "1.11.0"
 detekt = "2.0.0-alpha.6"
 kover = "0.9.11"
+jackson = "2.22.4"
 
 [libraries]
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
@@ -20,6 +21,8 @@ bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 # Gradle plugins on the build-logic classpath.
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

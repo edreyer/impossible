@@ -9,8 +9,78 @@ A shared type establishes a narrow guarantee. A consuming application's
 `CustomerName` or `OrderQuantity` can build on that guarantee while retaining
 its own meaning and policies.
 
-New here? The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step
-by step, from a single value to JSON and property tests.
+impossible is a construction kit for domain types plus an error pipeline: over 30
+validated value types (email, money, typed ids, date ranges, URLs, and more), a
+`validate { }` DSL that composes them into your own types and reports every failure at
+once, and stable error codes that become an RFC 9457 HTTP response in one call.
+Validation behaves identically on the JVM, JS, Wasm, iOS, macOS and Linux, and failures
+are typed values built on Arrow's `Raise`, never exceptions.
+
+### Before and after
+
+The usual way: checks scattered in `init` blocks, the first failure thrown as an
+exception, and the raw input echoed into the message.
+
+<!-- checked -->
+```kotlin
+data class Order(val email: String, val quantity: Int, val total: BigDecimal) {
+    init {
+        require("@" in email) { "Invalid email: $email" }
+        require(quantity > 0) { "Quantity must be positive" }
+        require(total.signum() > 0) { "Total must be positive" }
+    }
+}
+```
+
+With impossible: each field is a type that cannot hold an invalid value, every failure
+is collected against the field that caused it, and the error path is one line.
+
+<!-- checked -->
+```kotlin
+data class OrderInput(val email: String?, val quantity: Int, val total: Money.Text)
+
+data class Order(val email: Email, val quantity: PositiveInt, val total: PositiveMoney) {
+    companion object : ValueFactory<OrderInput, NonEmptyList<FieldError<ValidationError>>, Order> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: OrderInput): Order = validate {
+            val email by Email.required().fieldAt(value.email)
+            val quantity by PositiveInt.fieldAt(value.quantity)
+            val amount by Money.parser.flatFieldAt(value.total, name = "total")
+            val total by fieldAt { PositiveMoney.from(amount) }
+            Order(email, quantity, total)
+        }
+    }
+}
+
+fun accept(input: OrderInput): String = Order.fromEither(input).fold(
+    ifLeft = { failures -> render(failures.toProblemDetails()) }, // 422 application/problem+json
+    ifRight = { order -> "accepted ${order.quantity.value}" },
+)
+```
+
+`OrderInput("nope", 0, Money.Text("0.00", "EUR"))` yields one problem with three
+entries, `/email` `email.invalid_format`, `/quantity` `positive_int.non_positive` and
+`/total` `positive_money.non_positive`, each with an English message and the arguments
+a translation needs. The rejected email address never appears in it.
+
+### Is it for you
+
+- Kotlin 2.4 or later: the API uses context parameters.
+- Arrow 2 on the classpath, as an API dependency. You need only `Raise`, `either` and
+  `NonEmptyList`; the tutorial introduces them.
+- JSON through kotlinx.serialization (`impossible-serialization`) or Jackson 2
+  (`impossible-jackson`, JVM); every decoder runs the real validation.
+- Targets: JVM 17+, JS, Wasm, Linux x64, macOS and iOS (arm64 and simulator).
+- Version 0.x: the API may still change between minor versions, and every change shows
+  up in the committed ABI dumps.
+
+### Where next
+
+- The [tutorial](docs/tutorial/README.md) builds a small bookshop domain step by step,
+  from a single value to JSON and property tests.
+- The [recipes](docs/recipes/README.md) show the library in Ktor, Spring, Exposed and
+  JPA, and how to accept friendly input such as spaced phone numbers.
+- The rest of this README is the reference: every type, its invariant, and its errors.
 
 ## Types
 
@@ -19,7 +89,7 @@ package holds the construction contract shared by every type.
 
 | Package | Contents |
 | --- | --- |
-| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()`, `fromTrusted` and the combinators `map`, `mapError`, `andThen` and `ensure`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `Validated`) |
+| `io.liquidsoftware.safedomain` | `ValueFactory` with `optional()`, `required()`, `fromTrusted` and the combinators `map`, `mapError`, `andThen` and `ensure`, and the `validate { }` DSL (`field`, `flatField`, `eachField`, `ValidationScope`, `Validated`) |
 | `.text` | `NonBlankString`, `Slug`, `Secret` |
 | `.contact` | `Email`, `Phone` |
 | `.numeric` | `PositiveInt`, `NegativeInt`, `PositiveLong`, `NegativeLong`, `BoundedInt`, `PositiveDecimal`, `NegativeDecimal`, `NonNegativeDecimal`, `Percentage`, `Decimal` |
@@ -91,7 +161,22 @@ repairing it.
 
 ## Usage
 
-Use `either` when a result needs to exist as a value:
+Outside a `Raise` scope, such as in a test, a script, a controller or Java code, ask
+a factory for an `Either` or a nullable value directly:
+
+```kotlin
+import io.liquidsoftware.safedomain.contact.Email
+import io.liquidsoftware.safedomain.fromEither
+import io.liquidsoftware.safedomain.fromOrElse
+import io.liquidsoftware.safedomain.fromOrNull
+
+val parsed = Email.fromEither("ann@example.com") // Right(Email(ann@example.com)).
+val maybe = Email.fromOrNull("nope")              // null; use it only when the reason does not matter.
+val email = Email.fromOrElse(raw) { return badRequest(it) } // recover may return early.
+```
+
+`fromEither(x)` is exactly `either { from(x) }`. Use `either` itself when a block
+constructs several values:
 
 ```kotlin
 import arrow.core.Either
@@ -346,14 +431,12 @@ expose a `NonEmptyList<Error>` factory, as `Money.parser` does. Use the mapped
 `from(raw, onError = ...)` overload directly for composites that should stop at
 their first failure. `validate` has no field-count limit.
 
-`validate` wraps Arrow's `accumulate` API, which Arrow marks
-`@ExperimentalRaiseAccumulateApi`. The opt-in is confined to
-[Validation.kt](src/commonMain/kotlin/io/liquidsoftware/safedomain/Validation.kt);
-callers need none. `Validated<A>` is an alias for Arrow's
-`RaiseAccumulate.Value<A>`, so that experimental Arrow type is part of this
-library's public API: if Arrow changes it, upgrading Arrow is a breaking change
-here. Arrow is therefore pinned to an exact version in
-[gradle/libs.versions.toml](gradle/libs.versions.toml).
+The DSL is built on Arrow's accumulate API internally. That API is experimental in
+Arrow, so the library keeps it out of its own API: the block's receiver is the
+library's `ValidationScope<Error>` (a `Raise<Error>`, so `ensure` and `raise` work in
+it) and fields are the library's `Validated<A>`. No Arrow experimental type appears in
+a public signature, callers need no opt-in, and Arrow is an ordinary pinned
+dependency in [gradle/libs.versions.toml](gradle/libs.versions.toml).
 [ValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/ValidationTest.kt)
 covers ordering, flattening, indexing, dependent blocks, and early reads.
 
@@ -402,6 +485,17 @@ throw `ArithmeticException` when the scale leaves the `Int` range, when
 `BigDecimal`. The arbitrary-precision integer comes from
 [bignum](https://github.com/ionspin/kotlin-multiplatform-bignum), an internal
 dependency that is not part of the public API.
+
+`Decimal` arithmetic is plain arithmetic, not validation, so it follows
+`java.math.BigDecimal` and throws `ArithmeticException` on division by zero, on
+`UNNECESSARY` rounding that would lose digits, and on scale overflow. `Money`
+is different: its operations raise a typed `Money.ArithmeticError`. To make a decimal
+operation total inside a `Raise` scope, catch the exception and raise your own error:
+
+```kotlin
+val perUnit = Either.catch { total.divide(count, 2, RoundingMode.HALF_EVEN) }
+    .mapLeft { PriceError.NotDivisible }.bind()
+```
 
 `PositiveDecimal.from(Decimal.parse(...))` and `NonNegativeDecimal.from(Decimal.parse(...))`
 enforce their sign invariants. `Percentage.from(Decimal.parse("12.5"))` means **12.5%**
@@ -538,6 +632,12 @@ address can identify a person, so `InvalidFormat` redacts its input in `toString
 `Secret(<redacted>)`, so it can sit in a data class that gets logged; `reveal()` reads
 the content at the point of use. Equality takes time independent of where two secrets
 first differ, and the hash code uses only the length.
+
+The redaction rule across the library: an error's `toString` never shows rejected
+personal data, such as the text of an invalid email address or phone number. A valid
+value prints as written, so `Email` and `Phone` show their addresses and numbers;
+they are data the application already stores and displays. Text that must never be
+printed, logged, or serialized belongs in `Secret`.
 
 `GeoPoint` is a WGS 84 latitude and longitude in decimal degrees. Both are checked and
 reported together, and nothing is wrapped or clamped: `181.0` fails rather than becoming
@@ -874,6 +974,54 @@ pass `detail =` your own text, or `null` to leave it out. It is plain data; rend
 [PathValidationTest](src/commonTest/kotlin/io/liquidsoftware/safedomain/PathValidationTest.kt)
 shows the whole flow.
 
+### Boundary mode
+
+Every error this library defines implements `ValidationError`, whose one member,
+`describe()`, gives the error's stable code, text and arguments. A composite that only exists to check a request or a form can raise
+`NonEmptyList<FieldError<ValidationError>>` and declare its fields with no wrapper
+errors and no `onError` lambdas; each library error is recorded as it is:
+
+```kotlin
+data class SignupRequest(val email: Email, val name: NonBlankString, val country: CountryCode, val seats: PositiveInt) {
+    data class Input(val email: String?, val name: String, val country: String, val seats: Int)
+
+    companion object : ValueFactory<Input, NonEmptyList<FieldError<ValidationError>>, SignupRequest> {
+        context(raise: Raise<NonEmptyList<FieldError<ValidationError>>>)
+        override fun from(value: Input): SignupRequest = validate {
+            val email by Email.required().fieldAt(value.email) // RequiredError.Missing or an Email.Error
+            val name by NonBlankString.fieldAt(value.name)
+            val country by CountryCode.fieldAt(value.country)
+            val seats by PositiveInt.fieldAt(value.seats)
+            SignupRequest(email, name, country, seats)
+        }
+    }
+}
+
+val problem = SignupRequest.fromEither(input).mapLeft { it.toProblemDetails() }
+```
+
+`toProblemDetails()` without a `describe` argument describes each failure with its own
+`describe()`. The other boundary-mode helpers are `eachFieldAt(values)`, `flatFieldAt(value)` and
+`nestedFieldAt(value)` (for a nested boundary composite), and the precise forms with a
+lambda still work in the same block.
+
+Which to use: keep precise per-composite errors (the `Shipment` above) when the domain
+branches on them, such as retrying, compensating, or choosing an outcome. Use boundary
+mode when the only consumer of the errors is a message or a response. To add your own
+failure to a boundary composite, give it a type that implements `ValidationError`; the
+compiler then requires its description, so no error reaches a response undescribed:
+
+```kotlin
+data class SeatsOverLimit(val limit: Int) : ValidationError {
+    override fun describe() = ErrorMessage("signup.seats_over_limit", "Book at most $limit seats.")
+}
+
+failures.toProblemDetails() // library errors and SeatsOverLimit alike
+```
+
+Pass a `describe` function to `toProblemDetails` only to change the wording, such as for
+a translation.
+
 ## JSON and other formats
 
 The `impossible-serialization` module (in `serialization/`) has a
@@ -934,13 +1082,46 @@ path-aware helpers under [Field paths, messages, and problem details](#field-pat
 shows each case, and `SerializationLawsTest` checks that every serializer reads back
 what it writes and turns arbitrary text into a value or an `InvalidValueException`.
 
+### Jackson
+
+The `impossible-jackson` module (in `jackson/`, JVM only, coordinates
+`io.liquidsoftware:impossible-jackson`) gives Jackson 2 the same support with one line:
+
+```kotlin
+val mapper = ObjectMapper().registerModule(ImpossibleModule())
+```
+
+The JSON is the same as in the table above, and a test checks that for every type's
+generator both modules write equal JSON and read each other's output. Reading runs the
+real factory; a rejected value throws the module's `InvalidValueException`, a
+`JsonMappingException` with the typed `error`, its `messages`, and the JSON Pointer of
+the value (`pointer`, such as `/email`), and never the rejected input. Numbers are
+never coerced: a float is not truncated into a `PositiveInt`, and a decimal must be a
+string.
+
+- `Secret` is read but never written.
+- `BoundedInt` and `BoundedList` need bounds: declare `class RatingDeserializer :
+  BoundedIntDeserializer(1..5)` (or a `BoundedListDeserializer` subclass) and name it
+  with `@JsonDeserialize(using = ...)`.
+- Kotlin classes that hold value classes such as `Email` need jackson-module-kotlin as
+  well (`jacksonObjectMapper().registerModule(ImpossibleModule())`), which Spring Boot
+  registers automatically when it is on the classpath.
+- Your own types: `Sku.asJacksonDeserializer("com.example.Sku", String::class.java, ::describe)`
+  and `jacksonSerializer(Sku::value)`.
+
+The [Spring recipe](docs/recipes/spring.md) shows the module in a Spring Boot application.
+
 ## Property-based testing
 
 The `impossible-testing` module (in `testing/`) publishes [kotest](https://kotest.io/docs/proptest/property-based-testing.html)
 generators for every type, so you can property-test the business types you build
 from them. Each generator is an extension on the type's companion and produces
 values through the type's real factory, so a generated value has passed the same
-validation as production input:
+validation as production input.
+
+`impossible-testing` depends on kotest-property 6.x as an API dependency, since its
+generators are kotest `Arb`s. A project still on kotest 5 cannot use it until it
+upgrades.
 
 ```kotlin
 import io.liquidsoftware.safedomain.testing.arb
@@ -995,7 +1176,8 @@ it, because Kotlin/JS `Regex.matches` does not backtrack to a longer match.
 This library supplies validated construction, mapped factories, value semantics,
 date range operations, collection invariants, and minor-unit money arithmetic on every
 Kotlin Multiplatform target listed under [Build](#build), plus a few JVM
-conversions. It does not yet include serialization adapters. Arithmetic on an extracted
+conversions. Serialization adapters live in the separate `impossible-serialization`
+module (see [JSON and other formats](#json-and-other-formats)). Arithmetic on an extracted
 `Int` has ordinary Kotlin semantics; the wrappers' own operations preserve their
 invariants and report overflow explicitly. `TimeZoneId` is the one type whose
 validation depends on platform data: each target resolves ids with its own time zone
@@ -1031,16 +1213,18 @@ iOS simulator tests on macOS. The same checks run locally:
 | Coverage ([Kover](https://github.com/Kotlin/kotlinx-kover)), at least 90% of lines | `./gradlew koverVerify`; `./gradlew koverHtmlReport` writes `build/reports/kover/html` |
 | Binary compatibility (the Kotlin Gradle plugin's [ABI validation](https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html)) | `./gradlew checkKotlinAbi`; `./gradlew updateKotlinAbi` rewrites the dumps |
 
-The settings shared by all three modules (targets, toolchain, JVM bytecode level,
-explicit API mode, ABI validation, group and version) live in one convention plugin,
+The settings shared by the three multiplatform modules (targets, toolchain, JVM bytecode
+level, explicit API mode, ABI validation, group and version) live in one convention plugin,
 [build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts](build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts).
-Each module applies `id("impossible.kotlin-library")` and declares only its own
-dependencies.
+Each of them applies `id("impossible.kotlin-library")` and declares only its own
+dependencies. The JVM-only `impossible-jackson` applies
+[impossible.jvm-library](build-logic/src/main/kotlin/impossible.jvm-library.gradle.kts)
+instead, which shares the group, version and JDK floor through `ImpossibleBuild`.
 
 [config/detekt/detekt.yml](config/detekt/detekt.yml) lists this repository's changes
 to detekt's defaults, each with its reason.
 
-All three modules compile in Kotlin's
+All modules compile in Kotlin's
 [explicit API mode](https://kotlinlang.org/docs/api-guidelines-simplicity.html#use-explicit-api-mode):
 every declaration visible outside the module states its visibility (`public`,
 `internal` or `private`) and every public function or property states its type,
@@ -1071,13 +1255,19 @@ Dependencies:
   implementation dependency behind `Decimal`.
 - [@js-joda/timezone 2.23.0](https://www.npmjs.com/package/@js-joda/timezone), an npm
   dependency of the JS and Wasm targets only that gives `TimeZoneId` the IANA database there. It is the newest
-  release compatible with the `@js-joda/core` version kotlinx-datetime uses.
-- [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html),
+  release compatible with the `@js-joda/core` version kotlinx-datetime uses. The library
+  loads the full database, about 730 KB minified (about 40 KB gzipped), so every JS and
+  Wasm bundle that depends on the library carries it, even one that never uses
+  `TimeZoneId`.
+- [kotest-property](https://kotest.io/docs/proptest/property-based-testing.html) 6.x,
   an API dependency of `impossible-testing` only; the library itself does not use it.
   That module's tests also use kotlinx-coroutines-test to run suspending checks.
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), an
   API dependency of `impossible-serialization` only (core; its tests use the JSON
   format). That module applies the Kotlin serialization compiler plugin.
+- [Jackson](https://github.com/FasterXML/jackson-databind) databind 2.x, an API
+  dependency of `impossible-jackson` only. Its tests also use jackson-module-kotlin,
+  which the module itself does not need.
 - Build tooling only, not shipped: [detekt](https://detekt.dev) with its
   ktlint rules (a detekt 2 pre-release, built on the Kotlin 2.4 compiler), and
   [Kover](https://github.com/Kotlin/kotlinx-kover) for coverage.
