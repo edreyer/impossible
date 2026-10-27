@@ -19,7 +19,10 @@ check() {
       status=1
     fi
   done
-  if [[ -f "${base}-javadoc.jar" ]] && ! unzip -l "${base}-javadoc.jar" | grep -q 'index.html'; then
+  # unzip lists only the matching member and exits non-zero when there is none. Piping the
+  # listing into `grep -q` instead fails under pipefail: grep exits at the first match, unzip
+  # dies of SIGPIPE on a large listing, and a full jar reads as empty.
+  if [[ -f "${base}-javadoc.jar" ]] && ! unzip -l "${base}-javadoc.jar" '*index.html' > /dev/null 2>&1; then
     echo "Empty javadoc jar ${base#"${repo}/"}-javadoc.jar"
     status=1
   fi
