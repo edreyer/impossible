@@ -21,9 +21,14 @@ invalid data, and property tests for all of it.
 | [7. Decimals and money](07-decimals-and-money.md) | Exact amounts, discounts, and arithmetic that never rounds by accident | `Decimal`, `Percentage`, `Money`, `PositiveMoney`, `flatField` |
 | [8. Identifiers and time](08-ids-and-time.md) | Ids that can't be mixed up, dates checked against a clock | `TypedId`, `DateChecks`, `DateRange`, `TimeWindow`, `PositiveDuration` |
 | [9. Field paths](09-field-paths.md) | Say which field failed, including nested and list fields | `fieldAt`, `nestedFieldAt`, `eachFieldAt`, `flatFieldAt`, `FieldPath` |
+| [9b. Boundary mode](09b-boundary-mode.md) | Check a request with no wrapper errors and answer with one call | `ValidationError`, `fieldAt` without a lambda, `toProblemDetails()` |
 | [10. Messages and problem details](10-messages-and-problem-details.md) | Turn errors into stable codes, text, and an RFC 9457 response | `ErrorMessages`, `ErrorMessage`, `toProblemDetails` |
 | [11. JSON](11-json.md) | Read and write JSON through the validating factories | `impossible-serialization`, `asSerializer`, `InvalidValueException` |
 | [12. Property testing](12-property-testing.md) | Generate valid values and real errors to test your own code | `impossible-testing`, `arb()`, `errorArb()`, `untrustedText()`, `nearMiss()` |
+
+Already know the basics and want to see the library inside a framework? The
+[recipes](../recipes/README.md) cover Ktor, Spring, persistence, and normalizing input
+before parsing.
 
 ## Before you start
 
@@ -32,24 +37,19 @@ uses context parameters (`context(raise: Raise<Error>)`). It builds on
 [Arrow](https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/)'s `Raise`;
 you don't need to know Arrow first, as step 1 introduces the few pieces you need.
 
-The library is not yet published to Maven Central. Until it is, build against a
-checkout, for example with a [composite build](https://docs.gradle.org/current/userguide/composite_builds.html)
-in your `settings.gradle.kts`:
-
-```kotlin-gradle
-includeBuild("../impossible")
-```
-
-and the coordinates in your module's dependencies:
+The library is published to Maven Central. Add it to your module's dependencies:
 
 ```kotlin-gradle
 dependencies {
-    implementation("io.liquidsoftware:impossible:1.0-SNAPSHOT")
+    implementation("io.liquidsoftware:impossible:0.1.0")
     // Optional modules, used in steps 11 and 12:
-    implementation("io.liquidsoftware:impossible-serialization:1.0-SNAPSHOT")
-    testImplementation("io.liquidsoftware:impossible-testing:1.0-SNAPSHOT")
+    implementation("io.liquidsoftware:impossible-serialization:0.1.0")
+    testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
 }
 ```
+
+Step 12 uses `impossible-testing`, which depends on kotest-property 6.x; a project on
+kotest 5 has to upgrade before it can use that module.
 
 Every type lives in a subpackage of `io.liquidsoftware.safedomain` named after its
 domain (`text`, `numeric`, `money`, `contact`, `time`, and so on); the construction

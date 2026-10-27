@@ -2,6 +2,9 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
+import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.jvm.JvmInline
 import kotlin.time.Duration
@@ -12,7 +15,9 @@ import kotlin.time.Duration
  */
 @JvmInline
 public value class PositiveDuration private constructor(public val value: Duration) : Comparable<PositiveDuration> {
-    public sealed interface Error {
+    public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class NonPositive(val value: Duration) : Error
         public data object Infinite : Error
     }

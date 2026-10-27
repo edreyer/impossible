@@ -55,3 +55,16 @@ public fun <Error> NonEmptyList<FieldError<Error>>.toProblemDetails(
     }
     return ProblemDetails(type, title, status, detail, instance, fields)
 }
+
+/**
+ * Describes every failure of a boundary composite with its own [ValidationError.describe]
+ * and collects them into a single problem, as the overload taking `describe` does. A list of
+ * any library errors qualifies, since [FieldError] and [NonEmptyList] are covariant.
+ */
+public fun NonEmptyList<FieldError<ValidationError>>.toProblemDetails(
+    title: String = "The request is not valid.",
+    status: Int = 422,
+    type: String = "about:blank",
+    instance: String? = null,
+    detail: String? = if (size == 1) "The request has 1 problem." else "The request has $size problems.",
+): ProblemDetails = toProblemDetails({ it.describe() }, title, status, type, instance, detail)

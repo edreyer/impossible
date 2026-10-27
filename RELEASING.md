@@ -1,6 +1,6 @@
 # Releasing
 
-The three modules publish to Maven Central through Sonatype's Central Publisher Portal,
+The four modules publish to Maven Central through Sonatype's Central Publisher Portal,
 using the `com.gradleup.nmcp.settings` plugin configured in `settings.gradle.kts`. One
 upload carries every module and every target.
 
@@ -40,7 +40,7 @@ Release from a Mac, which can build and test every target.
 
 1. Ensure the working tree is clean and on `main`.
 2. Move the `Unreleased` entries in `CHANGELOG.md` under the new version.
-3. Set `version` in `build-logic/src/main/kotlin/impossible.kotlin-library.gradle.kts`.
+3. Set `VERSION` in `build-logic/src/main/kotlin/ImpossibleBuild.kt`.
 4. Run a full local verification build, then check the published files:
 
    ```bash
@@ -77,4 +77,5 @@ and look at `build/nmcp/zip/aggregation.zip`.
 Each of `impossible`, `impossible-serialization` and `impossible-testing` publishes a root
 artifact with the Gradle module metadata and one artifact per target (`-jvm`, `-js`,
 `-wasm-js`, `-linuxx64`, `-macosarm64`, `-iosarm64`, `-iossimulatorarm64`), each with
-a sources jar and a javadoc jar holding the Dokka HTML docs.
+a sources jar and a javadoc jar holding the Dokka HTML docs. The JVM-only
+`impossible-jackson` publishes a single jar with its sources and javadoc jars.

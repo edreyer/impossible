@@ -1,5 +1,6 @@
 package io.liquidsoftware.safedomain
 
+import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.raise.Raise
 import arrow.core.raise.either
@@ -45,7 +46,9 @@ public fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.o
 /** Why a [required] value could not be constructed. */
 public sealed interface RequiredError<out Error> {
     /** The input was null. */
-    public data object Missing : RequiredError<Nothing>
+    public data object Missing : RequiredError<Nothing>, ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.missing()
+    }
 
     /** The input was present but invalid. */
     public data class Invalid<out Error>(val cause: Error) : RequiredError<Error>
@@ -74,3 +77,27 @@ public fun <Input : Any, Error, Value> ValueFactory<Input, Error, Value>.require
  */
 public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromTrusted(value: Input): Value =
     either { from(value) }.getOrElse { throw IllegalArgumentException("Invalid trusted input: $it") }
+
+/**
+ * The value, or the error, as an [Either], for callers outside a [Raise] scope such as
+ * tests, scripts, controllers and Java code. The same as `either { from(value) }`.
+ */
+public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromEither(value: Input): Either<Error, Value> =
+    either { from(value) }
+
+/** The value, or null when the input is invalid; use it only when the reason does not matter. */
+public fun <Input, Error, Value : Any> ValueFactory<Input, Error, Value>.fromOrNull(value: Input): Value? =
+    fromEither(value).getOrNull()
+
+/**
+ * The value, or [recover] applied to the error, so a caller can substitute a value or
+ * fail its own way. [recover] may return from the enclosing function:
+ *
+ * ```kotlin
+ * val email = Email.fromOrElse(raw) { return badRequest(it) }
+ * ```
+ */
+public inline fun <Input, Error, Value> ValueFactory<Input, Error, Value>.fromOrElse(
+    value: Input,
+    recover: (Error) -> Value,
+): Value = fromEither(value).getOrElse(recover)

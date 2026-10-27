@@ -6,7 +6,8 @@ as a typed value instead of an exception, and the two ways to work with it: as a
 
 Imports for this step: `arrow.core.Either`, `arrow.core.getOrElse`,
 `arrow.core.raise.Raise`, `arrow.core.raise.either`,
-`io.liquidsoftware.safedomain.fromTrusted`,
+`io.liquidsoftware.safedomain.fromEither`, `io.liquidsoftware.safedomain.fromOrElse`,
+`io.liquidsoftware.safedomain.fromOrNull`, `io.liquidsoftware.safedomain.fromTrusted`,
 `io.liquidsoftware.safedomain.numeric.PositiveInt` and
 `io.liquidsoftware.safedomain.text.NonBlankString`.
 
@@ -30,6 +31,18 @@ An `Either<E, A>` holds exactly one of two things: a `Right` with the value, or 
 `titleOf(" ")` is `Left(NonBlankString.Error.Blank)`. The text is kept exactly as given: `"  Dune  "`
 keeps its spaces. The library never trims, case-folds or repairs input unless you
 ask it to (step 3 shows how).
+
+Every factory also has three shortcuts for code outside a `Raise` scope:
+`fromEither(raw)` is the same `Either` as `either { from(raw) }`, `fromOrNull(raw)`
+gives the value or `null` when you don't need the reason, and `fromOrElse(raw) { ... }`
+hands the error to a block that supplies a value or returns early:
+
+```kotlin
+fun titleOrNull(raw: String): NonBlankString? = NonBlankString.fromOrNull(raw)
+
+fun titleOrUntitled(raw: String): NonBlankString =
+    NonBlankString.fromOrElse(raw) { NonBlankString.fromTrusted("Untitled") }
+```
 
 ## Errors are values
 
