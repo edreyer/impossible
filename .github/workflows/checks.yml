@@ -56,7 +56,9 @@ jobs:
       - name: Publish to Maven Local
         run: ./gradlew publishToMavenLocal
       - name: Check the published files
-        run: scripts/check-publication.sh "$(./gradlew -q properties --property version | sed -n 's/^version: //p')"
+        # A block scalar, because the sed pattern's "version: " would end a plain YAML value.
+        run: |
+          scripts/check-publication.sh "$(./gradlew -q properties --property version | sed -n 's/^version: //p')"
 
   test:
     name: JVM/JS/Linux tests, coverage
