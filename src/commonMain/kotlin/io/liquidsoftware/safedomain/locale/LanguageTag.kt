@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.locale
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlin.jvm.JvmInline
@@ -17,6 +19,8 @@ import kotlin.jvm.JvmInline
 @JvmInline
 public value class LanguageTag private constructor(public val value: String) {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class InvalidFormat(val value: String) : Error
     }
 

@@ -3,6 +3,8 @@ package io.liquidsoftware.safedomain.collections
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.mapOrAccumulate
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
@@ -14,6 +16,8 @@ import io.liquidsoftware.safedomain.ValueFactory
  */
 public class UniqueList<A> private constructor(public val value: List<A>) : Iterable<A> {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         /** Zero-based positions; each repeat refers to the first equal element. */
         public data class Duplicate(val firstIndex: Int, val duplicateIndex: Int) : Error
     }

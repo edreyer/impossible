@@ -5,6 +5,8 @@ package io.liquidsoftware.safedomain.web
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensureNotNull
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
@@ -18,6 +20,8 @@ import io.liquidsoftware.safedomain.ValueFactory
  */
 public sealed class IpAddress {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         /** [toString] redacts [value], because an IP address can identify a person. */
         public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"

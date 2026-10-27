@@ -14,7 +14,6 @@ import io.liquidsoftware.safedomain.numeric.PositiveInt
 import io.liquidsoftware.safedomain.text.NonBlankString
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /** A nested composite whose own factory reports paths. */
 private data class Address(val street: NonBlankString, val country: CountryCode) {
@@ -94,8 +93,11 @@ private data class BoundaryAddress(val street: NonBlankString, val country: Coun
     }
 }
 
-/** A consumer error that joins a boundary composite. */
-private data class TooManyItems(val maximum: Int) : ValidationError
+/** A consumer error that joins a boundary composite and describes itself. */
+private data class TooManyItems(val maximum: Int) : ValidationError {
+    override fun describe(): ErrorMessage =
+        ErrorMessage("signup.too_many_items", "Choose at most $maximum items.", mapOf("maximum" to "$maximum"))
+}
 
 /** A boundary composite with no wrapper errors: every identity overload, plus a precise and a dependent field. */
 private data class Signup(
@@ -351,23 +353,16 @@ class PathValidationTest {
     }
 
     @Test
-    fun `a consumer error is described by the consumer and library errors by the dispatcher`() {
+    fun `a consumer error describes itself in problem details with no describe function`() {
         val input = validSignup.copy(nickname = " ", quantities = listOf(1, 1, 1, 1))
         val failures = either { Signup.from(input) }.leftOrNull()!!
-        val describe = { error: ValidationError ->
-            when (error) {
-                is TooManyItems -> ErrorMessage("signup.too_many_items", "Choose at most ${error.maximum} items.")
-                else -> ErrorMessages.describe(error)
-            }
-        }
         assertEquals(
-            listOf("non_blank_string.blank", "signup.too_many_items"),
-            failures.toProblemDetails(describe).errors.map { it.code },
+            listOf(
+                ProblemDetails.InvalidField("/nickname", "non_blank_string.blank", "Enter some text."),
+                ProblemDetails.InvalidField("/items", "signup.too_many_items", "Choose at most 3 items.", mapOf("maximum" to "3")),
+            ),
+            failures.toProblemDetails().errors,
         )
-    }
-
-    @Test
-    fun `the dispatcher rejects an error the library does not define`() {
-        assertFailsWith<IllegalArgumentException> { ErrorMessages.describe(TooManyItems(3)) }
+        assertEquals(TooManyItems(3).describe(), ErrorMessages.describe(TooManyItems(3)))
     }
 }

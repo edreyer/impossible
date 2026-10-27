@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import io.liquidsoftware.safedomain.ErrorMessage
-import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.FieldError
 import io.liquidsoftware.safedomain.FieldPath
 import io.liquidsoftware.safedomain.RequiredError
@@ -49,7 +48,9 @@ class ShippingAddress private constructor(val street: NonBlankString, val city: 
 }
 
 /** Isbn is the shop's own type, so its error joins the boundary through a small wrapper. */
-data class InvalidIsbn(val cause: Isbn.Error) : ValidationError
+data class InvalidIsbn(val cause: Isbn.Error) : ValidationError {
+    override fun describe(): ErrorMessage = ErrorMessage("isbn.invalid", "Enter a 13-digit ISBN.")
+}
 
 class OrderRequest private constructor(
     val customer: CustomerId,
@@ -71,11 +72,6 @@ class OrderRequest private constructor(
             OrderRequest(customer, email, shipTo, books, total)
         }
     }
-}
-
-fun describeOrderRequest(error: ValidationError): ErrorMessage = when (error) {
-    is InvalidIsbn -> ErrorMessage("isbn.invalid", "Enter a 13-digit ISBN.")
-    else -> ErrorMessages.describe(error)
 }
 
 class Step09bBoundaryModeTest {
@@ -112,11 +108,11 @@ class Step09bBoundaryModeTest {
     }
 
     @Test
-    fun `failures become problem details with the shop's own description for its own error`() {
+    fun `failures become problem details including the shop's own error`() {
         val failures = OrderRequest.fromEither(valid.copy(email = "nope", isbns = listOf("123"))).leftOrNull()!!
         assertEquals(
             listOf("/email" to "email.invalid_format", "/isbns/0" to "isbn.invalid"),
-            failures.toProblemDetails(::describeOrderRequest).errors.map { it.pointer to it.code },
+            failures.toProblemDetails().errors.map { it.pointer to it.code },
         )
     }
 

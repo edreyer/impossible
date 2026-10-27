@@ -976,8 +976,8 @@ shows the whole flow.
 
 ### Boundary mode
 
-Every error this library defines implements the marker interface `ValidationError`.
-A composite that only exists to check a request or a form can raise
+Every error this library defines implements `ValidationError`, whose one member,
+`describe()`, gives the error's stable code, text and arguments. A composite that only exists to check a request or a form can raise
 `NonEmptyList<FieldError<ValidationError>>` and declare its fields with no wrapper
 errors and no `onError` lambdas; each library error is recorded as it is:
 
@@ -1000,32 +1000,27 @@ data class SignupRequest(val email: Email, val name: NonBlankString, val country
 val problem = SignupRequest.fromEither(input).mapLeft { it.toProblemDetails() }
 ```
 
-`toProblemDetails()` without a `describe` argument uses
-`ErrorMessages.describe(ValidationError)`, which describes any library error. The
-other boundary-mode helpers are `eachFieldAt(values)`, `flatFieldAt(value)` and
+`toProblemDetails()` without a `describe` argument describes each failure with its own
+`describe()`. The other boundary-mode helpers are `eachFieldAt(values)`, `flatFieldAt(value)` and
 `nestedFieldAt(value)` (for a nested boundary composite), and the precise forms with a
 lambda still work in the same block.
 
 Which to use: keep precise per-composite errors (the `Shipment` above) when the domain
 branches on them, such as retrying, compensating, or choosing an outcome. Use boundary
 mode when the only consumer of the errors is a message or a response. To add your own
-failure to a boundary composite, give it a type that implements `ValidationError` and
-describe it yourself, delegating everything else:
+failure to a boundary composite, give it a type that implements `ValidationError`; the
+compiler then requires its description, so no error reaches a response undescribed:
 
 ```kotlin
-data class SeatsOverLimit(val limit: Int) : ValidationError
-
-val describe = { error: ValidationError ->
-    when (error) {
-        is SeatsOverLimit -> ErrorMessage("signup.seats_over_limit", "Book at most ${error.limit} seats.")
-        else -> ErrorMessages.describe(error)
-    }
+data class SeatsOverLimit(val limit: Int) : ValidationError {
+    override fun describe() = ErrorMessage("signup.seats_over_limit", "Book at most $limit seats.")
 }
-failures.toProblemDetails(describe)
+
+failures.toProblemDetails() // library errors and SeatsOverLimit alike
 ```
 
-`ErrorMessages.describe(ValidationError)` throws `IllegalArgumentException` for an error
-the library does not define, so a consumer error always needs its own branch.
+Pass a `describe` function to `toProblemDetails` only to change the wording, such as for
+a translation.
 
 ## JSON and other formats
 

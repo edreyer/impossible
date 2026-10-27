@@ -4,6 +4,8 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.field
@@ -30,6 +32,8 @@ public class Money private constructor(public val minor: Long, public val curren
     public data class Text(val amount: String, val currency: String)
 
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class InvalidAmount(val value: String) : Error
         public data class InvalidCurrency(val cause: Currency.Error) : Error
 
@@ -44,6 +48,8 @@ public class Money private constructor(public val minor: Long, public val curren
     }
 
     public sealed interface ArithmeticError : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class CurrencyMismatch(val expected: Currency, val actual: Currency) : ArithmeticError
         public data object DivisionByZero : ArithmeticError
 

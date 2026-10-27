@@ -5,7 +5,7 @@ request: no wrapper error per field, and one call to turn its failures into an H
 response.
 
 Imports for this step: `io.liquidsoftware.safedomain.ValidationError`,
-`io.liquidsoftware.safedomain.ErrorMessages`, `io.liquidsoftware.safedomain.toProblemDetails`
+`io.liquidsoftware.safedomain.ErrorMessage`, `io.liquidsoftware.safedomain.toProblemDetails`
 and `io.liquidsoftware.safedomain.fromEither`, plus the step 9 imports.
 
 ## Why step 9's order has so many errors
@@ -17,8 +17,8 @@ the address but rejects a bad total needs to tell them apart in a `when`. A requ
 handler that only turns the errors into a response doesn't; for it the wrappers are
 ceremony.
 
-Every error the library defines implements one marker interface, `ValidationError`.
-A composite that raises `NonEmptyList<FieldError<ValidationError>>` can call the
+Every error the library defines implements one interface, `ValidationError`, whose only
+member is `describe()`: the error's stable code and default text. A composite that raises `NonEmptyList<FieldError<ValidationError>>` can call the
 path-aware helpers *without* the lambda, and each library error is recorded as it is.
 
 ## The address and the order, in boundary mode
@@ -38,11 +38,14 @@ class ShippingAddress private constructor(val street: NonBlankString, val city: 
 ```
 
 `Isbn` is the shop's own type from step 3, and its error is not a library error, so it
-joins the boundary through a one-line wrapper that implements the marker. The precise
-form of a helper, the one with a lambda, works in the same block:
+joins the boundary through a small wrapper that implements `ValidationError`, which means
+it must say how it is described. The precise form of a helper, the one with a lambda,
+works in the same block:
 
 ```kotlin
-data class InvalidIsbn(val cause: Isbn.Error) : ValidationError
+data class InvalidIsbn(val cause: Isbn.Error) : ValidationError {
+    override fun describe(): ErrorMessage = ErrorMessage("isbn.invalid", "Enter a 13-digit ISBN.")
+}
 
 class OrderRequest private constructor(
     val customer: CustomerId,
@@ -73,21 +76,13 @@ at `email`, a blank street is `NonBlankString.Error.Blank` at `ship_to.street`.
 
 ## One call to a response
 
-`toProblemDetails()` with no arguments describes library errors with
-`ErrorMessages.describe`. With a consumer error in the mix, pass a `describe` that
-handles yours and delegates the rest:
-
-```kotlin
-fun describeOrderRequest(error: ValidationError): ErrorMessage = when (error) {
-    is InvalidIsbn -> ErrorMessage("isbn.invalid", "Enter a 13-digit ISBN.")
-    else -> ErrorMessages.describe(error)
-}
-```
-
-and `OrderRequest.fromEither(input).mapLeft { it.toProblemDetails(::describeOrderRequest) }`
-is the whole error path of the handler. `ErrorMessages.describe` throws for an error the
-library does not define, so forgetting a branch for your own error fails loudly in
-your tests rather than producing a vague message.
+`toProblemDetails()` with no arguments describes every failure with its own
+`describe()`, the shop's `InvalidIsbn` included, so
+`OrderRequest.fromEither(input).mapLeft { it.toProblemDetails() }` is the whole error
+path of the handler. Because `describe()` is part of `ValidationError`, the compiler
+rejects an error that joins the boundary without a description; nothing can reach the
+response undescribed. Pass your own `describe` function to `toProblemDetails` only to
+change the wording, for example to translate.
 
 ## Which to use
 

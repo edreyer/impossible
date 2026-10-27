@@ -46,7 +46,9 @@ public fun <Input : Any, Error, Value : Any> ValueFactory<Input, Error, Value>.o
 /** Why a [required] value could not be constructed. */
 public sealed interface RequiredError<out Error> {
     /** The input was null. */
-    public data object Missing : RequiredError<Nothing>, ValidationError
+    public data object Missing : RequiredError<Nothing>, ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.missing()
+    }
 
     /** The input was present but invalid. */
     public data class Invalid<out Error>(val cause: Error) : RequiredError<Error>

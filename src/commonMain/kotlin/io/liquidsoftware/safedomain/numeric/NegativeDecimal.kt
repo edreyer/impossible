@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
@@ -11,6 +13,8 @@ import io.liquidsoftware.safedomain.ValueFactory
  */
 public class NegativeDecimal private constructor(public val value: Decimal) : Comparable<NegativeDecimal> {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class NonNegative(val value: Decimal) : Error
     }
 

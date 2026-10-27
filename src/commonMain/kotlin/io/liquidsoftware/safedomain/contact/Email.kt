@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.contact
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.fromTrusted
@@ -19,6 +21,8 @@ import io.liquidsoftware.safedomain.web.DomainName
  */
 public class Email private constructor(public val value: String) {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         /** [toString] redacts [value], so a rejected address does not reach logs. */
         public data class InvalidFormat(val value: String) : Error {
             override fun toString(): String = "InvalidFormat(value=<redacted>)"

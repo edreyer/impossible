@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.time
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 import kotlinx.datetime.DateTimeUnit
@@ -14,6 +16,8 @@ public class DateRange private constructor(public val start: LocalDate, public v
     public data class Input(val start: LocalDate, val endInclusive: LocalDate)
 
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class EndBeforeStart(val start: LocalDate, val endInclusive: LocalDate) : Error
     }
 

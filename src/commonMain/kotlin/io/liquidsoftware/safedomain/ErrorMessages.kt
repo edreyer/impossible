@@ -70,59 +70,11 @@ public object ErrorMessages {
         }
 
     /**
-     * Describes any error this library raises, for a boundary that collects them as
-     * [ValidationError]s, such as a composite built with the boundary-mode `fieldAt`
-     * overloads. A [RequiredError.Missing] is described as `required.missing`.
-     *
-     * @throws IllegalArgumentException for a [ValidationError] the library does not
-     *   define; describe your own errors with your own function and delegate library
-     *   errors to this one.
+     * Describes any [ValidationError] by its own [ValidationError.describe], which every
+     * library error delegates to its overload here. Kept for callers that pass
+     * `ErrorMessages::describe` as a describe function.
      */
-    @Suppress("CyclomaticComplexMethod") // One flat branch per library error type, so a missing one is easy to see.
-    public fun describe(error: ValidationError): ErrorMessage = when (error) {
-        RequiredError.Missing -> missing()
-        is NonBlankString.Error -> describe(error)
-        is Slug.Error -> describe(error)
-        is Secret.Error -> describe(error)
-        is Email.Error -> describe(error)
-        is Phone.Error -> describe(error)
-        is CountryCode.Error -> describe(error)
-        is LanguageTag.Error -> describe(error)
-        is TypedId.Error -> describe(error)
-        is PositiveInt.Error -> describe(error)
-        is PositiveLong.Error -> describe(error)
-        is PositiveDecimal.Error -> describe(error)
-        is NegativeInt.Error -> describe(error)
-        is NegativeLong.Error -> describe(error)
-        is NegativeDecimal.Error -> describe(error)
-        is PositiveInt.Overflow -> describe(error)
-        is PositiveLong.Overflow -> describe(error)
-        is NegativeInt.Overflow -> describe(error)
-        is NegativeLong.Overflow -> describe(error)
-        is NonNegativeDecimal.Error -> describe(error)
-        is BoundedInt.Error -> describe(error)
-        is Percentage.Error -> describe(error)
-        is Currency.Error -> describe(error)
-        is Money.Error -> describe(error)
-        is Money.ArithmeticError -> describe(error)
-        is PositiveMoney.Error -> describe(error)
-        is NonNegativeMoney.Error -> describe(error)
-        is NegativeMoney.Error -> describe(error)
-        is DateRange.Error -> describe(error)
-        is DateChecks.Error -> describe(error)
-        is TimeWindow.Error -> describe(error)
-        is PositiveDuration.Error -> describe(error)
-        is TimeZoneId.Error -> describe(error)
-        is DomainName.Error -> describe(error)
-        is IpAddress.Error -> describe(error)
-        is HttpUrl.Error -> describe(error)
-        is GeoPoint.Error -> describe(error)
-        is BoundedList.Error -> describe(error)
-        is UniqueList.Error -> describe(error)
-        is NonEmptyError -> describe(error)
-        is DistinctError -> describe(error)
-        else -> throw IllegalArgumentException("Not a library error: ${error::class.simpleName}")
-    }
+    public fun describe(error: ValidationError): ErrorMessage = error.describe()
 
     // text
 
@@ -394,7 +346,7 @@ public object ErrorMessages {
         is DistinctError.Duplicate -> duplicate("collection.duplicate", error.firstIndex, error.duplicateIndex)
     }
 
-    private fun missing() = ErrorMessage("required.missing", "A value is required.")
+    internal fun missing(): ErrorMessage = ErrorMessage("required.missing", "A value is required.")
 
     private fun greaterThanZero(code: String) = ErrorMessage(code, "Enter a number greater than zero.")
 

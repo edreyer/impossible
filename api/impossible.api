@@ -184,6 +184,7 @@ public final class io/liquidsoftware/safedomain/RequiredError$Invalid : io/liqui
 
 public final class io/liquidsoftware/safedomain/RequiredError$Missing : io/liquidsoftware/safedomain/RequiredError, io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/RequiredError$Missing;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -195,6 +196,7 @@ public final class io/liquidsoftware/safedomain/Validated {
 }
 
 public abstract interface class io/liquidsoftware/safedomain/ValidationError {
+	public abstract fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/ValidationKt {
@@ -287,6 +289,11 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Companio
 }
 
 public abstract interface class io/liquidsoftware/safedomain/collections/BoundedList$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/collections/BoundedList$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$TooLarge : io/liquidsoftware/safedomain/collections/BoundedList$Error {
@@ -295,6 +302,7 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$To
 	public final fun component2 ()I
 	public final fun copy (II)Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooLarge;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooLarge;IIILjava/lang/Object;)Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooLarge;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActual ()I
 	public final fun getMaximum ()I
@@ -308,6 +316,7 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$To
 	public final fun component2 ()I
 	public final fun copy (II)Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooSmall;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooSmall;IIILjava/lang/Object;)Lio/liquidsoftware/safedomain/collections/BoundedList$Error$TooSmall;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActual ()I
 	public final fun getMinimum ()I
@@ -316,6 +325,11 @@ public final class io/liquidsoftware/safedomain/collections/BoundedList$Error$To
 }
 
 public abstract interface class io/liquidsoftware/safedomain/collections/DistinctError : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/collections/DistinctError$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/collections/DistinctError;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/collections/DistinctError$Duplicate : io/liquidsoftware/safedomain/collections/DistinctError {
@@ -324,6 +338,7 @@ public final class io/liquidsoftware/safedomain/collections/DistinctError$Duplic
 	public final fun component2 ()I
 	public final fun copy (II)Lio/liquidsoftware/safedomain/collections/DistinctError$Duplicate;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/collections/DistinctError$Duplicate;IIILjava/lang/Object;)Lio/liquidsoftware/safedomain/collections/DistinctError$Duplicate;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDuplicateIndex ()I
 	public final fun getFirstIndex ()I
@@ -333,16 +348,23 @@ public final class io/liquidsoftware/safedomain/collections/DistinctError$Duplic
 
 public final class io/liquidsoftware/safedomain/collections/DistinctError$Empty : io/liquidsoftware/safedomain/collections/DistinctError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/collections/DistinctError$Empty;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class io/liquidsoftware/safedomain/collections/NonEmptyError : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/collections/NonEmptyError$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/collections/NonEmptyError;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/collections/NonEmptyError$Empty : io/liquidsoftware/safedomain/collections/NonEmptyError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/collections/NonEmptyError$Empty;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -373,6 +395,11 @@ public final class io/liquidsoftware/safedomain/collections/UniqueList$Companion
 }
 
 public abstract interface class io/liquidsoftware/safedomain/collections/UniqueList$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/collections/UniqueList$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/collections/UniqueList$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/collections/UniqueList$Error$Duplicate : io/liquidsoftware/safedomain/collections/UniqueList$Error {
@@ -381,6 +408,7 @@ public final class io/liquidsoftware/safedomain/collections/UniqueList$Error$Dup
 	public final fun component2 ()I
 	public final fun copy (II)Lio/liquidsoftware/safedomain/collections/UniqueList$Error$Duplicate;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/collections/UniqueList$Error$Duplicate;IIILjava/lang/Object;)Lio/liquidsoftware/safedomain/collections/UniqueList$Error$Duplicate;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDuplicateIndex ()I
 	public final fun getFirstIndex ()I
@@ -407,6 +435,11 @@ public final class io/liquidsoftware/safedomain/contact/Email$Companion : io/liq
 }
 
 public abstract interface class io/liquidsoftware/safedomain/contact/Email$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/contact/Email$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/contact/Email$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/contact/Email$Error$InvalidFormat : io/liquidsoftware/safedomain/contact/Email$Error {
@@ -414,6 +447,7 @@ public final class io/liquidsoftware/safedomain/contact/Email$Error$InvalidForma
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/contact/Email$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/contact/Email$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/contact/Email$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -442,6 +476,11 @@ public final class io/liquidsoftware/safedomain/contact/Phone$Companion : io/liq
 }
 
 public abstract interface class io/liquidsoftware/safedomain/contact/Phone$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/contact/Phone$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/contact/Phone$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/contact/Phone$Error$InvalidFormat : io/liquidsoftware/safedomain/contact/Phone$Error {
@@ -449,6 +488,7 @@ public final class io/liquidsoftware/safedomain/contact/Phone$Error$InvalidForma
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/contact/Phone$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/contact/Phone$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/contact/Phone$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -472,6 +512,11 @@ public final class io/liquidsoftware/safedomain/geo/GeoPoint$Companion : io/liqu
 }
 
 public abstract interface class io/liquidsoftware/safedomain/geo/GeoPoint$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/geo/GeoPoint$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/geo/GeoPoint$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOfRange : io/liquidsoftware/safedomain/geo/GeoPoint$Error {
@@ -479,6 +524,7 @@ public final class io/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOf
 	public final fun component1 ()D
 	public final fun copy (D)Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOfRange;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOfRange;DILjava/lang/Object;)Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LatitudeOutOfRange;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()D
 	public fun hashCode ()I
@@ -490,6 +536,7 @@ public final class io/liquidsoftware/safedomain/geo/GeoPoint$Error$LongitudeOutO
 	public final fun component1 ()D
 	public final fun copy (D)Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LongitudeOutOfRange;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LongitudeOutOfRange;DILjava/lang/Object;)Lio/liquidsoftware/safedomain/geo/GeoPoint$Error$LongitudeOutOfRange;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()D
 	public fun hashCode ()I
@@ -530,6 +577,11 @@ public final class io/liquidsoftware/safedomain/identity/TypedId$Companion {
 }
 
 public abstract interface class io/liquidsoftware/safedomain/identity/TypedId$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/identity/TypedId$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/identity/TypedId$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFormat : io/liquidsoftware/safedomain/identity/TypedId$Error {
@@ -537,6 +589,7 @@ public final class io/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFo
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/identity/TypedId$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -565,6 +618,11 @@ public final class io/liquidsoftware/safedomain/locale/CountryCode$Companion : i
 }
 
 public abstract interface class io/liquidsoftware/safedomain/locale/CountryCode$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/locale/CountryCode$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/locale/CountryCode$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/locale/CountryCode$Error$UnsupportedCode : io/liquidsoftware/safedomain/locale/CountryCode$Error {
@@ -572,6 +630,7 @@ public final class io/liquidsoftware/safedomain/locale/CountryCode$Error$Unsuppo
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/locale/CountryCode$Error$UnsupportedCode;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/locale/CountryCode$Error$UnsupportedCode;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/locale/CountryCode$Error$UnsupportedCode;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -601,6 +660,11 @@ public final class io/liquidsoftware/safedomain/locale/LanguageTag$Companion : i
 }
 
 public abstract interface class io/liquidsoftware/safedomain/locale/LanguageTag$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/locale/LanguageTag$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/locale/LanguageTag$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/locale/LanguageTag$Error$InvalidFormat : io/liquidsoftware/safedomain/locale/LanguageTag$Error {
@@ -608,6 +672,7 @@ public final class io/liquidsoftware/safedomain/locale/LanguageTag$Error$Invalid
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/locale/LanguageTag$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/locale/LanguageTag$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/locale/LanguageTag$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -637,6 +702,11 @@ public final class io/liquidsoftware/safedomain/money/Currency$Companion : io/li
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/Currency$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/money/Currency$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/Currency$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/Currency$Error$UnsupportedCode : io/liquidsoftware/safedomain/money/Currency$Error {
@@ -644,6 +714,7 @@ public final class io/liquidsoftware/safedomain/money/Currency$Error$Unsupported
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Currency$Error$UnsupportedCode;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/Currency$Error$UnsupportedCode;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Currency$Error$UnsupportedCode;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -676,6 +747,7 @@ public final class io/liquidsoftware/safedomain/money/Money {
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/Money$ArithmeticError : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$CurrencyMismatch : io/liquidsoftware/safedomain/money/Money$ArithmeticError {
@@ -684,6 +756,7 @@ public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$Curr
 	public final fun component2-n2EbN8I ()Ljava/lang/String;
 	public final fun copy-J-bDGSw (Ljava/lang/String;Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$CurrencyMismatch;
 	public static synthetic fun copy-J-bDGSw$default (Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$CurrencyMismatch;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$CurrencyMismatch;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActual-n2EbN8I ()Ljava/lang/String;
 	public final fun getExpected-n2EbN8I ()Ljava/lang/String;
@@ -691,8 +764,13 @@ public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$Curr
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/Money$ArithmeticError;)Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
 public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$DivisionByZero : io/liquidsoftware/safedomain/money/Money$ArithmeticError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$DivisionByZero;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -700,6 +778,7 @@ public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$Divi
 
 public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$Overflow : io/liquidsoftware/safedomain/money/Money$ArithmeticError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$Overflow;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -707,6 +786,7 @@ public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$Over
 
 public final class io/liquidsoftware/safedomain/money/Money$ArithmeticError$RoundingRequired : io/liquidsoftware/safedomain/money/Money$ArithmeticError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/money/Money$ArithmeticError$RoundingRequired;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -725,6 +805,11 @@ public final class io/liquidsoftware/safedomain/money/Money$Companion : io/liqui
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/Money$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/money/Money$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/Money$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/Money$Error$InvalidAmount : io/liquidsoftware/safedomain/money/Money$Error {
@@ -732,6 +817,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Error$InvalidAmount 
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Money$Error$InvalidAmount;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/Money$Error$InvalidAmount;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$Error$InvalidAmount;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -743,6 +829,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Error$InvalidCurrenc
 	public final fun component1 ()Lio/liquidsoftware/safedomain/money/Currency$Error;
 	public final fun copy (Lio/liquidsoftware/safedomain/money/Currency$Error;)Lio/liquidsoftware/safedomain/money/Money$Error$InvalidCurrency;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/Money$Error$InvalidCurrency;Lio/liquidsoftware/safedomain/money/Currency$Error;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$Error$InvalidCurrency;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCause ()Lio/liquidsoftware/safedomain/money/Currency$Error;
 	public fun hashCode ()I
@@ -754,6 +841,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Error$NoMinorUnits :
 	public final fun component1-n2EbN8I ()Ljava/lang/String;
 	public final fun copy-_SNtq0o (Ljava/lang/String;)Lio/liquidsoftware/safedomain/money/Money$Error$NoMinorUnits;
 	public static synthetic fun copy-_SNtq0o$default (Lio/liquidsoftware/safedomain/money/Money$Error$NoMinorUnits;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$Error$NoMinorUnits;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrency-n2EbN8I ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -766,6 +854,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Error$NotInMinorUnit
 	public final fun component2 ()I
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;I)Lio/liquidsoftware/safedomain/money/Money$Error$NotInMinorUnits;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/Money$Error$NotInMinorUnits;Lio/liquidsoftware/safedomain/numeric/Decimal;IILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$Error$NotInMinorUnits;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmount ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun getMinorUnits ()I
@@ -778,6 +867,7 @@ public final class io/liquidsoftware/safedomain/money/Money$Error$OutOfRange : i
 	public final fun component1 ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;)Lio/liquidsoftware/safedomain/money/Money$Error$OutOfRange;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/Money$Error$OutOfRange;Lio/liquidsoftware/safedomain/numeric/Decimal;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/Money$Error$OutOfRange;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmount ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public fun hashCode ()I
@@ -836,6 +926,11 @@ public final class io/liquidsoftware/safedomain/money/NegativeMoney$Companion : 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/NegativeMoney$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/money/NegativeMoney$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/NegativeMoney$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNegative : io/liquidsoftware/safedomain/money/NegativeMoney$Error {
@@ -843,6 +938,7 @@ public final class io/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNeg
 	public final fun component1 ()Lio/liquidsoftware/safedomain/money/Money;
 	public final fun copy (Lio/liquidsoftware/safedomain/money/Money;)Lio/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNegative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNegative;Lio/liquidsoftware/safedomain/money/Money;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/NegativeMoney$Error$NonNegative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMoney ()Lio/liquidsoftware/safedomain/money/Money;
 	public fun hashCode ()I
@@ -878,6 +974,11 @@ public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Companion
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/NonNegativeMoney$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Negative : io/liquidsoftware/safedomain/money/NonNegativeMoney$Error {
@@ -885,6 +986,7 @@ public final class io/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Neg
 	public final fun component1 ()Lio/liquidsoftware/safedomain/money/Money;
 	public final fun copy (Lio/liquidsoftware/safedomain/money/Money;)Lio/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Negative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Negative;Lio/liquidsoftware/safedomain/money/Money;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/NonNegativeMoney$Error$Negative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMoney ()Lio/liquidsoftware/safedomain/money/Money;
 	public fun hashCode ()I
@@ -918,6 +1020,11 @@ public final class io/liquidsoftware/safedomain/money/PositiveMoney$Companion : 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/money/PositiveMoney$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/money/PositiveMoney$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/money/PositiveMoney$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPositive : io/liquidsoftware/safedomain/money/PositiveMoney$Error {
@@ -925,6 +1032,7 @@ public final class io/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPos
 	public final fun component1 ()Lio/liquidsoftware/safedomain/money/Money;
 	public final fun copy (Lio/liquidsoftware/safedomain/money/Money;)Lio/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPositive;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPositive;Lio/liquidsoftware/safedomain/money/Money;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/money/PositiveMoney$Error$NonPositive;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMoney ()Lio/liquidsoftware/safedomain/money/Money;
 	public fun hashCode ()I
@@ -947,6 +1055,11 @@ public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Companion {
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/BoundedInt$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/BoundedInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRange : io/liquidsoftware/safedomain/numeric/BoundedInt$Error {
@@ -955,6 +1068,7 @@ public final class io/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRa
 	public final fun component2 ()Lkotlin/ranges/IntRange;
 	public final fun copy (ILkotlin/ranges/IntRange;)Lio/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRange;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRange;ILkotlin/ranges/IntRange;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/BoundedInt$Error$OutOfRange;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBounds ()Lkotlin/ranges/IntRange;
 	public final fun getValue ()I
@@ -1020,6 +1134,11 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Companio
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error {
@@ -1027,6 +1146,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$No
 	public final fun component1 ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;)Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$NonNegative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$NonNegative;Lio/liquidsoftware/safedomain/numeric/Decimal;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/NegativeDecimal$Error$NonNegative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public fun hashCode ()I
@@ -1063,6 +1183,11 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Companion : 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeInt$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeInt$Error {
@@ -1070,6 +1195,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNeg
 	public final fun component1 ()I
 	public final fun copy (I)Lio/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNegative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNegative;IILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNegative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()I
 	public fun hashCode ()I
@@ -1078,6 +1204,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Error$NonNeg
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeInt$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/NegativeInt$Overflow;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1112,6 +1239,11 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Companion :
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/NegativeLong$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/NegativeLong$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNegative : io/liquidsoftware/safedomain/numeric/NegativeLong$Error {
@@ -1119,6 +1251,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNe
 	public final fun component1 ()J
 	public final fun copy (J)Lio/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNegative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNegative;JILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNegative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()J
 	public fun hashCode ()I
@@ -1127,6 +1260,7 @@ public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Error$NonNe
 
 public final class io/liquidsoftware/safedomain/numeric/NegativeLong$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/NegativeLong$Overflow;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1152,6 +1286,11 @@ public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Compa
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$Negative : io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error {
@@ -1159,6 +1298,7 @@ public final class io/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error
 	public final fun component1 ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;)Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$Negative;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$Negative;Lio/liquidsoftware/safedomain/numeric/Decimal;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/NonNegativeDecimal$Error$Negative;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public fun hashCode ()I
@@ -1184,6 +1324,11 @@ public final class io/liquidsoftware/safedomain/numeric/Percentage$Companion : i
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/Percentage$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/Percentage$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/Percentage$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRange : io/liquidsoftware/safedomain/numeric/Percentage$Error {
@@ -1191,6 +1336,7 @@ public final class io/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRa
 	public final fun component1 ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;)Lio/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRange;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRange;Lio/liquidsoftware/safedomain/numeric/Decimal;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/Percentage$Error$OutOfRange;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public fun hashCode ()I
@@ -1218,6 +1364,11 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Companio
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error {
@@ -1225,6 +1376,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$No
 	public final fun component1 ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public final fun copy (Lio/liquidsoftware/safedomain/numeric/Decimal;)Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$NonPositive;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$NonPositive;Lio/liquidsoftware/safedomain/numeric/Decimal;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/PositiveDecimal$Error$NonPositive;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Lio/liquidsoftware/safedomain/numeric/Decimal;
 	public fun hashCode ()I
@@ -1261,6 +1413,11 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Companion : 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveInt$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveInt$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveInt$Error {
@@ -1268,6 +1425,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPos
 	public final fun component1 ()I
 	public final fun copy (I)Lio/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPositive;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPositive;IILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPositive;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()I
 	public fun hashCode ()I
@@ -1276,6 +1434,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Error$NonPos
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveInt$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/PositiveInt$Overflow;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1310,6 +1469,11 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Companion :
 }
 
 public abstract interface class io/liquidsoftware/safedomain/numeric/PositiveLong$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/numeric/PositiveLong$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPositive : io/liquidsoftware/safedomain/numeric/PositiveLong$Error {
@@ -1317,6 +1481,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPo
 	public final fun component1 ()J
 	public final fun copy (J)Lio/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPositive;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPositive;JILjava/lang/Object;)Lio/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPositive;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()J
 	public fun hashCode ()I
@@ -1325,6 +1490,7 @@ public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Error$NonPo
 
 public final class io/liquidsoftware/safedomain/numeric/PositiveLong$Overflow : io/liquidsoftware/safedomain/ValidationError {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/numeric/PositiveLong$Overflow;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1368,13 +1534,19 @@ public final class io/liquidsoftware/safedomain/text/NonBlankString$Companion : 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/text/NonBlankString$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/text/NonBlankString$Error$Blank : io/liquidsoftware/safedomain/text/NonBlankString$Error {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/text/NonBlankString$Error$Blank;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/liquidsoftware/safedomain/text/NonBlankString$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/text/NonBlankString$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/text/NonBlankString$Error$TooLong : io/liquidsoftware/safedomain/text/NonBlankString$Error {
@@ -1383,6 +1555,7 @@ public final class io/liquidsoftware/safedomain/text/NonBlankString$Error$TooLon
 	public final fun component2 ()I
 	public final fun copy (II)Lio/liquidsoftware/safedomain/text/NonBlankString$Error$TooLong;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/text/NonBlankString$Error$TooLong;IIILjava/lang/Object;)Lio/liquidsoftware/safedomain/text/NonBlankString$Error$TooLong;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActual ()I
 	public final fun getMaximum ()I
@@ -1406,13 +1579,19 @@ public final class io/liquidsoftware/safedomain/text/Secret$Companion : io/liqui
 }
 
 public abstract interface class io/liquidsoftware/safedomain/text/Secret$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/text/Secret$Error$Blank : io/liquidsoftware/safedomain/text/Secret$Error {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/text/Secret$Error$Blank;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/liquidsoftware/safedomain/text/Secret$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/text/Secret$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/text/Slug {
@@ -1437,6 +1616,11 @@ public final class io/liquidsoftware/safedomain/text/Slug$Companion : io/liquids
 }
 
 public abstract interface class io/liquidsoftware/safedomain/text/Slug$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/text/Slug$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/text/Slug$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat : io/liquidsoftware/safedomain/text/Slug$Error {
@@ -1444,6 +1628,7 @@ public final class io/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat : 
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/text/Slug$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1457,6 +1642,11 @@ public final class io/liquidsoftware/safedomain/time/DateChecks {
 }
 
 public abstract interface class io/liquidsoftware/safedomain/time/DateChecks$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/time/DateChecks$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/time/DateChecks$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture : io/liquidsoftware/safedomain/time/DateChecks$Error {
@@ -1465,6 +1655,7 @@ public final class io/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture 
 	public final fun component2 ()Lkotlinx/datetime/LocalDate;
 	public final fun copy (Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;)Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture;Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotFuture;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getToday ()Lkotlinx/datetime/LocalDate;
 	public final fun getValue ()Lkotlinx/datetime/LocalDate;
@@ -1478,6 +1669,7 @@ public final class io/liquidsoftware/safedomain/time/DateChecks$Error$NotPast : 
 	public final fun component2 ()Lkotlinx/datetime/LocalDate;
 	public final fun copy (Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;)Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotPast;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotPast;Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/DateChecks$Error$NotPast;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getToday ()Lkotlinx/datetime/LocalDate;
 	public final fun getValue ()Lkotlinx/datetime/LocalDate;
@@ -1506,6 +1698,11 @@ public final class io/liquidsoftware/safedomain/time/DateRange$Companion : io/li
 }
 
 public abstract interface class io/liquidsoftware/safedomain/time/DateRange$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/time/DateRange$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/time/DateRange$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeStart : io/liquidsoftware/safedomain/time/DateRange$Error {
@@ -1514,6 +1711,7 @@ public final class io/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeSt
 	public final fun component2 ()Lkotlinx/datetime/LocalDate;
 	public final fun copy (Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;)Lio/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeStart;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeStart;Lkotlinx/datetime/LocalDate;Lkotlinx/datetime/LocalDate;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/DateRange$Error$EndBeforeStart;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEndInclusive ()Lkotlinx/datetime/LocalDate;
 	public final fun getStart ()Lkotlinx/datetime/LocalDate;
@@ -1592,10 +1790,16 @@ public final class io/liquidsoftware/safedomain/time/PositiveDuration$Companion 
 }
 
 public abstract interface class io/liquidsoftware/safedomain/time/PositiveDuration$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/time/PositiveDuration$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/time/PositiveDuration$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/time/PositiveDuration$Error$Infinite : io/liquidsoftware/safedomain/time/PositiveDuration$Error {
 	public static final field INSTANCE Lio/liquidsoftware/safedomain/time/PositiveDuration$Error$Infinite;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1606,6 +1810,7 @@ public final class io/liquidsoftware/safedomain/time/PositiveDuration$Error$NonP
 	public final fun component1-UwyO8pc ()J
 	public final fun copy-LRDsOJo (J)Lio/liquidsoftware/safedomain/time/PositiveDuration$Error$NonPositive;
 	public static synthetic fun copy-LRDsOJo$default (Lio/liquidsoftware/safedomain/time/PositiveDuration$Error$NonPositive;JILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/PositiveDuration$Error$NonPositive;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue-UwyO8pc ()J
 	public fun hashCode ()I
@@ -1633,6 +1838,11 @@ public final class io/liquidsoftware/safedomain/time/TimeWindow$Companion : io/l
 }
 
 public abstract interface class io/liquidsoftware/safedomain/time/TimeWindow$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/time/TimeWindow$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/time/TimeWindow$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterStart : io/liquidsoftware/safedomain/time/TimeWindow$Error {
@@ -1641,6 +1851,7 @@ public final class io/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterSt
 	public final fun component2 ()Lkotlin/time/Instant;
 	public final fun copy (Lkotlin/time/Instant;Lkotlin/time/Instant;)Lio/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterStart;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterStart;Lkotlin/time/Instant;Lkotlin/time/Instant;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/TimeWindow$Error$NotAfterStart;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEndExclusive ()Lkotlin/time/Instant;
 	public final fun getStart ()Lkotlin/time/Instant;
@@ -1678,6 +1889,11 @@ public final class io/liquidsoftware/safedomain/time/TimeZoneId$Companion : io/l
 }
 
 public abstract interface class io/liquidsoftware/safedomain/time/TimeZoneId$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/time/TimeZoneId$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/time/TimeZoneId$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZone : io/liquidsoftware/safedomain/time/TimeZoneId$Error {
@@ -1685,6 +1901,7 @@ public final class io/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZon
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZone;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZone;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/time/TimeZoneId$Error$UnknownZone;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1708,6 +1925,11 @@ public final class io/liquidsoftware/safedomain/web/DomainName$Companion : io/li
 }
 
 public abstract interface class io/liquidsoftware/safedomain/web/DomainName$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/web/DomainName$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/web/DomainName$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/web/DomainName$Error$InvalidFormat : io/liquidsoftware/safedomain/web/DomainName$Error {
@@ -1715,6 +1937,7 @@ public final class io/liquidsoftware/safedomain/web/DomainName$Error$InvalidForm
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/DomainName$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/DomainName$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/DomainName$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1744,6 +1967,11 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Companion : io/liqui
 }
 
 public abstract interface class io/liquidsoftware/safedomain/web/HttpUrl$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/web/HttpUrl$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort : io/liquidsoftware/safedomain/web/HttpUrl$Error {
@@ -1751,6 +1979,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort : 
 	public final fun component1 ()I
 	public final fun copy (I)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort;IILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidPort;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getPort ()I
 	public fun hashCode ()I
@@ -1762,6 +1991,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidSyntax 
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidSyntax;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidSyntax;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$InvalidSyntax;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1773,6 +2003,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$MissingHost : 
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$MissingHost;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/HttpUrl$Error$MissingHost;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$MissingHost;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1784,6 +2015,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$NotAbsolute : 
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$NotAbsolute;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/HttpUrl$Error$NotAbsolute;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$NotAbsolute;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1795,6 +2027,7 @@ public final class io/liquidsoftware/safedomain/web/HttpUrl$Error$UnsupportedSch
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$UnsupportedScheme;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/HttpUrl$Error$UnsupportedScheme;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/HttpUrl$Error$UnsupportedScheme;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getScheme ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1820,6 +2053,11 @@ public final class io/liquidsoftware/safedomain/web/IpAddress$Companion : io/liq
 }
 
 public abstract interface class io/liquidsoftware/safedomain/web/IpAddress$Error : io/liquidsoftware/safedomain/ValidationError {
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
+}
+
+public final class io/liquidsoftware/safedomain/web/IpAddress$Error$DefaultImpls {
+	public static fun describe (Lio/liquidsoftware/safedomain/web/IpAddress$Error;)Lio/liquidsoftware/safedomain/ErrorMessage;
 }
 
 public final class io/liquidsoftware/safedomain/web/IpAddress$Error$InvalidFormat : io/liquidsoftware/safedomain/web/IpAddress$Error {
@@ -1827,6 +2065,7 @@ public final class io/liquidsoftware/safedomain/web/IpAddress$Error$InvalidForma
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lio/liquidsoftware/safedomain/web/IpAddress$Error$InvalidFormat;
 	public static synthetic fun copy$default (Lio/liquidsoftware/safedomain/web/IpAddress$Error$InvalidFormat;Ljava/lang/String;ILjava/lang/Object;)Lio/liquidsoftware/safedomain/web/IpAddress$Error$InvalidFormat;
+	public fun describe ()Lio/liquidsoftware/safedomain/ErrorMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I

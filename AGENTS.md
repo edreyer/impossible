@@ -50,11 +50,12 @@ their domain names, policies, authorization decisions, and workflows.
 - Preserve precise error types. Do not introduce artificial shared error
   hierarchies, widen errors to `Any`, or add functional abstractions solely to
   avoid a small explicit `when`. The one exception is the `ValidationError`
-  marker interface: it exists so a boundary (an HTTP handler, a form) can collect
-  and describe library errors without wrapping each one. It carries no meaning
-  and nothing branches on it inside a domain. Every error type the library
-  defines implements it, has a branch in `ErrorMessages.describe(ValidationError)`,
-  and joins the dispatcher check in `ErrorLawsTest`.
+  interface: it exists so a boundary (an HTTP handler, a form) can collect and
+  describe errors without wrapping each one. Its only member is `describe()`;
+  nothing branches on it inside a domain. Every error type the library defines
+  implements it with `override fun describe(): ErrorMessage =
+  ErrorMessages.describe(this)`, keeping codes and texts in `ErrorMessages`, and
+  joins the agreement check in `ErrorLawsTest`.
 - Keep explicit result types required by ports, framework contracts, or
   meaningful domain outcomes. Do not replace closed domain outcomes for style.
 - At application boundaries, consume typed results explicitly and translate

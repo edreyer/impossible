@@ -2,6 +2,8 @@ package io.liquidsoftware.safedomain.numeric
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValidationError
 import io.liquidsoftware.safedomain.ValueFactory
 
@@ -12,6 +14,8 @@ import io.liquidsoftware.safedomain.ValueFactory
  */
 public class BoundedInt private constructor(public val value: Int, public val bounds: IntRange) : Comparable<BoundedInt> {
     public sealed interface Error : ValidationError {
+        override fun describe(): ErrorMessage = ErrorMessages.describe(this)
+
         public data class OutOfRange(val value: Int, val bounds: IntRange) : Error
     }
 

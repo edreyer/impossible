@@ -169,7 +169,7 @@ class ErrorLawsTest {
         assertEquals(publishedCodes, seen)
     }
 
-    /** Each generator's errors, described by their own overload and through the [ValidationError] dispatcher. */
+    /** Each generator's errors, described by their own overload and by [ValidationError.describe]. */
     private val dispatched: List<Arb<Pair<ErrorMessage, ErrorMessage>>> = listOf(
         agreement(NonBlankString.errorArb()) { ErrorMessages.describe(it) },
         agreement(Slug.errorArb()) { ErrorMessages.describe(it) },
@@ -210,10 +210,10 @@ class ErrorLawsTest {
     )
 
     private fun <E : ValidationError> agreement(errors: Arb<E>, describe: (E) -> ErrorMessage): Arb<Pair<ErrorMessage, ErrorMessage>> =
-        errors.map { describe(it) to ErrorMessages.describe(it as ValidationError) }
+        errors.map { describe(it) to it.describe() }
 
     @Test
-    fun `the ValidationError dispatcher describes every error as its own overload does`() = runTest {
+    fun `every error describes itself as its own overload does`() = runTest {
         for (pairs in dispatched) {
             forAll(pairs, iterations = 50) { (specific, dispatched) -> assertEquals(specific, dispatched) }
         }
@@ -221,8 +221,8 @@ class ErrorLawsTest {
             listOf(PositiveInt.Overflow, PositiveLong.Overflow, NegativeInt.Overflow, NegativeLong.Overflow)
         assertEquals(
             listOf("positive_int.overflow", "positive_long.overflow", "negative_int.overflow", "negative_long.overflow"),
-            overflows.map { ErrorMessages.describe(it).code },
+            overflows.map { it.describe().code },
         )
-        assertEquals("required.missing", ErrorMessages.describe(RequiredError.Missing as ValidationError).code)
+        assertEquals("required.missing", RequiredError.Missing.describe().code)
     }
 }
