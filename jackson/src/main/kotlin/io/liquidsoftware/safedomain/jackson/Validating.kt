@@ -2,14 +2,14 @@ package io.liquidsoftware.safedomain.jackson
 
 import arrow.core.Either
 import arrow.core.raise.either
+import io.liquidsoftware.safedomain.ErrorMessage
+import io.liquidsoftware.safedomain.ValueFactory
 import tools.jackson.core.JsonGenerator
 import tools.jackson.core.JsonParser
 import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.SerializationContext
 import tools.jackson.databind.ValueDeserializer
 import tools.jackson.databind.ValueSerializer
-import tools.jackson.databind.SerializationContext
-import io.liquidsoftware.safedomain.ErrorMessage
-import io.liquidsoftware.safedomain.ValueFactory
 
 /**
  * A deserializer that reads [input] with Jackson's usual rules and runs it through this

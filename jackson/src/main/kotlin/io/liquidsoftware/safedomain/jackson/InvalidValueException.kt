@@ -1,8 +1,8 @@
 package io.liquidsoftware.safedomain.jackson
 
+import io.liquidsoftware.safedomain.ErrorMessage
 import tools.jackson.core.JsonParser
 import tools.jackson.databind.DatabindException
-import io.liquidsoftware.safedomain.ErrorMessage
 
 /**
  * Reading found well-formed JSON that the type's factory rejected. [error] is the

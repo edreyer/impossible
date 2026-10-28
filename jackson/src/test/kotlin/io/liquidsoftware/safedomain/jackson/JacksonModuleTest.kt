@@ -1,14 +1,5 @@
 package io.liquidsoftware.safedomain.jackson
 
-import tools.jackson.core.type.TypeReference
-import tools.jackson.databind.DatabindException
-import tools.jackson.databind.DeserializationFeature
-import tools.jackson.databind.annotation.JsonDeserialize
-import tools.jackson.databind.exc.MismatchedInputException
-import tools.jackson.databind.json.JsonMapper
-import tools.jackson.databind.module.SimpleModule
-import tools.jackson.module.kotlin.jacksonMapperBuilder
-import tools.jackson.module.kotlin.readValue
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.collections.BoundedList
@@ -25,6 +16,15 @@ import io.liquidsoftware.safedomain.text.NonBlankString
 import io.liquidsoftware.safedomain.text.Secret
 import io.liquidsoftware.safedomain.text.Slug
 import io.liquidsoftware.safedomain.time.DateRange
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.DatabindException
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.exc.MismatchedInputException
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.module.kotlin.jacksonMapperBuilder
+import tools.jackson.module.kotlin.readValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

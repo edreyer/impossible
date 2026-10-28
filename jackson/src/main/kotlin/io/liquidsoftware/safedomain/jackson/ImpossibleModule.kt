@@ -1,17 +1,6 @@
 package io.liquidsoftware.safedomain.jackson
 
 import arrow.core.NonEmptyList
-import tools.jackson.core.JsonGenerator
-import tools.jackson.core.JsonParser
-import tools.jackson.databind.BeanProperty
-import tools.jackson.databind.DeserializationContext
-import tools.jackson.databind.JavaType
-import tools.jackson.databind.ValueDeserializer
-import tools.jackson.databind.DatabindException
-import tools.jackson.databind.ValueSerializer
-import tools.jackson.databind.SerializationContext
-
-import tools.jackson.databind.module.SimpleModule
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValueFactory
@@ -49,6 +38,16 @@ import io.liquidsoftware.safedomain.web.DomainName
 import io.liquidsoftware.safedomain.web.HttpUrl
 import io.liquidsoftware.safedomain.web.IpAddress
 import kotlinx.datetime.LocalDate
+import tools.jackson.core.JsonGenerator
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.BeanProperty
+import tools.jackson.databind.DatabindException
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JavaType
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.ValueSerializer
+import tools.jackson.databind.module.SimpleModule
 import kotlin.time.Duration
 import kotlin.time.Instant
 

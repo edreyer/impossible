@@ -1,8 +1,5 @@
 package io.liquidsoftware.safedomain.jackson
 
-import tools.jackson.databind.JavaType
-import tools.jackson.databind.json.JsonMapper
-import tools.jackson.databind.module.SimpleModule
 import io.kotest.common.ExperimentalKotest
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -81,6 +78,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import tools.jackson.databind.JavaType
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
