@@ -1,7 +1,7 @@
 package io.liquidsoftware.safedomain.jackson
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.JsonMappingException
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DatabindException
 import io.liquidsoftware.safedomain.ErrorMessage
 
 /**
@@ -17,4 +17,4 @@ public class InvalidValueException(
     public val error: Any?,
     public val messages: List<ErrorMessage>,
     public val pointer: String,
-) : JsonMappingException(parser, "Invalid $typeName: ${messages.joinToString { it.code }}")
+) : DatabindException(parser, "Invalid $typeName: ${messages.joinToString { it.code }}")

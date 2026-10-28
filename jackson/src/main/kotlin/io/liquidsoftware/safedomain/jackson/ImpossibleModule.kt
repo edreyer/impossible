@@ -1,17 +1,17 @@
 package io.liquidsoftware.safedomain.jackson
 
 import arrow.core.NonEmptyList
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.BeanProperty
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JavaType
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
+import tools.jackson.core.JsonGenerator
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.BeanProperty
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JavaType
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.DatabindException
+import tools.jackson.databind.ValueSerializer
+import tools.jackson.databind.SerializationContext
+
+import tools.jackson.databind.module.SimpleModule
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ErrorMessages
 import io.liquidsoftware.safedomain.ValueFactory
@@ -67,7 +67,7 @@ private const val PACKAGE = "io.liquidsoftware.safedomain"
  * [BoundedIntDeserializer] or [BoundedListDeserializer] you declare per use. `TypedId`'s
  * tag exists only at compile time, so one deserializer serves every tag.
  *
- * Register it once: `ObjectMapper().registerModule(ImpossibleModule())`. Kotlin value
+ * Register it once: `JsonMapper.builder().addModule(ImpossibleModule()).build()`. Kotlin value
  * classes held in Kotlin classes also need jackson-module-kotlin, which maps them to
  * these (de)serializers.
  */
@@ -81,7 +81,7 @@ public class ImpossibleModule : SimpleModule("impossible") {
         collections()
     }
 
-    private fun <A : Any> add(type: Class<A>, deserializer: JsonDeserializer<out A>?, serializer: JsonSerializer<A>) {
+    private fun <A : Any> add(type: Class<A>, deserializer: ValueDeserializer<out A>?, serializer: ValueSerializer<A>) {
         if (deserializer != null) addDeserializer(type, deserializer)
         addSerializer(type, serializer)
     }
@@ -102,9 +102,9 @@ public class ImpossibleModule : SimpleModule("impossible") {
         add(
             Secret::class.java,
             ValidatingDeserializer("$PACKAGE.text.Secret", Secret, readString, one(ErrorMessages::describe)),
-            object : JsonSerializer<Secret>() {
-                override fun serialize(value: Secret, gen: JsonGenerator, serializers: SerializerProvider): Unit =
-                    throw JsonMappingException.from(gen, "A Secret is never serialized; map it to a safe form first")
+            object : ValueSerializer<Secret>() {
+                override fun serialize(value: Secret, gen: JsonGenerator, serializers: SerializationContext): Unit =
+                    throw DatabindException.from(gen, "A Secret is never serialized; map it to a safe form first")
             },
         )
         string(Email::class.java, "$PACKAGE.contact.Email", Email, { it.value }, ErrorMessages::describe)
@@ -218,8 +218,8 @@ public class ImpossibleModule : SimpleModule("impossible") {
                 one(ErrorMessages::describe),
             ),
             writeObject { range, gen ->
-                gen.writeStringField("start", range.start.toString())
-                gen.writeStringField("endInclusive", range.endInclusive.toString())
+                gen.writeStringProperty("start", range.start.toString())
+                gen.writeStringProperty("endInclusive", range.endInclusive.toString())
             },
         )
         add(
@@ -233,8 +233,8 @@ public class ImpossibleModule : SimpleModule("impossible") {
                 one(ErrorMessages::describe),
             ),
             writeObject { window, gen ->
-                gen.writeStringField("start", window.start.toString())
-                gen.writeStringField("endExclusive", window.endExclusive.toString())
+                gen.writeStringProperty("start", window.start.toString())
+                gen.writeStringProperty("endExclusive", window.endExclusive.toString())
             },
         )
         add(
@@ -268,8 +268,8 @@ public class ImpossibleModule : SimpleModule("impossible") {
                 readObject("latitude", "longitude") { GeoPoint.Input(double("latitude"), double("longitude")) },
             ) { errors -> errors.map(ErrorMessages::describe) },
             writeObject { point, gen ->
-                gen.writeNumberField("latitude", point.latitude)
-                gen.writeNumberField("longitude", point.longitude)
+                gen.writeNumberProperty("latitude", point.latitude)
+                gen.writeNumberProperty("longitude", point.longitude)
             },
         )
     }
@@ -297,7 +297,7 @@ public class ImpossibleModule : SimpleModule("impossible") {
  * `class RatingDeserializer : BoundedIntDeserializer(1..5)` with
  * `@JsonDeserialize(using = RatingDeserializer::class)`.
  */
-public open class BoundedIntDeserializer(bounds: IntRange) : JsonDeserializer<BoundedInt>() {
+public open class BoundedIntDeserializer(bounds: IntRange) : ValueDeserializer<BoundedInt>() {
     private val delegate = ValidatingDeserializer(
         "$PACKAGE.numeric.BoundedInt",
         BoundedInt.factory(bounds),
@@ -313,9 +313,8 @@ public open class BoundedIntDeserializer(bounds: IntRange) : JsonDeserializer<Bo
  * declared element type. Like [BoundedIntDeserializer], declare one subclass per use.
  */
 public open class BoundedListDeserializer(private val bounds: IntRange) :
-    JsonDeserializer<BoundedList<Any?>>(),
-    ContextualDeserializer {
-    override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> =
+    ValueDeserializer<BoundedList<Any?>>() {
+    override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): ValueDeserializer<*> =
         ElementsOf(elementType(ctxt, property)) { elements ->
             ValidatingDeserializer(
                 "$PACKAGE.collections.BoundedList",
@@ -335,9 +334,8 @@ public open class BoundedListDeserializer(private val bounds: IntRange) :
 }
 
 internal class UniqueListDeserializer(private val element: JavaType?) :
-    JsonDeserializer<UniqueList<Any?>>(),
-    ContextualDeserializer {
-    override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): JsonDeserializer<*> =
+    ValueDeserializer<UniqueList<Any?>>() {
+    override fun createContextual(ctxt: DeserializationContext, property: BeanProperty?): ValueDeserializer<*> =
         UniqueListDeserializer(elementType(ctxt, property))
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): UniqueList<Any?> =
@@ -346,7 +344,7 @@ internal class UniqueListDeserializer(private val element: JavaType?) :
 }
 
 /** A list deserializer fixed to one element type, built when Jackson knows the property. */
-private class ElementsOf<A>(element: JavaType?, build: (Reader<List<Any?>>) -> JsonDeserializer<A>) : JsonDeserializer<A>() {
+private class ElementsOf<A>(element: JavaType?, build: (Reader<List<Any?>>) -> ValueDeserializer<A>) : ValueDeserializer<A>() {
     private val delegate = build(readList(element))
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): A = delegate.deserialize(p, ctxt)
@@ -356,7 +354,7 @@ private fun elementType(ctxt: DeserializationContext, property: BeanProperty?): 
     (ctxt.contextualType ?: property?.type)?.containedType(0)
 
 private fun readList(element: JavaType?): Reader<List<Any?>> = { p, ctxt ->
-    if (p.currentToken != com.fasterxml.jackson.core.JsonToken.START_ARRAY) mismatch(p, "Expected a JSON array")
+    if (p.currentToken() != tools.jackson.core.JsonToken.START_ARRAY) mismatch(p, "Expected a JSON array")
     val type = ctxt.typeFactory.constructCollectionType(List::class.java, element ?: ctxt.constructType(Any::class.java))
     ctxt.readValue(p, type)
 }
@@ -372,7 +370,7 @@ private val readDecimal: Reader<Decimal> = { p, ctxt ->
     )
 }
 
-private object DecimalDeserializer : JsonDeserializer<Decimal>() {
+private object DecimalDeserializer : ValueDeserializer<Decimal>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Decimal = readDecimal(p, ctxt)
 }
 
@@ -396,28 +394,34 @@ private val describeAll: (NonEmptyList<UniqueList.Error>) -> List<ErrorMessage> 
 
 private fun <E> one(describe: (E) -> ErrorMessage): (E) -> List<ErrorMessage> = { listOf(describe(it)) }
 
-private fun <A> writeString(render: (A) -> String): JsonSerializer<A> = object : JsonSerializer<A>() {
-    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializerProvider) = gen.writeString(render(value))
+private fun <A> writeString(render: (A) -> String): ValueSerializer<A> = object : ValueSerializer<A>() {
+    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializationContext) {
+        gen.writeString(render(value))
+    }
 }
 
-private fun <A> writeInt(render: (A) -> Int): JsonSerializer<A> = object : JsonSerializer<A>() {
-    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializerProvider) = gen.writeNumber(render(value))
+private fun <A> writeInt(render: (A) -> Int): ValueSerializer<A> = object : ValueSerializer<A>() {
+    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializationContext) {
+        gen.writeNumber(render(value))
+    }
 }
 
-private fun <A> writeLong(render: (A) -> Long): JsonSerializer<A> = object : JsonSerializer<A>() {
-    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializerProvider) = gen.writeNumber(render(value))
+private fun <A> writeLong(render: (A) -> Long): ValueSerializer<A> = object : ValueSerializer<A>() {
+    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializationContext) {
+        gen.writeNumber(render(value))
+    }
 }
 
-private fun <A> writeObject(fields: (A, JsonGenerator) -> Unit): JsonSerializer<A> = object : JsonSerializer<A>() {
-    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializerProvider) {
+private fun <A> writeObject(fields: (A, JsonGenerator) -> Unit): ValueSerializer<A> = object : ValueSerializer<A>() {
+    override fun serialize(value: A, gen: JsonGenerator, serializers: SerializationContext) {
         gen.writeStartObject()
         fields(value, gen)
         gen.writeEndObject()
     }
 }
 
-private fun <A> writeMoney(money: (A) -> Money): JsonSerializer<A> = writeObject { value, gen ->
+private fun <A> writeMoney(money: (A) -> Money): ValueSerializer<A> = writeObject { value, gen ->
     val amount = money(value)
-    gen.writeStringField("amount", amount.amount.toPlainString())
-    gen.writeStringField("currency", amount.currency.code)
+    gen.writeStringProperty("amount", amount.amount.toPlainString())
+    gen.writeStringProperty("currency", amount.currency.code)
 }

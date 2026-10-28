@@ -8,6 +8,17 @@ version may change the public API.
 
 ## [Unreleased]
 
+### Changed
+
+- `impossible-jackson` targets Jackson 3 (`tools.jackson`), the version Spring Boot 4
+  uses, instead of Jackson 2. Register it with
+  `JsonMapper.builder().addModule(ImpossibleModule()).build()`. `asJacksonDeserializer`
+  and `jacksonSerializer` return Jackson 3's `ValueDeserializer` and `ValueSerializer`,
+  and `InvalidValueException` is now a `DatabindException`. Following Jackson 3's
+  defaults, unknown fields in money, range and point objects are accepted unless the
+  mapper enables `FAIL_ON_UNKNOWN_PROPERTIES`. Spring Boot 3 and other Jackson 2 users
+  stay on 0.1.0.
+
 ## [0.1.0]
 
 The first release, to Maven Central as `io.liquidsoftware:impossible`,

@@ -1,13 +1,14 @@
 package io.liquidsoftware.safedomain.jackson
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.DatabindException
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.exc.MismatchedInputException
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
+import tools.jackson.module.kotlin.jacksonMapperBuilder
+import tools.jackson.module.kotlin.readValue
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ValueFactory
 import io.liquidsoftware.safedomain.collections.BoundedList
@@ -55,7 +56,7 @@ value class Sku private constructor(val value: String) {
 }
 
 class JacksonModuleTest {
-    private val mapper = ObjectMapper().registerModule(ImpossibleModule())
+    private val mapper = JsonMapper.builder().addModule(ImpossibleModule()).build()
 
     @Test
     fun `text and numbers use their plain JSON forms`() {
@@ -112,15 +113,21 @@ class JacksonModuleTest {
             )
         }
         assertFailsWith<MismatchedInputException> { mapper.readValue("""{"amount":"1.00"}""", Money::class.java) }
-        assertFailsWith<MismatchedInputException> {
-            mapper.readValue("""{"amount":"1.00","currency":"EUR","extra":1}""", Money::class.java)
-        }
+    }
+
+    @Test
+    fun `unknown fields follow the mapper's setting`() {
+        // Jackson 3 accepts unknown properties by default, and the library's object forms do the same.
+        val extra = """{"amount":"1.00","currency":"EUR","extra":1}"""
+        assertEquals("1.00", mapper.readValue(extra, Money::class.java).amount.toPlainString())
+        val strict = mapper.rebuild().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build()
+        assertFailsWith<MismatchedInputException> { strict.readValue(extra, Money::class.java) }
     }
 
     @Test
     fun `a secret is read but never written`() {
         assertEquals("hunter2", mapper.readValue("\"hunter2\"", Secret::class.java).reveal())
-        assertFailsWith<JsonMappingException> { mapper.writeValueAsString(Secret.fromTrusted("hunter2")) }
+        assertFailsWith<DatabindException> { mapper.writeValueAsString(Secret.fromTrusted("hunter2")) }
     }
 
     @Test
@@ -148,7 +155,7 @@ class JacksonModuleTest {
                 },
             )
             .addSerializer(Sku::class.java, jacksonSerializer(Sku::value))
-        val skus = ObjectMapper().registerModule(module)
+        val skus = JsonMapper.builder().addModule(module).build()
         assertEquals("\"ab-12\"", skus.writeValueAsString(skus.readValue("\"ab-12\"", Sku::class.java)))
         assertEquals(
             listOf("sku.invalid"),
@@ -160,7 +167,7 @@ class JacksonModuleTest {
 
     @Test
     fun `kotlin data classes with value class properties work with jackson-module-kotlin`() {
-        val kotlinMapper = jacksonObjectMapper().registerModule(ImpossibleModule())
+        val kotlinMapper = jacksonMapperBuilder().addModule(ImpossibleModule()).build()
         val signup = kotlinMapper.readValue<Signup>("""{"email":"ann@example.com","seats":2,"name":"Ann"}""")
         assertEquals(Signup(Email.fromTrusted("ann@example.com"), PositiveInt.fromTrusted(2), NonBlankString.fromTrusted("Ann")), signup)
         assertEquals("""{"email":"ann@example.com","seats":2,"name":"Ann"}""", kotlinMapper.writeValueAsString(signup))

@@ -68,7 +68,7 @@ a translation needs. The rejected email address never appears in it.
 - Kotlin 2.4 or later: the API uses context parameters.
 - Arrow 2 on the classpath, as an API dependency. You need only `Raise`, `either` and
   `NonEmptyList`; the tutorial introduces them.
-- JSON through kotlinx.serialization (`impossible-serialization`) or Jackson 2
+- JSON through kotlinx.serialization (`impossible-serialization`) or Jackson 3
   (`impossible-jackson`, JVM); every decoder runs the real validation.
 - Targets: JVM 17+, JS, Wasm, Linux x64, macOS and iOS (arm64 and simulator).
 - Version 0.x: the API may still change between minor versions, and every change shows
@@ -1104,26 +1104,31 @@ what it writes and turns arbitrary text into a value or an `InvalidValueExceptio
 ### Jackson
 
 The `impossible-jackson` module (in `jackson/`, JVM only, coordinates
-`io.liquidsoftware:impossible-jackson`) gives Jackson 2 the same support with one line:
+`io.liquidsoftware:impossible-jackson`) gives Jackson 3, the version Spring Boot 4 uses,
+the same support with one line:
 
 ```kotlin
-val mapper = ObjectMapper().registerModule(ImpossibleModule())
+val mapper = JsonMapper.builder().addModule(ImpossibleModule()).build()
 ```
+
+Version 0.1.0 of the module targets Jackson 2 (Spring Boot 3); later versions target
+Jackson 3.
 
 The JSON is the same as in the table above, and a test checks that for every type's
 generator both modules write equal JSON and read each other's output. Reading runs the
 real factory; a rejected value throws the module's `InvalidValueException`, a
-`JsonMappingException` with the typed `error`, its `messages`, and the JSON Pointer of
+`DatabindException` with the typed `error`, its `messages`, and the JSON Pointer of
 the value (`pointer`, such as `/email`), and never the rejected input. Numbers are
 never coerced: a float is not truncated into a `PositiveInt`, and a decimal must be a
-string.
+string. Unknown fields in the object forms (money, ranges, points) follow the mapper's
+`FAIL_ON_UNKNOWN_PROPERTIES` setting, which Jackson 3 turns off by default.
 
 - `Secret` is read but never written.
 - `BoundedInt` and `BoundedList` need bounds: declare `class RatingDeserializer :
   BoundedIntDeserializer(1..5)` (or a `BoundedListDeserializer` subclass) and name it
   with `@JsonDeserialize(using = ...)`.
 - Kotlin classes that hold value classes such as `Email` need jackson-module-kotlin as
-  well (`jacksonObjectMapper().registerModule(ImpossibleModule())`), which Spring Boot
+  well (`jacksonMapperBuilder().addModule(ImpossibleModule()).build()`), which Spring Boot
   registers automatically when it is on the classpath.
 - Your own types: `Sku.asJacksonDeserializer("com.example.Sku", String::class.java, ::describe)`
   and `jacksonSerializer(Sku::value)`.
@@ -1290,7 +1295,7 @@ Dependencies:
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), an
   API dependency of `impossible-serialization` only (core; its tests use the JSON
   format). That module applies the Kotlin serialization compiler plugin.
-- [Jackson](https://github.com/FasterXML/jackson-databind) databind 2.x, an API
+- [Jackson](https://github.com/FasterXML/jackson-databind) databind 3.x, an API
   dependency of `impossible-jackson` only. Its tests also use jackson-module-kotlin,
   which the module itself does not need.
 - Build tooling only, not shipped: [detekt](https://detekt.dev) with its
