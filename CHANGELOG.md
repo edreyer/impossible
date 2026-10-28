@@ -8,6 +8,8 @@ version may change the public API.
 
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Changed
 
 - `impossible-jackson` targets Jackson 3 (`tools.jackson`), the version Spring Boot 4

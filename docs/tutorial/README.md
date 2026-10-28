@@ -41,10 +41,10 @@ The library is published to Maven Central. Add it to your module's dependencies:
 
 ```kotlin-gradle
 dependencies {
-    implementation("io.liquidsoftware:impossible:0.1.0")
+    implementation("io.liquidsoftware:impossible:0.2.0")
     // Optional modules, used in steps 11 and 12:
-    implementation("io.liquidsoftware:impossible-serialization:0.1.0")
-    testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
+    implementation("io.liquidsoftware:impossible-serialization:0.2.0")
+    testImplementation("io.liquidsoftware:impossible-testing:0.2.0")
 }
 ```
 
