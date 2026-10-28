@@ -8,6 +8,8 @@ version may change the public API.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-28
+
 ### Changed
 
 - `impossible-jackson` targets Jackson 3 (`tools.jackson`), the version Spring Boot 4
@@ -19,7 +21,7 @@ version may change the public API.
   mapper enables `FAIL_ON_UNKNOWN_PROPERTIES`. Spring Boot 3 and other Jackson 2 users
   stay on 0.1.0.
 
-## [0.1.0]
+## [0.1.0] - 2026-10-27
 
 The first release, to Maven Central as `io.liquidsoftware:impossible`,
 `io.liquidsoftware:impossible-serialization`, `io.liquidsoftware:impossible-jackson` and

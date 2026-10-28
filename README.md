@@ -90,15 +90,15 @@ to `dependencies` the same way.
 
 ```kotlin
 dependencies {
-  implementation("io.liquidsoftware:impossible:0.1.0")
+  implementation("io.liquidsoftware:impossible:0.2.0")
   // kotlinx.serialization serializers that validate while decoding.
-  implementation("io.liquidsoftware:impossible-serialization:0.1.0")
+  implementation("io.liquidsoftware:impossible-serialization:0.2.0")
   // kotest generators for property tests.
-  testImplementation("io.liquidsoftware:impossible-testing:0.1.0")
+  testImplementation("io.liquidsoftware:impossible-testing:0.2.0")
 }
 ```
 
-On the JVM, `io.liquidsoftware:impossible-jackson:0.1.0` adds the
+On the JVM, `io.liquidsoftware:impossible-jackson:0.2.0` adds the
 [Jackson module](#jackson).
 
 ## Types
