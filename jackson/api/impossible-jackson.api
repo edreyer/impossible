@@ -1,22 +1,22 @@
-public class io/liquidsoftware/safedomain/jackson/BoundedIntDeserializer : com/fasterxml/jackson/databind/JsonDeserializer {
+public class io/liquidsoftware/safedomain/jackson/BoundedIntDeserializer : tools/jackson/databind/ValueDeserializer {
 	public fun <init> (Lkotlin/ranges/IntRange;)V
-	public fun deserialize (Lcom/fasterxml/jackson/core/JsonParser;Lcom/fasterxml/jackson/databind/DeserializationContext;)Lio/liquidsoftware/safedomain/numeric/BoundedInt;
-	public synthetic fun deserialize (Lcom/fasterxml/jackson/core/JsonParser;Lcom/fasterxml/jackson/databind/DeserializationContext;)Ljava/lang/Object;
+	public fun deserialize (Ltools/jackson/core/JsonParser;Ltools/jackson/databind/DeserializationContext;)Lio/liquidsoftware/safedomain/numeric/BoundedInt;
+	public synthetic fun deserialize (Ltools/jackson/core/JsonParser;Ltools/jackson/databind/DeserializationContext;)Ljava/lang/Object;
 }
 
-public class io/liquidsoftware/safedomain/jackson/BoundedListDeserializer : com/fasterxml/jackson/databind/JsonDeserializer, com/fasterxml/jackson/databind/deser/ContextualDeserializer {
+public class io/liquidsoftware/safedomain/jackson/BoundedListDeserializer : tools/jackson/databind/ValueDeserializer {
 	public fun <init> (Lkotlin/ranges/IntRange;)V
-	public fun createContextual (Lcom/fasterxml/jackson/databind/DeserializationContext;Lcom/fasterxml/jackson/databind/BeanProperty;)Lcom/fasterxml/jackson/databind/JsonDeserializer;
-	public fun deserialize (Lcom/fasterxml/jackson/core/JsonParser;Lcom/fasterxml/jackson/databind/DeserializationContext;)Lio/liquidsoftware/safedomain/collections/BoundedList;
-	public synthetic fun deserialize (Lcom/fasterxml/jackson/core/JsonParser;Lcom/fasterxml/jackson/databind/DeserializationContext;)Ljava/lang/Object;
+	public fun createContextual (Ltools/jackson/databind/DeserializationContext;Ltools/jackson/databind/BeanProperty;)Ltools/jackson/databind/ValueDeserializer;
+	public fun deserialize (Ltools/jackson/core/JsonParser;Ltools/jackson/databind/DeserializationContext;)Lio/liquidsoftware/safedomain/collections/BoundedList;
+	public synthetic fun deserialize (Ltools/jackson/core/JsonParser;Ltools/jackson/databind/DeserializationContext;)Ljava/lang/Object;
 }
 
-public final class io/liquidsoftware/safedomain/jackson/ImpossibleModule : com/fasterxml/jackson/databind/module/SimpleModule {
+public final class io/liquidsoftware/safedomain/jackson/ImpossibleModule : tools/jackson/databind/module/SimpleModule {
 	public fun <init> ()V
 }
 
-public final class io/liquidsoftware/safedomain/jackson/InvalidValueException : com/fasterxml/jackson/databind/JsonMappingException {
-	public fun <init> (Lcom/fasterxml/jackson/core/JsonParser;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/lang/String;)V
+public final class io/liquidsoftware/safedomain/jackson/InvalidValueException : tools/jackson/databind/DatabindException {
+	public fun <init> (Ltools/jackson/core/JsonParser;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/lang/String;)V
 	public final fun getError ()Ljava/lang/Object;
 	public final fun getMessages ()Ljava/util/List;
 	public final fun getPointer ()Ljava/lang/String;
@@ -24,7 +24,7 @@ public final class io/liquidsoftware/safedomain/jackson/InvalidValueException : 
 }
 
 public final class io/liquidsoftware/safedomain/jackson/ValidatingKt {
-	public static final fun asJacksonDeserializer (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/String;Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lcom/fasterxml/jackson/databind/JsonDeserializer;
-	public static final fun jacksonSerializer (Lkotlin/jvm/functions/Function1;)Lcom/fasterxml/jackson/databind/JsonSerializer;
+	public static final fun asJacksonDeserializer (Lio/liquidsoftware/safedomain/ValueFactory;Ljava/lang/String;Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Ltools/jackson/databind/ValueDeserializer;
+	public static final fun jacksonSerializer (Lkotlin/jvm/functions/Function1;)Ltools/jackson/databind/ValueSerializer;
 }
 

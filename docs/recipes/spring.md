@@ -1,7 +1,9 @@
 # Spring
 
 > Not compiled: this recipe is checked by reading, not by the build. It targets Spring
-> Boot 3 (Spring Framework 6, Jackson 2).
+> Boot 4 (Spring Framework 7, Jackson 3). On Spring Boot 3, which uses Jackson 2, use
+> `impossible-jackson` 0.1.0 and register the module as a `com.fasterxml.jackson.databind.Module`
+> bean instead.
 
 ## Validate in the controller
 
@@ -56,13 +58,13 @@ class ProblemAdvice {
 
 The `impossible-jackson` module reads and writes every library type with the same JSON
 as `impossible-serialization`, and decoding runs the real factory. Spring Boot
-registers every Jackson `Module` bean with its `ObjectMapper`:
+registers every `JacksonModule` bean with the `JsonMapper` it builds:
 
 ```kotlin
 @Configuration
 class JacksonConfig {
     @Bean
-    fun impossibleModule(): Module = ImpossibleModule()
+    fun impossibleModule(): JacksonModule = ImpossibleModule()
 }
 ```
 

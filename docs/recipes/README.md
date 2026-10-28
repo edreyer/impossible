@@ -11,5 +11,5 @@ from the ground up; these start from the framework you already run.
 | [Persistence](persistence.md) | Exposed column types and JPA converters that read through the factories | No |
 
 Recipes marked "No" are written against the frameworks' public APIs as of late 2026
-(Ktor 3, Spring Boot 3 with Jackson 2, Exposed 0.6x, Jakarta Persistence 3) but are not
+(Ktor 3, Spring Boot 4 with Jackson 3, Exposed 0.6x, Jakarta Persistence 3) but are not
 built in this repository; check them against the versions you use.

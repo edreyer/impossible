@@ -2,14 +2,14 @@ package io.liquidsoftware.safedomain.jackson
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
 import io.liquidsoftware.safedomain.ErrorMessage
 import io.liquidsoftware.safedomain.ValueFactory
+import tools.jackson.core.JsonGenerator
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.ValueSerializer
 
 /**
  * A deserializer that reads [input] with Jackson's usual rules and runs it through this
@@ -23,15 +23,15 @@ public fun <Input, Error, Value> ValueFactory<Input, Error, Value>.asJacksonDese
     typeName: String,
     input: Class<Input>,
     describe: (Error) -> List<ErrorMessage>,
-): JsonDeserializer<Value> = ValidatingDeserializer(typeName, this, { parser, context ->
+): ValueDeserializer<Value> = ValidatingDeserializer(typeName, this, { parser, context ->
     context.readValue(parser, input)
 }, describe)
 
 /** A serializer that writes [render] of a value with whatever serializer Jackson has for the result. */
-public fun <Value, Output> jacksonSerializer(render: (Value) -> Output): JsonSerializer<Value> =
-    object : JsonSerializer<Value>() {
-        override fun serialize(value: Value, gen: JsonGenerator, serializers: SerializerProvider) {
-            serializers.defaultSerializeValue(render(value), gen)
+public fun <Value, Output> jacksonSerializer(render: (Value) -> Output): ValueSerializer<Value> =
+    object : ValueSerializer<Value>() {
+        override fun serialize(value: Value, gen: JsonGenerator, serializers: SerializationContext) {
+            serializers.writeValue(gen, render(value))
         }
     }
 
@@ -43,7 +43,7 @@ internal class ValidatingDeserializer<Input, Error, Value>(
     private val factory: ValueFactory<Input, Error, Value>,
     private val read: Reader<Input>,
     private val describe: (Error) -> List<ErrorMessage>,
-) : JsonDeserializer<Value>() {
+) : ValueDeserializer<Value>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Value {
         // Take the pointer before reading: an object or array has already opened its own context.
         val pointer = pointerOf(p)
@@ -57,7 +57,7 @@ internal class ValidatingDeserializer<Input, Error, Value>(
 
 /** The JSON Pointer of the value at the parser's current token. */
 internal fun pointerOf(p: JsonParser): String {
-    val context = p.parsingContext
-    val holder = if (p.currentToken?.isStructStart == true) context.parent ?: context else context
+    val context = p.streamReadContext()
+    val holder = if (p.currentToken()?.isStructStart == true) context.parent ?: context else context
     return holder.pathAsPointer().toString()
 }
