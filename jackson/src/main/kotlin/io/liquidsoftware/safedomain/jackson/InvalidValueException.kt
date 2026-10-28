@@ -1,8 +1,8 @@
 package io.liquidsoftware.safedomain.jackson
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.JsonMappingException
 import io.liquidsoftware.safedomain.ErrorMessage
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DatabindException
 
 /**
  * Reading found well-formed JSON that the type's factory rejected. [error] is the
@@ -17,4 +17,4 @@ public class InvalidValueException(
     public val error: Any?,
     public val messages: List<ErrorMessage>,
     public val pointer: String,
-) : JsonMappingException(parser, "Invalid $typeName: ${messages.joinToString { it.code }}")
+) : DatabindException(parser, "Invalid $typeName: ${messages.joinToString { it.code }}")

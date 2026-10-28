@@ -1,8 +1,5 @@
 package io.liquidsoftware.safedomain.jackson
 
-import com.fasterxml.jackson.databind.JavaType
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
 import io.kotest.common.ExperimentalKotest
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
@@ -81,6 +78,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import tools.jackson.databind.JavaType
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -91,13 +91,14 @@ import kotlin.test.assertEquals
  */
 class CrossCheckTest {
     @Suppress("UNCHECKED_CAST")
-    private val mapper = ObjectMapper()
-        .registerModule(ImpossibleModule())
-        .registerModule(
+    private val mapper = JsonMapper.builder()
+        .addModule(ImpossibleModule())
+        .addModule(
             SimpleModule()
                 .addDeserializer(BoundedInt::class.java, BoundedIntDeserializer(-3..7))
                 .addDeserializer(BoundedList::class.java as Class<BoundedList<Any?>>, BoundedListDeserializer(1..4)),
         )
+        .build()
 
     private fun type(raw: Class<*>, vararg parameters: Class<*>): JavaType =
         if (parameters.isEmpty()) mapper.constructType(raw) else mapper.typeFactory.constructParametricType(raw, *parameters)

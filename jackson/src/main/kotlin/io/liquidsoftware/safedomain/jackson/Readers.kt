@@ -1,10 +1,10 @@
 package io.liquidsoftware.safedomain.jackson
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import tools.jackson.core.JsonParser
+import tools.jackson.core.JsonToken
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.exc.MismatchedInputException
 
 // Strict readers for the library's own wire forms, matching impossible-serialization:
 // text only from JSON strings, integers only from JSON integers in range, and no
@@ -15,11 +15,11 @@ internal fun mismatch(p: JsonParser, message: String): Nothing =
     throw MismatchedInputException.from(p, Any::class.java, message)
 
 internal val readString: Reader<String> = { p, _ ->
-    if (p.currentToken == JsonToken.VALUE_STRING) p.text else mismatch(p, "Expected a JSON string")
+    if (p.currentToken() == JsonToken.VALUE_STRING) p.string else mismatch(p, "Expected a JSON string")
 }
 
 internal val readInt: Reader<Int> = { p, _ ->
-    if (p.currentToken == JsonToken.VALUE_NUMBER_INT && p.numberType == JsonParser.NumberType.INT) {
+    if (p.currentToken() == JsonToken.VALUE_NUMBER_INT && p.numberType == JsonParser.NumberType.INT) {
         p.intValue
     } else {
         mismatch(p, "Expected a JSON integer in the Int range")
@@ -28,7 +28,7 @@ internal val readInt: Reader<Int> = { p, _ ->
 
 internal val readLong: Reader<Long> = { p, _ ->
     val type = p.numberType
-    if (p.currentToken == JsonToken.VALUE_NUMBER_INT && (type == JsonParser.NumberType.INT || type == JsonParser.NumberType.LONG)) {
+    if (p.currentToken() == JsonToken.VALUE_NUMBER_INT && (type == JsonParser.NumberType.INT || type == JsonParser.NumberType.LONG)) {
         p.longValue
     } else {
         mismatch(p, "Expected a JSON integer in the Long range")
@@ -45,11 +45,14 @@ internal fun <A> readParsed(what: String, parse: (String) -> A): Reader<A> = { p
     }
 }
 
-/** The named fields of a JSON object, each required; unknown fields fail when Jackson is configured to. */
+/**
+ * The named fields of a JSON object, each required. Unknown fields fail only when the mapper
+ * enables `FAIL_ON_UNKNOWN_PROPERTIES`, which Jackson 3 leaves off by default.
+ */
 internal class Fields(private val p: JsonParser, private val node: JsonNode) {
     fun string(name: String): String {
         val value = field(name)
-        return if (value.isTextual) value.textValue() else mismatch(p, "Expected a JSON string in field $name")
+        return if (value.isString) value.stringValue() else mismatch(p, "Expected a JSON string in field $name")
     }
 
     fun double(name: String): Double {
@@ -67,10 +70,10 @@ internal class Fields(private val p: JsonParser, private val node: JsonNode) {
 }
 
 internal fun <A> readObject(vararg names: String, build: Fields.() -> A): Reader<A> = { p, ctxt ->
-    if (p.currentToken != JsonToken.START_OBJECT) mismatch(p, "Expected a JSON object")
+    if (p.currentToken() != JsonToken.START_OBJECT) mismatch(p, "Expected a JSON object")
     val node: JsonNode = ctxt.readTree(p)
     if (ctxt.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)) {
-        val unknown = node.fieldNames().asSequence().firstOrNull { it !in names }
+        val unknown = node.propertyNames().asSequence().firstOrNull { it !in names }
         if (unknown != null) mismatch(p, "Unknown field $unknown")
     }
     Fields(p, node).build()
