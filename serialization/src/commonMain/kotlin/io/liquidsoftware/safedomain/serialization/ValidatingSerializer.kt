@@ -58,10 +58,13 @@ private class ValidatingSerializer<Input, Error, Value>(
 
     private fun decodeInput(decoder: Decoder): Input = try {
         decoder.decodeSerializableValue(input)
-    } catch (e: IllegalArgumentException) {
-        // Date, instant and duration parsers throw plain IllegalArgumentExceptions whose
-        // messages quote the input; report malformed data as the format's own failure.
-        throw e as? SerializationException ?: SerializationException("Malformed $serialName")
+    } catch (e: InvalidValueException) {
+        throw e
+    } catch (ignored: IllegalArgumentException) {
+        // Date, instant and duration parsers throw IllegalArgumentExceptions that quote the
+        // input, and Json wraps them (and its own decoding errors) in exceptions that quote
+        // the document, so report malformed data without either message.
+        throw SerializationException("Malformed $serialName")
     }
 }
 
